@@ -14,7 +14,7 @@ from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCa
 
 from calculate_opt import *
 from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
-from data import get_wikitext2_testloader, get_wikitext2_random_test_stream
+from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
 
 parser = argparse.ArgumentParser(
@@ -179,7 +179,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
                     time.sleep(0.0001)
                     break
 
-            test_loader = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer)
+            test_loader = get_wikitext2_testloader_full(tokenizer)
             testenc = test_loader.input_ids
             nsamples = testenc.numel() // seqlen
 
