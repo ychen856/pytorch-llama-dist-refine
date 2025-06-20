@@ -169,17 +169,32 @@ def arrival_sampler(distribution="uniform", **kwargs):
     else:
         raise ValueError("Unsupported distribution")
 
-def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform', dist_args={}):
+def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='uniform', dist_args={}):
     batch_count = 0
     is_first = True
     if mode == 1:   #batch arrival
         while True:
             if input_queue.qsize() == 0 and not is_first:
-                while len(timestamp_manager.end_times) < n_sample:
+                while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
                     break
 
-            input_queue.put(get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids)
+            test_loader = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer)
+            testenc = test_loader.input_ids
+            nsamples = testenc.numel() // seqlen
+
+            for i in range(0, nsamples, bs):
+                if i % 50 == 0:
+                    print(f"sample {i}")
+
+                # Calculate end index
+                j = min(i + bs, nsamples)
+
+                # Prepare inputs and move to device
+                inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+                inputs = inputs.reshape(j - i, seqlen)
+
+                input_queue.put(inputs)
 
             is_first = False
             batch_count = batch_count + 1
@@ -190,11 +205,11 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
     elif mode ==2: #stream arrival
         while True:
             if input_queue.qsize() == 0 and not is_first:
-                while len(timestamp_manager.end_times) < n_sample:
+                while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
                     break
 
-            input_queue.put(get_wikitext2_random_test_stream(n_sample, seed, seqlen, tokenizer).input_ids)
+            input_queue.put(get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer).input_ids)
 
             batch_count = batch_count + 1
             is_first = False
@@ -206,11 +221,11 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
     elif mode ==3:
         while True:
             if input_queue.qsize() == 0 and not is_first:
-                while len(timestamp_manager.end_times) < n_sample:
+                while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
                     break
 
-            data = get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids
+            data = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer).input_ids
             index = 0
             while True:
                 index = index + 1
@@ -230,8 +245,7 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
             if batch_count == 10:
                 return
 
-            data = get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids
-            #data = get_wikitext2_random_test_stream(n_sample, seed, seqlen, tokenizer).input_ids
+
 
 def task2_computation():
     for i in range(0, 10):
@@ -271,10 +285,11 @@ if __name__ == '__main__':
     seed = random.seed(time.time())
     seqlen = 1024
     mode = 1
+    bs = 1
 
 
     # Create and start threads
-    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, tokenizer, mode])
+    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode])
     thread2 = threading.Thread(target=task2_computation, args=[])
     #thread2 = threading.Thread(target=task2_computation,
     #                           args=[models, lm_models, start_idx, calculate_opt.end_idx, calculate_opt.end_idx_buff,
