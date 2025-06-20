@@ -330,7 +330,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
         return False, logits_linear
 
 def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
-    threshold = 0.6
+    threshold = 0.5
     temperature = 0.5
 
     print('head: ', lm_head)
