@@ -219,9 +219,9 @@ if __name__ == '__main__':
 
     head_idx = args.head
 
-    #models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
+    models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
-    #_, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
+    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
 
     print("loading success")
 
@@ -232,12 +232,14 @@ if __name__ == '__main__':
     seqlen = 1024
     # Get input IDs
     testenc = test_loader.input_ids
-    input_list = []
+
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen
 
-
-
+    # List to store negative log likelihoods
+    nlls = []
+    print(f"nsamples {nsamples}")
+    # Loop through each batch
     for i in range(0, nsamples, bs):
         if i % 50 == 0:
             print(f"sample {i}")
@@ -247,79 +249,54 @@ if __name__ == '__main__':
 
         # Prepare inputs and move to device
         inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        print(inputs)
         inputs = inputs.reshape(j - i, seqlen)
-        input_list.append(inputs)
 
+        lm_logits = None
+        is_early_exit = False
 
-    input_count = 0
-    '''while 1:
-        nlls = []
-        early_count = 0
-        for input_idx in range(0, len(input_list)):
-            with torch.no_grad():
-
-                out, ids, mask = models[0](input)
-                is_early_exit = False
-
-                # lm_head, lm_head_idx = get_lm_head_idx(end_idx[i])
-                # print('iii: ', i)
-                # for k in range (1, len(models) - 2):
-                for k in range(1, len(models) - 2):
+        out, ids, mask = models[0](inputs)
+        for k in range(1, len(models) - 2):
+            out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
+            if k == head_idx:
+                try:
+                    is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx)
+                    # print('is early: ', is_early_exit)
+                except Exception as e:
+                    print('early oom!')
+                    is_oom = True
                     is_early_exit = False
-                    # print('Processing layer: ', k)
-                    start_time = time.time()
-                    out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
 
-                    # print('mask: ', mask)
+                    end_idx = k
 
-                    if k == head_idx:
-                        # print('head idx: ', head_idx)
-                        is_early_exit, lm_logits = early_exit_regression(lm_models, out, head_idx, 0.9)
+                if is_early_exit:
+                    is_early_exit = True
+                    break
 
-                        if is_early_exit:
-                            is_early_exit = True
-                            early_count = early_count + 1
-                            print('early: ', early_count)
-                            break
+        if not is_early_exit:
+            lm_logits = models[33](out.last_hidden_state)
+            lm_logits = models[34](lm_logits)
 
-                if not is_early_exit:
-                    print('is not early!')
-                    lm_logits = models[33](out.last_hidden_state)
-                    lm_logits = models[34](lm_logits)
 
-            # Shift logits and labels for next token prediction
-            shift_logits = lm_logits[:, :-1, :].contiguous()
-            shift_labels = input[:, 1:]
+        # Shift logits and labels for next token prediction
+        shift_logits = lm_logits[:, :-1, :].contiguous()
+        shift_labels = inputs[:, 1:]
 
-            #print('shift logits: ', shift_logits)
-            #print('shift labels: ', shift_labels)
+        # Compute loss
+        loss_fct = nn.CrossEntropyLoss()
+        loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
 
-            # Compute loss
-            loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
-            print('loss: ', loss)
+        # Calculate negative log likelihood
+        neg_log_likelihood = loss.float() * seqlen * (j - i)
 
-            j = min(input_idx + bs, nsamples)
-            # Calculate negative log likelihood
-            neg_log_likelihood = loss.float() * seqlen * (j - input_idx)
-            print('likelihood: ', neg_log_likelihood)
-            # print('ppl: ', torch.exp(neg_log_likelihood / seqlen))
+        # Append to list of negative log likelihoods
+        nlls.append(neg_log_likelihood)
 
-            # Append to list of negative log likelihoods
-            nlls.append(neg_log_likelihood)
+        sys.stdout.flush()
 
-            sys.stdout.flush()
+    print('begin calcualte ppl')
+    # Compute perplexity
+    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * seqlen))
+    # Empty CUDA cache to save memory
+    torch.cuda.empty_cache()
 
-            input_count = input_count + 1
-            if input_count >= nsamples:
-                input_count = 0
-
-        print('begin calcualte ppl')
-        # Compute perplexity
-        ppl = torch.exp(torch.stack(nlls).sum() / (len(input_list) * seqlen))
-        # Empty CUDA cache to save memory
-        torch.cuda.empty_cache()
-        print('early count: ', early_count)
-        print('ppl: ', ppl.item())
-        break'''
+    print('ppl: ', ppl.item())
