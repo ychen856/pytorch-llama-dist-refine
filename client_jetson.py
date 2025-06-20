@@ -179,10 +179,10 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
                     time.sleep(0.0001)
                     break
 
-                input_queue.put(get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids)
+            input_queue.put(get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids)
 
-                is_first = False
-                batch_count = batch_count + 1
+            is_first = False
+            batch_count = batch_count + 1
 
             if batch_count == 10:
                 return
@@ -194,10 +194,10 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
                     time.sleep(0.0001)
                     break
 
-                input_queue.put(get_wikitext2_random_test_stream(n_sample, seed, seqlen, tokenizer).input_ids)
+            input_queue.put(get_wikitext2_random_test_stream(n_sample, seed, seqlen, tokenizer).input_ids)
 
-                batch_count = batch_count + 1
-                is_first = False
+            batch_count = batch_count + 1
+            is_first = False
 
             if batch_count == 10:
                 return
@@ -210,22 +210,22 @@ def data_producer(n_sample, seed, seqlen, tokenizer, mode, distribution='uniform
                     time.sleep(0.0001)
                     break
 
-                data = get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids
-                index = 0
-                while True:
-                    index = index + 1
-                    input_queue.put(data[index])
+            data = get_wikitext2_testloader(n_sample, seed, seqlen, tokenizer).input_ids
+            index = 0
+            while True:
+                index = index + 1
+                input_queue.put(data[index])
 
-                    delay = arrival_sampler(distribution, **dist_args)
-                    print(f"[Producer] New input arrived. Next in ~{delay:.2f}s.")
-                    time.sleep(delay)
+                delay = arrival_sampler(distribution, **dist_args)
+                print(f"[Producer] New input arrived. Next in ~{delay:.2f}s.")
+                time.sleep(delay)
 
-                    if index == n_sample:
-                        break
+                if index == n_sample:
+                    break
 
 
-                batch_count = batch_count + 1
-                is_first = False
+            batch_count = batch_count + 1
+            is_first = False
 
             if batch_count == 10:
                 return
