@@ -275,7 +275,7 @@ def early_exit_lm_cuda_ppl_test(models, lm_models, out, ids, mask):
 
 def early_exit_lm_head(lm_models, out, lm_head):
     threshold = 0.5
-    temperature = 0.3
+    temperature = 0.6
 
     logits_norm = lm_models[0](out.last_hidden_state.detach())
     logits_linear = lm_models[1](logits_norm.detach())
@@ -349,6 +349,7 @@ def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     early_count = 0
 
     for i in range(0, len(probs)):
+        print('max prob: ', torch.max(probs_sort[i]).item())
         if torch.max(probs_sort[i]).item() >= threshold:
             probs_sum = probs_sum + torch.max(probs_sort[i]).item()
             early_count = early_count + 1
