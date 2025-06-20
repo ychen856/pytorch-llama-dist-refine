@@ -263,8 +263,9 @@ if __name__ == '__main__':
     data_collector.statistic_period = 10
 
     models = load_model(args.ckpt_dir_hf_sep, start_idx, end_idx_buff, device)
-    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
-    tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf_sep, use_fast=False)'''
+    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")'''
+    print('hii')
+    tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf_sep, use_fast=False)
 
     n_sample = 10
     seed = random.seed(time.time())
