@@ -330,7 +330,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
         return False, logits_linear
 
 def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
-    threshold = 0.5
+    threshold = 0.8
     temperature = 0.5
 
     print('head: ', lm_head)
@@ -349,11 +349,11 @@ def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     early_count = 0
 
     for i in range(0, len(probs)):
-        print('max prob: ', torch.max(probs_sort[i]).item())
         if torch.max(probs_sort[i]).item() >= threshold:
             probs_sum = probs_sum + torch.max(probs_sort[i]).item()
             early_count = early_count + 1
 
+    print('early count: ', early_count)
     print('early rate: ', early_count / 1024)
 
     # return logits_linear
