@@ -251,11 +251,11 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
 def task2_computation():
     print('T2 start...')
     for i in range(0, 10):
-        if input_queue.empty():
+        while input_queue.empty():
             time.sleep(0.0001)
-        else:
-            while not input_queue.empty():
-                print(input_queue.get())
+
+        while not input_queue.empty():
+            print(input_queue.get())
 
 
 
