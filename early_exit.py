@@ -275,7 +275,7 @@ def early_exit_lm_cuda_ppl_test(models, lm_models, out, ids, mask):
 
 def early_exit_lm_head(lm_models, out, lm_head):
     threshold = 0.5
-    temperature = 0.6
+    temperature = 0.3
 
     logits_norm = lm_models[0](out.last_hidden_state.detach())
     logits_linear = lm_models[1](logits_norm.detach())
@@ -331,7 +331,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
 
 def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     threshold = 0.5
-    temperature = 0.3
+    temperature = 0.6
 
     print('head: ', lm_head)
 
