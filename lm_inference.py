@@ -224,7 +224,6 @@ if __name__ == '__main__':
     _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
 
     print("loading success")
-    print('type: ', args.selection)
 
     test_loader = get_wikitext2_testloader_full(tokenizer)
     bs = 1
