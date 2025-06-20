@@ -219,9 +219,9 @@ if __name__ == '__main__':
 
     head_idx = args.head
 
-    models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
+    #models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
-    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
+    #_, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
 
     print("loading success")
 
@@ -247,12 +247,13 @@ if __name__ == '__main__':
 
         # Prepare inputs and move to device
         inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        print(inputs)
         inputs = inputs.reshape(j - i, seqlen)
         input_list.append(inputs)
 
 
     input_count = 0
-    while 1:
+    '''while 1:
         nlls = []
         early_count = 0
         for input_idx in range(0, len(input_list)):
@@ -321,4 +322,4 @@ if __name__ == '__main__':
         torch.cuda.empty_cache()
         print('early count: ', early_count)
         print('ppl: ', ppl.item())
-        break
+        break'''
