@@ -10,10 +10,10 @@ import yaml
 import torch
 from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
-parser = argparse.ArgumentParser(
+'''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
-args = parser.parse_args()
+args = parser.parse_args()'''
 
 def get_wikitext2_testloader_full(tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
@@ -62,7 +62,7 @@ def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
     return testloader
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     with open(args.config) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
     for key in config:
@@ -93,6 +93,6 @@ if __name__ == '__main__':
     test_loader = get_wikitext2_random_test_stream(3, seed, 1024, tokenizer)
 
     for data in test_loader:
-        print('data: ', data)
+        print('data: ', data)'''
 
 
