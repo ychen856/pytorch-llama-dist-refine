@@ -231,6 +231,7 @@ if __name__ == '__main__':
 
     # List to store negative log likelihoods
     nlls = []
+    early_count = 0
     print(f"nsamples {nsamples}")
     # Loop through each batch
     for i in range(0, nsamples, bs):
@@ -262,6 +263,7 @@ if __name__ == '__main__':
                         end_idx = k
 
                     if is_early_exit:
+                        early_count = early_count + 1
                         is_early_exit = True
                         break
 
@@ -293,3 +295,4 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
     print('ppl: ', ppl.item())
+    print('early count: ', early_count)
