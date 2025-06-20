@@ -131,20 +131,13 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
         args.ckpt_dir_hf,
         return_unused_kwargs=True
     )
-    print('config: ', config)
-    print('??: ', end_idx)
 
     lm_head, lm_head_idx = get_lm_head_idx(end_idx)
 
-    print('lm_head: ', lm_head)
-    print('lm_head_idx: ', lm_head_idx)
 
     checkpoint_list = []
     checkpoints = sorted(Path(checkpoints_dir).glob("lm_head.*.pth"))
     checkpoints = natsorted(checkpoints)
-    #checkpoints = checkpoints.sort(key=natural_keys)
-    #checkpoints = sorted(Path(checkpoints_dir).glob("lm_head.*.pth"), key=lambda f: [int(n) for n in re.findall(r"\d+", f)])
-    print('zzzzzzzzzzz', checkpoints)
     assert len(checkpoints) > 0, f"no checkpoint files found in {checkpoints_dir}"
 
 
@@ -253,45 +246,45 @@ if __name__ == '__main__':
 
         lm_logits = None
         is_early_exit = False
+        with torch.no_grad():
+            out, ids, mask = models[0](inputs)
+            for k in range(1, len(models) - 2):
+                out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
+                if k == head_idx:
+                    try:
+                        is_early_exit, lm_logits = early_exit_regression(lm_models, out, lm_models, threshold=0.9)
+                        # print('is early: ', is_early_exit)
+                    except Exception as e:
+                        print('early oom!')
+                        is_oom = True
+                        is_early_exit = False
 
-        out, ids, mask = models[0](inputs)
-        for k in range(1, len(models) - 2):
-            out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
-            if k == head_idx:
-                try:
-                    is_early_exit, lm_logits = early_exit_regression(lm_models, out, lm_models, threshold=0.9)
-                    # print('is early: ', is_early_exit)
-                except Exception as e:
-                    print('early oom!')
-                    is_oom = True
-                    is_early_exit = False
+                        end_idx = k
 
-                    end_idx = k
+                    if is_early_exit:
+                        is_early_exit = True
+                        break
 
-                if is_early_exit:
-                    is_early_exit = True
-                    break
-
-        if not is_early_exit:
-            lm_logits = models[33](out.last_hidden_state)
-            lm_logits = models[34](lm_logits)
+            if not is_early_exit:
+                lm_logits = models[33](out.last_hidden_state)
+                lm_logits = models[34](lm_logits)
 
 
-        # Shift logits and labels for next token prediction
-        shift_logits = lm_logits[:, :-1, :].contiguous()
-        shift_labels = inputs[:, 1:]
+            # Shift logits and labels for next token prediction
+            shift_logits = lm_logits[:, :-1, :].contiguous()
+            shift_labels = inputs[:, 1:]
 
-        # Compute loss
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
+            # Compute loss
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
 
-        # Calculate negative log likelihood
-        neg_log_likelihood = loss.float() * seqlen * (j - i)
+            # Calculate negative log likelihood
+            neg_log_likelihood = loss.detach().float() * seqlen * (j - i)
 
-        # Append to list of negative log likelihoods
-        nlls.append(neg_log_likelihood)
+            # Append to list of negative log likelihoods
+            nlls.append(neg_log_likelihood)
 
-        sys.stdout.flush()
+            sys.stdout.flush()
 
     print('begin calcualte ppl')
     # Compute perplexity
