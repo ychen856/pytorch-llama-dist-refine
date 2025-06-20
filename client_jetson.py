@@ -170,6 +170,7 @@ def arrival_sampler(distribution="uniform", **kwargs):
         raise ValueError("Unsupported distribution")
 
 def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='uniform', dist_args={}):
+    print('T1 start...')
     batch_count = 0
     is_first = True
     if mode == 1:   #batch arrival
@@ -248,6 +249,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
 
 
 def task2_computation():
+    print('T2 start...')
     for i in range(0, 10):
         if input_queue.empty():
             time.sleep(0.0001)
