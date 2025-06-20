@@ -331,12 +331,13 @@ def early_exit_lm_head(lm_models, out, lm_head):
 
 def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     threshold = 0.5
-    temperature = 1
+    temperature = 0.6
 
     logits_norm = lm_models[0](out.last_hidden_state.detach())
     logits_linear = lm_models[1](logits_norm.detach())
 
     probs = torch.softmax(logits_linear / temperature, dim=-1)
+
     print('confidence!!: ', probs.max(dim=-1).values.flatten())
     probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
 
