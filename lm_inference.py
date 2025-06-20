@@ -259,7 +259,7 @@ if __name__ == '__main__':
             out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
             if k == head_idx:
                 try:
-                    is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx)
+                    is_early_exit, lm_logits = early_exit_regression(lm_models, out, lm_models, threshold=0.9)
                     # print('is early: ', is_early_exit)
                 except Exception as e:
                     print('early oom!')
