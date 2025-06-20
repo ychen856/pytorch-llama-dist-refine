@@ -210,7 +210,8 @@ if __name__ == '__main__':
     #allow_cuda = False
     device = torch.device("cuda")
 
-    head_idx = args.head
+    #head_idx = args.head
+    head_idx = 1
 
     models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
@@ -253,7 +254,7 @@ if __name__ == '__main__':
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_regression(lm_models, out, lm_models, threshold=0.9)
+                        is_early_exit, lm_logits = early_exit_regression(lm_models, out, head_idx, threshold=0.9)
                         # print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
