@@ -10,7 +10,7 @@ import numpy as np
 from pathlib import Path
 import argparse
 import yaml
-from transformers import AutoConfig, LlamaTokenizer
+from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
 from calculate_opt import *
 from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
@@ -265,7 +265,7 @@ if __name__ == '__main__':
     models = load_model(args.ckpt_dir_hf_sep, start_idx, end_idx_buff, device)
     _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")'''
     print('hii')
-    tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf_sep, use_fast=False)
+    tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
     n_sample = 10
     seed = random.seed(time.time())
