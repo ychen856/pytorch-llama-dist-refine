@@ -331,7 +331,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
 
 def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     threshold = 0.5
-    temperature = 1
+    temperature = 0.5
 
     print('head: ', lm_head)
 
