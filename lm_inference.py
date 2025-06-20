@@ -322,3 +322,4 @@ if __name__ == '__main__':
         torch.cuda.empty_cache()
         print('early count: ', early_count)
         print('ppl: ', ppl.item())
+        break
