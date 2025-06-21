@@ -261,6 +261,7 @@ def task2_computation():
 
 
 if __name__ == '__main__':
+    print('?????')
     with open(args.config) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
     for key in config:
