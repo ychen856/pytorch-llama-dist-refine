@@ -287,7 +287,7 @@ if __name__ == '__main__':
     n_sample = 10
     seed = random.seed(time.time())
     seqlen = 1024
-    mode = 2
+    mode = 1
     bs = 1
 
 
