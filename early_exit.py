@@ -371,7 +371,7 @@ def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     elif lm_head == 2:
         early_rate = 0.8663311749
     elif lm_head == 1:
-        early_rate = 0.657
+        early_rate = 0.652
         #early_rate = 0.8490639077
 
     '''early_rate = 0.887
