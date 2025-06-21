@@ -286,12 +286,15 @@ if __name__ == '__main__':
     n_sample = 10
     seed = random.seed(time.time())
     seqlen = 1024
-    mode = 1
+    mode = 2
     bs = 1
 
 
     # Create and start threads
-    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode])
+    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode], kwargs={
+                                                                                            "distribution": "exponential",
+                                                                                            "dist_args": {"scale": 0.8}
+                                                                                            })
     thread2 = threading.Thread(target=task2_computation, args=[])
     #thread2 = threading.Thread(target=task2_computation,
     #                           args=[models, lm_models, start_idx, calculate_opt.end_idx, calculate_opt.end_idx_buff,
