@@ -211,7 +211,7 @@ if __name__ == '__main__':
     device = torch.device("cuda")
 
     #head_idx = args.head
-    head_idx = 8
+    head_idx = 10
 
     models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
