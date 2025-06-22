@@ -31,13 +31,12 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
     testloader = []
 
     for _ in range(nsamples):
-        i = random.randint(0, input_ids.shape[0] - seqlen - 1)
-        chunk = input_ids[i:i + seqlen].unsqueeze(0)
-        target = chunk.clone()
-        target[:, :-1] = -100
-        #testloader.append((chunk, target))
-        testloader.append(chunk)
-    return testloader
+        i = random.randint(0, testenc.input_ids.shape[1] - seqlen - 1)
+        j = i + seqlen
+        inp = testenc.input_ids[:, i:j]
+        testenc.append(inp)
+
+    return testenc
 def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     lines = [line for line in testdata['text'] if line.strip() != '']

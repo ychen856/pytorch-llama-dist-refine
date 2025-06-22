@@ -212,23 +212,14 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
                     break
 
             testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
+            nsamples = len(testenc)
             print('test loader: ', testenc)
-            #testenc = test_loader.input_ids
-            #nsamples = testenc.numel() // seqlen
-            nsamples = testenc.numel() // seqlen
 
             for i in range(0, nsamples, bs):
                 if i % 50 == 0:
                     print(f"sample {i}")
 
-                # Calculate end index
-                j = min(i + bs, nsamples)
-
-                # Prepare inputs and move to device
-                inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-                inputs = inputs.reshape(j - i, seqlen)
-
-                input_queue.put(inputs)
+                input_queue.put(testenc[i])
 
             is_first = False
             batch_count = batch_count + 1
