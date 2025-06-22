@@ -211,6 +211,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
                     break
 
             test_loader = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
+            print('test loader: ', test_loader)
             testenc = test_loader.input_ids
             nsamples = testenc.numel() // seqlen
 
