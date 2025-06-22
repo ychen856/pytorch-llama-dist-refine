@@ -215,7 +215,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
             print('test loader: ', testenc)
             #testenc = test_loader.input_ids
             #nsamples = testenc.numel() // seqlen
-            nsamples = len(testenc)
+            nsamples = testenc.numel() // seqlen
 
             for i in range(0, nsamples, bs):
                 if i % 50 == 0:
