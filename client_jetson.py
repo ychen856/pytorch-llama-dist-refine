@@ -235,7 +235,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
                     time.sleep(0.0001)
                     break
 
-            testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer)
+            testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
             index = 0
             while True:
