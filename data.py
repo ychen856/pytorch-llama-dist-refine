@@ -26,7 +26,7 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
-    testenc = testenc['input_ids'][0]  # assume batch dim = 1
+    input_ids = testenc['input_ids'][0]  # assume batch dim = 1
     random.seed(seed)
     testloader = []
 
@@ -34,9 +34,9 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
         i = random.randint(0, testenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = testenc.input_ids[:, i:j]
-        testenc.append(inp)
+        testloader.append(inp)
 
-    return testenc
+    return testloader
 def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     lines = [line for line in testdata['text'] if line.strip() != '']
