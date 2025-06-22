@@ -210,10 +210,11 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
                     time.sleep(0.0001)
                     break
 
-            test_loader = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
-            print('test loader: ', test_loader)
-            testenc = test_loader.input_ids
-            nsamples = testenc.numel() // seqlen
+            testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
+            print('test loader: ', testenc)
+            #testenc = test_loader.input_ids
+            #nsamples = testenc.numel() // seqlen
+            nsamples = len(testenc)
 
             for i in range(0, nsamples, bs):
                 if i % 50 == 0:

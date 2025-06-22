@@ -35,8 +35,8 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
         chunk = input_ids[i:i + seqlen].unsqueeze(0)
         target = chunk.clone()
         target[:, :-1] = -100
-        testloader.append((chunk, target))
-
+        #testloader.append((chunk, target))
+        testloader.append(chunk)
     return testloader
 def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
