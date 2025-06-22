@@ -203,17 +203,32 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
             if batch_count == 10:
                 return
 
-    elif mode ==2: #stream arrival
+    elif mode == 2: #stream arrival
         while True:
             if input_queue.qsize() == 0 and not is_first:
                 while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
                     break
 
-            input_queue.put(get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer).input_ids)
+            test_loader = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
+            testenc = test_loader.input_ids
+            nsamples = testenc.numel() // seqlen
 
-            batch_count = batch_count + 1
+            for i in range(0, nsamples, bs):
+                if i % 50 == 0:
+                    print(f"sample {i}")
+
+                # Calculate end index
+                j = min(i + bs, nsamples)
+
+                # Prepare inputs and move to device
+                inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+                inputs = inputs.reshape(j - i, seqlen)
+
+                input_queue.put(inputs)
+
             is_first = False
+            batch_count = batch_count + 1
 
             if batch_count == 10:
                 return
@@ -287,7 +302,7 @@ if __name__ == '__main__':
     n_sample = 10
     seed = random.seed(time.time())
     seqlen = 1024
-    mode = 1
+    mode = 2
     bs = 1
 
 
