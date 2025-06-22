@@ -34,7 +34,6 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
         i = random.randint(0, testenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = testenc.input_ids[:, i:j]
-        print('inp: ', inp)
         testloader.append(inp)
 
     return testloader
@@ -57,8 +56,8 @@ def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
         tar = input_ids.clone()
         tar[:, :-1] = -100  # mask non-target tokens
 
-        testloader.append((inp, tar))
-
+        #testloader.append((inp, tar))
+        testloader.append(inp)
     return testloader
 
 
