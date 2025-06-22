@@ -26,7 +26,7 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
-    input_ids = testenc['input_ids'][0]  # assume batch dim = 1
+    testenc = testenc['input_ids'][0]  # assume batch dim = 1
     random.seed(seed)
     testloader = []
 
