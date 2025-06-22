@@ -182,6 +182,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
 
             test_loader = get_wikitext2_testloader_full(tokenizer)
             testenc = test_loader.input_ids
+            print('zzzzz: ', testenc)
             nsamples = testenc.numel() // seqlen
 
             for i in range(0, nsamples, bs):
