@@ -22,7 +22,7 @@ def get_wikitext2_testloader_full(tokenizer):
 
     return testenc
 
-def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
+def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer, device):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
@@ -33,11 +33,11 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer):
     for _ in range(nsamples):
         i = random.randint(0, testenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
-        inp = testenc.input_ids[:, i:j]
+        inp = testenc.input_ids[:, i:j].to(device)
         testloader.append(inp)
 
     return testloader
-def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
+def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer, device):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     lines = [line for line in testdata['text'] if line.strip() != '']
     random.seed(seed)
@@ -50,7 +50,7 @@ def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer):
             cur_text += ' ' + random.choice(lines)
 
         tokens = tokenizer(cur_text, return_tensors='pt', truncation=True, max_length=seqlen + 1)['input_ids']
-        input_ids = tokens[:, :seqlen]
+        input_ids = tokens[:, :seqlen].to(device)
 
         inp = input_ids.clone()
         tar = input_ids.clone()

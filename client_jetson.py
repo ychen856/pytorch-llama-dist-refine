@@ -169,7 +169,7 @@ def arrival_sampler(distribution="uniform", **kwargs):
     else:
         raise ValueError("Unsupported distribution")
 
-def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='uniform', dist_args={}):
+def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distribution='uniform', dist_args={}):
     print('T1 start...')
     batch_count = 0
     is_first = True
@@ -211,7 +211,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, distribution='u
                     time.sleep(0.0001)
                     break
 
-            testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer)
+            testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
             print('test loader: ', testenc)
 
@@ -301,7 +301,7 @@ if __name__ == '__main__':
 
 
     # Create and start threads
-    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode], kwargs={
+    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
