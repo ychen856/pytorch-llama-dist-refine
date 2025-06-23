@@ -256,6 +256,13 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     time.sleep(0.0001)
                     break
 
+                print('time: ', timestamp_manager)
+                timestamp_manager.get_time_diff_every_n_inputs(10)
+
+                print('batch count: ', batch_count)
+                if batch_count > total_batch_num:
+                    return
+
             test_loader = get_wikitext2_testloader_full(tokenizer)
             testenc = test_loader.input_ids
             print('zzzzz: ', testenc)
@@ -287,6 +294,13 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     time.sleep(0.0001)
                     break
 
+                print('time: ', timestamp_manager)
+                timestamp_manager.get_time_diff_every_n_inputs(10)
+
+                print('batch count: ', batch_count)
+                if batch_count > total_batch_num:
+                    return
+
             testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
             print('test loader: ', testenc)
@@ -312,6 +326,13 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     time.sleep(0.0001)
                     break
 
+                print('time: ', timestamp_manager)
+                timestamp_manager.get_time_diff_every_n_inputs(10)
+
+                print('batch count: ', batch_count)
+                if batch_count > total_batch_num:
+                    return
+
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
 
@@ -330,10 +351,43 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             batch_count = batch_count + 1
             is_first = False
 
-            print('batch count: ', batch_count)
+            '''print('batch count: ', batch_count)
             if batch_count == total_batch_num:
-                return
+                return'''
 
+def task1_data_sending(args):
+    while 1:
+        timeout_count = 0
+
+        while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+        #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
+            timeout_count = timeout_count + 1
+
+            start_time = time.time()
+            #print('outgoing queue size: ', outgoing_queue.qsize())
+
+            if input_queue.qsize() > 0: #and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
+                idx = input_queue.qsize()
+                timestamp_manager.start_times = (idx, start_time)
+
+                output = input_queue.get()
+                outgoing_queue.put([0, output, None, None, idx, 0])
+
+                #packed_data = serialize_and_compress(0, [None, None, output], None, None, idx, 0)
+                #outgoing_queue.put(packed_data)
+
+                end_time = time.time()
+
+                print('rate: ', 0)
+                print('server idle!')
+            else:
+                break
+
+
+        data = outgoing_queue.get()
+        performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+        #http_sender.send_data(args.server_ip, args.server_port, data, calculate_opt, timestamp_manager)
+        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
 
 
 '''def task2_computation():
@@ -352,8 +406,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     is_oom = False
     #prune_wanda_allocation(args, models, tokenizer, testenc[0], device=torch.device("cuda:0"))
     # Loop through each batch
-    batch_count = 30
-    #batch_count = 10
+    max_batch_num = 3
+    batch_count = 0
     cycle_count = 0
     input_count = 0
     count = 0
@@ -364,6 +418,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     global repeated
     #while not input_queue.empty():
     while(1):
+        if count > max_batch_num * batch_size:
+            break
+
         while input_queue.empty():
             time.sleep(0.0001)
 
@@ -505,7 +562,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         torch.cuda.empty_cache()
 
 
-    performance_data_store.statistic_period = statistics_period
     print('end T2...')
 
 
@@ -525,41 +581,41 @@ if __name__ == '__main__':
 
     device = torch.device("cuda")
 
-    '''max_layers = args.max_layers
+    max_layers = args.max_layers
     start_idx = args.start_idx
     end_idx_buff = args.end_idx_buff
     head_idx = 2
 
-    data_collector.statistic_period = 10
+    performance_data_store.statistic_period = 10
 
     models = load_model(args.ckpt_dir_hf_sep, start_idx, end_idx_buff, device)
-    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")'''
+    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
     print('hii')
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
     n_sample = 10
-    batch_count = 10
+    batch_count = 3
     seed = random.seed(time.time())
     seqlen = 1024
-    mode = 3
+    mode = 1
     bs = 1
 
 
     # Create and start threads
-    thread1 = threading.Thread(target=data_producer, args=[batch_count, n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
+    thread3 = threading.Thread(target=data_producer, args=[batch_count, n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
-    thread2 = threading.Thread(target=task2_computation, args=[])
-    #thread2 = threading.Thread(target=task2_computation,
-    #                           args=[models, lm_models, start_idx, calculate_opt.end_idx, calculate_opt.end_idx_buff,
-    #                                 head_idx, max_layers, device])
+    thread1 = threading.Thread(target=task1_data_sending, args=[args])
+    thread2 = threading.Thread(target=task2_computation,
+                               args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
+                                     head_idx, max_layers, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
     thread2.start()
-    #thread3.start()
+    thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
     thread2.join()
-    # thread3.join()
+    thread3.join()
