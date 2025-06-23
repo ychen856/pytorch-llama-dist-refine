@@ -200,7 +200,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
 
             is_first = False
             batch_count = batch_count + 1
-
+            print('batch count: ', batch_count)
             if batch_count == 10:
                 return
 
@@ -254,6 +254,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
             batch_count = batch_count + 1
             is_first = False
 
+            print('batch count: ', batch_count)
             if batch_count == 10:
                 return
 
