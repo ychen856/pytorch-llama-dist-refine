@@ -237,6 +237,8 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
 
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
+            print('length: ', nsamples)
+
             index = 0
             while True:
                 index = index + 1
