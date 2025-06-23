@@ -248,7 +248,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
                 delay = arrival_sampler(distribution, **dist_args)
                 print(f"[Producer] New input arrived. Next in ~{delay:.2f}s.")
                 time.sleep(delay)
-
+                print('idx: ', index)
                 if index == nsamples:
                     break
 
