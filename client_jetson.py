@@ -228,7 +228,8 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
                 return
 
 
-    elif mode ==3:
+    elif mode == 3:
+        print('mode: ', 3)
         while True:
             if input_queue.qsize() == 0 and not is_first:
                 while len(timestamp_manager.end_times) < batch_size:
