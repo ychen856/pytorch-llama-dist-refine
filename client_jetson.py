@@ -238,17 +238,16 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
 
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
-            print('length: ', nsamples)
 
             index = 0
             while True:
-                index = index + 1
                 input_queue.put(testenc[index])
 
                 delay = arrival_sampler(distribution, **dist_args)
                 print(f"[Producer] New input arrived. Next in ~{delay:.2f}s.")
                 time.sleep(delay)
-                print('idx: ', index)
+
+                index = index + 1
                 if index == nsamples:
                     break
 
