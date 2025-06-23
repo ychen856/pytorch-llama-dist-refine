@@ -6,6 +6,7 @@ import torch
 from natsort import natsorted
 from queue import Queue
 import numpy as np
+import math
 
 from pathlib import Path
 import argparse
@@ -16,16 +17,95 @@ from calculate_opt import *
 from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
 from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
+from early_exit import early_exit_lm_head, early_exit_regression
+import http_sender
 
 parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
 args = parser.parse_args()
 
-data_collector = ServerClientDataCollector()
+performance_data_store = PerformanceDataStore()
 input_queue = Queue()
+outgoing_queue = Queue()
 timestamp_manager = Timestamp_manager()
 
+def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
+    if type == 1: #add buffer layers
+        #print('increase buffer')
+        config, kwargs = AutoConfig.from_pretrained(
+            args.ckpt_dir_hf_sep,
+            return_unused_kwargs=True
+        )
+        #print('config: ', config)
+
+        checkpoint_list = []
+        checkpoints = sorted(Path(args.ckpt_dir_hf_sep).glob("consolidated.*.pth"))
+        assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
+
+        checkpoints = checkpoints[end_idx_buff + 1:]
+        checkpoint_idx = end_idx_buff
+        for checkpoint in checkpoints:
+            ckpt_path = checkpoint
+
+            checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
+            checkpoint_idx = checkpoint_idx + 1
+            if checkpoint_idx >= max_layers:
+                break
+            if checkpoint_idx > end_idx_buff + 2:
+                break
+
+        start_idx = end_idx_buff + 1
+        if end_idx_buff + 3 <= max_layers:
+            end_idx_buff = end_idx_buff + 3
+        else:
+            end_idx_buff = max_layers
+
+
+        if device.type == 'cuda':
+            torch.set_default_tensor_type(torch.cuda.HalfTensor)
+        else:
+            torch.set_default_tensor_type(torch.BFloat16Tensor)
+
+
+        for i in range(start_idx, end_idx_buff + 1):
+            #print('i: ', i)
+            try:
+                if i == 0:
+                    models.append(LlamaForCausalLM_emb(config))
+                    models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
+                    models[0].to(device)
+                elif i == 33:
+                    models.append((LlamaForCausalLM_norm(config)))
+                    models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
+                    models[33].to(device)
+
+                elif i == 34:
+                    models.append((LlamaForCausalLM_linear(config)))
+                    models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
+                    models[34].to(device)
+                else:
+                    models.append(LlamaForCausalLM_layer_0(config))
+                    models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
+                    models[i].to(device)
+            except:
+                end_idx_buff = i - 1
+                break
+
+    if type == 2: # drop layers
+        #print('decrease buffer')
+        models = models[:-1]
+        end_idx_buff = end_idx_buff - 1
+    if type == 4:   #reload the whole model
+        load_model(args.ckpt_dir_hf_sep, 0, end_idx_buff, torch.device("cuda:0"))
+
+    '''for i in range(0, len(models)):
+                model = models[i]
+                for name, param in model.named_parameters():
+                    if param.requires_grad:
+                        print(name, param.data)'''
+
+    return models, end_idx_buff
 def load_model(checkpoints_dir, start_idx, end_idx, device):
     config, kwargs = AutoConfig.from_pretrained(
         args.ckpt_dir_hf_sep,
@@ -83,7 +163,6 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
                 print(name, param.data)'''
 
     return models
-
 def get_lm_head_idx(end_idx):
 
     lm_heads = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
@@ -107,7 +186,6 @@ def get_lm_head_idx(end_idx):
 
 
     return lm_head, lm_head_idx
-
 def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
     config, kwargs = AutoConfig.from_pretrained(
         args.ckpt_dir_hf,
@@ -154,7 +232,6 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
             lm_models[i].to(device)
 
     return lm_head, lm_models
-
 def arrival_sampler(distribution="uniform", **kwargs):
     """Return a random delay based on given distribution"""
     if distribution == "uniform":
@@ -168,8 +245,7 @@ def arrival_sampler(distribution="uniform", **kwargs):
         return max(0, random.gauss(kwargs.get("mu", 1.0), kwargs.get("sigma", 0.2)))
     else:
         raise ValueError("Unsupported distribution")
-
-def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distribution='uniform', dist_args={}):
+def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode, device, distribution='uniform', dist_args={}):
     print('T1 start...')
     batch_count = 0
     is_first = True
@@ -201,7 +277,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
             is_first = False
             batch_count = batch_count + 1
             print('batch count: ', batch_count)
-            if batch_count == 10:
+            if batch_count == total_batch_num:
                 return
 
     elif mode == 2: #stream arrival
@@ -224,7 +300,7 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
             is_first = False
             batch_count = batch_count + 1
 
-            if batch_count == 10:
+            if batch_count == total_batch_num:
                 return
 
 
@@ -255,19 +331,184 @@ def data_producer(batch_size, seed, seqlen, bs, tokenizer, mode, device, distrib
             is_first = False
 
             print('batch count: ', batch_count)
-            if batch_count == 10:
+            if batch_count == total_batch_num:
                 return
 
 
 
-def task2_computation():
+'''def task2_computation():
     print('T2 start...')
     for i in range(0, 10):
         while input_queue.empty():
             time.sleep(0.0001)
 
         while not input_queue.empty():
+            print(input_queue.get())'''
+
+
+
+def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_idx, max_layers, device):
+
+    is_oom = False
+    #prune_wanda_allocation(args, models, tokenizer, testenc[0], device=torch.device("cuda:0"))
+    # Loop through each batch
+    batch_count = 30
+    #batch_count = 10
+    cycle_count = 0
+    input_count = 0
+    count = 0
+    early_count = 0
+    statistics_period = performance_data_store.statistic_period
+    batch_size = 10
+    # repeated 5->0, 10->1, 20->3
+    global repeated
+    #while not input_queue.empty():
+    while(1):
+        while input_queue.empty():
+            time.sleep(0.0001)
+
+        while not input_queue.empty():
             print(input_queue.get())
+
+        if input_count % batch_size == 0:
+            early_count = 0
+
+
+        is_early_exit = False
+        count = count + 1
+        #print('========================================')
+
+        idx = input_queue.qsize()
+        input = input_queue.get()
+
+        if input_count % 50 == 0:
+            print(f"sample {input_count}")
+
+
+        start_time = time.time()
+        timestamp_manager.start_times = (idx, start_time)
+
+
+        print('start idx: ', 0)
+        # Forward pass through the model
+        try:
+            out, ids, mask = models[0](input)
+        except Exception as e:
+            print(e)
+
+
+        for k in range(1, end_idx + 1):
+            try:
+                out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
+                if k == head_idx:
+                    try:
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx)
+                        #print('is early: ', is_early_exit)
+                    except Exception as e:
+                        print('early oom!')
+                        is_oom = True
+                        is_early_exit = False
+
+                        end_idx = k
+
+                    if is_early_exit:
+                        print('end idx: ', k)
+                        timestamp_manager.end_times = (idx, time.time())
+                        break
+
+            except Exception as e:
+                print('oom!!!')
+                is_oom = True
+
+                end_idx = k - 1
+
+                #print('updated end idx: ', end_idx)
+                break
+
+
+        end_time = time.time()
+
+        if not is_early_exit:
+            print('end idx: ', end_idx)
+
+        print('is early: ', is_early_exit)
+
+
+
+        if is_early_exit:
+            early_count = early_count + 1
+            performance_data_store.add_client_info(datetime.now() + timedelta(milliseconds=50), end_idx, end_idx_buff, end_time - start_time, head_idx, True)
+
+        if not is_early_exit:
+            cycle_count = cycle_count + 1
+            input_count = input_count + 1
+
+            print('cycle count: ', cycle_count)
+            print('input count: ', input_count)
+
+
+            #outgoing_queue.put([end_idx + 1, pruned_feature_vector, ids, mask, idx, end_time - start_time])
+            outgoing_queue.put([end_idx + 1, out, ids, mask, idx, end_time - start_time])
+
+            print('outgoing queue PUT!')
+            performance_data_store.add_client_info(datetime.now() + timedelta(milliseconds=50), end_idx, end_idx_buff, end_time - start_time, head_idx, False)
+
+            if is_oom:
+                end_idx = max(1, math.ceil(end_idx / 2))
+                is_oom = False
+            #print('statistic: ', statistics_period)
+            #if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
+            if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+                print('testing higher value(i<30)')
+                performance_data_store.max_end_idx = end_idx
+                end_idx = end_idx + 1
+
+            if cycle_count == (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+                print('testing lower value (i>30)')
+                end_idx = max(1, end_idx - 1)
+
+            if cycle_count > (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+                print('testing higher value (i>30): ')
+                performance_data_store.max_end_idx = end_idx
+                end_idx = end_idx + 1
+
+        #if (input_count) % 10 == 0:
+        print('record count: ', performance_data_store.new_record_count)
+        if performance_data_store.new_record_count >= statistics_period:
+            #print('statistic')
+            #statistics_period = statistics_period + 5
+            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store)
+            print('opt end idx: ', end_idx)
+            print('opt buff idx: ', new_buff_idx)
+            print('opt statistics period: ', statistics_period)
+            #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
+            '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
+            outgoing_queue.put(packed_data)'''
+
+
+
+            #while new_buff_idx < end_idx_buff:
+            #    models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+
+            lm_head, _ = get_lm_head_idx(end_idx)
+            if not lm_head == head_idx:
+                head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
+
+            cycle_count = 0
+
+        #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
+        if end_idx_buff < end_idx and end_idx_buff < max_layers:
+            models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
+        while end_idx_buff > end_idx + 3:  #remove buffer
+            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+
+        torch.cuda.empty_cache()
+
+
+    performance_data_store.statistic_period = statistics_period
+    print('end T2...')
+
+
 
 
 
@@ -297,6 +538,7 @@ if __name__ == '__main__':
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
     n_sample = 10
+    batch_count = 10
     seed = random.seed(time.time())
     seqlen = 1024
     mode = 3
@@ -304,7 +546,7 @@ if __name__ == '__main__':
 
 
     # Create and start threads
-    thread1 = threading.Thread(target=data_producer, args=[n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
+    thread1 = threading.Thread(target=data_producer, args=[batch_count, n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
