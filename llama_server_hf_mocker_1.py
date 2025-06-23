@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 import argparse
 
-from data import get_loaders
+from data import get_wikitext2_testloader, get_wikitext2_testloader_full
 from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 from multiprocessing import Pool
 from multiprocessing import set_start_method
@@ -20,7 +20,6 @@ from transformers.modeling_outputs import BaseModelOutputWithPast
 from multiprocessing import current_process
 from threading import current_thread, Thread
 
-from feature_pruning import *
 from model_hf import LlamaForCausalLM, LlamaForCausalLM_emb, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm, \
     LlamaForCausalLM_linear
 import yaml
@@ -112,9 +111,7 @@ def get_dataset(tokenizer):
     bs = 1
     seqlen = 1024
 
-    _, testloader = get_loaders(
-        dataset, seed=0, seqlen=seqlen, tokenizer=tokenizer
-    )
+    testloader = get_wikitext2_testloader_full(tokenizer)
     # Get input IDs
     testenc = testloader.input_ids
 
