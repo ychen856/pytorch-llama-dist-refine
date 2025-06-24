@@ -144,7 +144,7 @@ def get_dataset(tokenizer):
     return input_list
 
 
-def task1_data_receiving(args, inputs):
+def task1_data_receiving(args):
     pid = os.getpid()
     curr_thread = current_thread().name
     curr_process = current_process().name
@@ -302,25 +302,25 @@ if __name__ == '__main__':
     models = load_model(args.ckpt_dir_hf_sep, start_idx_buff, end_idx, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
-    inputs = get_dataset(tokenizer)
+    #inputs = get_dataset(tokenizer)
     print("loading success")
     # Create and start threads
 
     start_idx = 0
     end_idx = 34
-    incoming_queue.put(inputs[0])
-    thread2 = threading.Thread(target=task2_computation, args=[models, start_idx, end_idx, tokenizer, device, True])
+    #incoming_queue.put(inputs[0])
+    #thread2 = threading.Thread(target=task2_computation, args=[models, start_idx, end_idx, tokenizer, device, True])
 
-    thread2.start()
+    #thread2.start()
 
     # Wait for both threads to finish (optional)
-    thread2.join()
+    #thread2.join()
 
     start_time = time.time()
-    start_idx = 5
+    start_idx = 0
     end_idx = 34
     # task2_computation(models, start_idx, end_idx, tokenizer, device, inputs)
-    thread1 = threading.Thread(target=task1_data_receiving, args=[args, inputs])
+    thread1 = threading.Thread(target=task1_data_receiving, args=[args])
     thread2 = threading.Thread(target=task2_computation, args=[models, start_idx, end_idx, tokenizer, device, False])
 
     thread1.start()
