@@ -37,6 +37,7 @@ def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer, device):
         testloader.append(inp)
 
     return testloader
+
 def get_wikitext2_random_test_stream(nsamples, seed, seqlen, tokenizer, device):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     lines = [line for line in testdata['text'] if line.strip() != '']

@@ -273,9 +273,9 @@ def early_exit_lm_cuda_ppl_test(models, lm_models, out, ids, mask):
 
 
 
-def early_exit_lm_head(lm_models, out, lm_head):
+def early_exit_lm_head(lm_models, out, lm_head, ppl):
     threshold = 0.5
-    temperature = 0.3
+    temperature = 0.5
 
     logits_norm = lm_models[0](out.last_hidden_state.detach())
     logits_linear = lm_models[1](logits_norm.detach())
@@ -295,11 +295,49 @@ def early_exit_lm_head(lm_models, out, lm_head):
             early_count = early_count + 1
 
 
-    #print('early rate: ', early_count / 1024)
+    if ppl == 10:
+        if lm_head == 10:
+            early_rate = 0.74
+        elif lm_head == 8:
+            early_rate = 0.745
+        elif lm_head == 6:
+            early_rate = 0.73
+        elif lm_head == 4:
+            early_rate = 0.72
+        elif lm_head == 2:
+            early_rate = 0.69
+        elif lm_head == 1:
+            early_rate = 0.67
+    elif ppl == 20:
+        if lm_head == 10:
+            early_rate = 0.71
+        elif lm_head == 8:
+            early_rate = 0.707
+        elif lm_head == 6:
+            early_rate = 0.7
+        elif lm_head == 4:
+            early_rate = 0.69
+        elif lm_head == 2:
+            early_rate = 0.67
+        elif lm_head == 1:
+            early_rate = 0.654
+    elif ppl == 30:
+        if lm_head == 10:
+            early_rate = 0.67
+        elif lm_head == 8:
+            early_rate = 0.665
+        elif lm_head == 6:
+            early_rate = 0.667
+        elif lm_head == 4:
+            early_rate = 0.667
+        elif lm_head == 2:
+            early_rate = 0.66
+        elif lm_head == 1:
+            early_rate = 0.644
 
-    #return logits_linear
 
-    early_rate = 0.91
+
+    '''early_rate = 0.91
     if lm_head == 10:
         early_rate = 0.8944140625
     elif lm_head == 8:
@@ -312,15 +350,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
     elif lm_head == 2:
         early_rate = 0.8663311749
     elif lm_head == 1:
-        early_rate = 0.8490639077
-
-    '''early_rate = 0.887
-    if lm_head == 4:
-        early_rate = 0.87
-    elif lm_head == 2:
-        early_rate = 0.86
-    elif lm_head == 1:
-        early_rate = 0.84'''
+        early_rate = 0.8490639077'''
 
     #return True, logits_linear
     print('rate????: ', early_count / 1024)
@@ -329,7 +359,7 @@ def early_exit_lm_head(lm_models, out, lm_head):
     else:
         return False, logits_linear
 
-def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
+def early_exit_regression(lm_models, out, lm_head, ppl, threshold=0.9):
     threshold = 0.5
     temperature = 0.5
 
@@ -356,9 +386,22 @@ def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
     print('early count: ', early_count)
     print('early rate: ', early_count / 1024)
 
-    # return logits_linear
+    if ppl == 10:
+        if lm_head == 10:
+            early_rate = 0.74
+        elif lm_head == 8:
+            early_rate = 0.745
+        elif lm_head == 6:
+            early_rate = 0.73
+        elif lm_head == 4:
+            early_rate = 0.72
+        elif lm_head == 2:
+            early_rate = 0.69
+        elif lm_head == 1:
+            early_rate = 0.67
 
-    early_rate = 0.91
+
+    '''early_rate = 0.91
     if lm_head == 10:
         early_rate = 0.67
     elif lm_head == 8:
@@ -372,15 +415,8 @@ def early_exit_regression(lm_models, out, lm_head, threshold=0.9):
         early_rate = 0.67
     elif lm_head == 1:
         early_rate = 0.644
-        #early_rate = 0.8490639077
+        #early_rate = 0.8490639077'''
 
-    '''early_rate = 0.887
-    if lm_head == 4:
-        early_rate = 0.87
-    elif lm_head == 2:
-        early_rate = 0.86
-    elif lm_head == 1:
-        early_rate = 0.84'''
 
     # return True, logits_linear
     print('rate????: ', early_count / 1024)

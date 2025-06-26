@@ -258,14 +258,15 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
                 print('time: ', timestamp_manager)
                 timestamp_manager.get_time_diff_every_n_inputs(10)
+                timestamp_manager.clearAll()
 
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
+                    print('end...')
                     return
 
             test_loader = get_wikitext2_testloader_full(tokenizer)
             testenc = test_loader.input_ids
-            print('zzzzz: ', testenc)
             nsamples = testenc.numel() // seqlen
 
             for i in range(0, nsamples, bs):
@@ -283,39 +284,36 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
             is_first = False
             batch_count = batch_count + 1
-            print('batch count: ', batch_count)
-            if batch_count == total_batch_num:
-                return
+
 
     elif mode == 2: #stream arrival
         while True:
-            if input_queue.qsize() == 0 and not is_first:
+            if not is_first:
                 while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
-                    break
 
                 print('time: ', timestamp_manager)
                 timestamp_manager.get_time_diff_every_n_inputs(10)
+                timestamp_manager.clearAll()
 
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
+                    print('end...')
                     return
 
-            testenc = get_wikitext2_random_test_stream(batch_size, seed, seqlen, tokenizer, device)
+            testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
-            print('test loader: ', testenc)
+            print('test loader len: ', nsamples)
 
             for i in range(0, nsamples, bs):
                 if i % 50 == 0:
                     print(f"sample {i}")
 
-                input_queue.put(testenc[i])
+                input_queue.put(testenc[i].to(device))
 
             is_first = False
             batch_count = batch_count + 1
 
-            if batch_count == total_batch_num:
-                return
 
 
     elif mode == 3:
@@ -328,9 +326,11 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
                 print('time: ', timestamp_manager)
                 timestamp_manager.get_time_diff_every_n_inputs(10)
+                timestamp_manager.clearAll()
 
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
+                    print('end...')
                     return
 
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
@@ -401,12 +401,12 @@ def task1_data_sending(args):
 
 
 
-def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_idx, max_layers, device):
+def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_idx, max_layers, batch_num, device):
 
     is_oom = False
     #prune_wanda_allocation(args, models, tokenizer, testenc[0], device=torch.device("cuda:0"))
     # Loop through each batch
-    max_batch_num = 3
+    max_batch_num = batch_num
     batch_count = 0
     cycle_count = 0
     input_count = 0
@@ -424,8 +424,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         while input_queue.empty():
             time.sleep(0.0001)
 
-        while not input_queue.empty():
-            print(input_queue.get())
 
         if input_count % batch_size == 0:
             early_count = 0
@@ -459,7 +457,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx)
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 30)
                         #print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
@@ -594,22 +592,22 @@ if __name__ == '__main__':
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
     n_sample = 10
-    batch_count = 3
+    batch_num = 30
     seed = random.seed(time.time())
     seqlen = 1024
-    mode = 1
+    mode = 2
     bs = 1
 
 
     # Create and start threads
-    thread3 = threading.Thread(target=data_producer, args=[batch_count, n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
+    thread3 = threading.Thread(target=data_producer, args=[batch_num, n_sample, seed, seqlen, bs, tokenizer, mode, device], kwargs={
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
     thread1 = threading.Thread(target=task1_data_sending, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
-                                     head_idx, max_layers, device])
+                                     head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
     thread2.start()

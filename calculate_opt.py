@@ -156,7 +156,7 @@ class PerformanceDataStore:
         server_match_start_index_key = client_end_index + 1
 
         matched_server_record = None
-        if server_match_start_index_key in self.pending_server_data and self.pending_server_data[
+        if not is_early_exit and server_match_start_index_key in self.pending_server_data and self.pending_server_data[
             server_match_start_index_key]:
             oldest_timestamp = datetime.max
             oldest_server_rec_to_match = None
@@ -180,15 +180,15 @@ class PerformanceDataStore:
         if is_early_exit:
             complete_record = {
                 "timestamp": client_data["timestamp"],
-                "start_index": None,
-                "end_index": None,
+                "start_index": client_data["client_end_index"] + 1,
+                "end_index": 34,
                 "client_end_index": client_data["client_end_index"],
                 "end_index_buffer": client_data["end_index_buffer"],
                 "is_early_exit": is_early_exit,
                 "early_exit_index": early_exit_index,
                 "client_computation_time": client_data["client_computation_time"],
-                "server_computation_time": None,
-                "communication_time": None,
+                "server_computation_time": 0,
+                "communication_time": 0,
             }
             self._add_complete_record_to_main_storage(complete_record)
         elif matched_server_record:
@@ -355,23 +355,34 @@ def calculate_opt(data_store: PerformanceDataStore):
     optimal_key_found = None
 
     WEIGHT_OLD = 0.3
+    WEIGHT_EARLY = 0.2
     WEIGHT_NEW = 0.7
 
-    #print('DATAAAAAAAAAAAAAA: ', all_data.items())
+
+    print('DATAAAAAAAAAAAAAA: ', all_data.items())
     individual_latencies_with_timestamps = []
     for (start_idx, end_idx), records in all_data.items():
-        if not records['is_early_exit']:
-            continue
         print('(start, end): ', (start_idx, end_idx))
         latency = 0.0
         valid_record = True
+        is_early = False
         for record in records:
             if (record["client_computation_time"] is not None and
                 record["server_computation_time"] is not None and
-                record["communication_time"] is not None):
+                record["communication_time"] is not None and
+                not record["is_early_exit"]):
                 latency = (record["client_computation_time"] +
                            record["server_computation_time"] +
                            record["communication_time"])
+                is_early = False
+            elif (record["client_computation_time"] is not None and
+                record["server_computation_time"] is not None and
+                record["communication_time"] is not None and
+                record["is_early_exit"]):
+                latency = (record["client_computation_time"] +
+                           record["server_computation_time"] +
+                           record["communication_time"])
+                is_early = True
             else:
                 valid_record = False
 
@@ -379,6 +390,7 @@ def calculate_opt(data_store: PerformanceDataStore):
                 individual_latencies_with_timestamps.append((latency, record["timestamp"]))
 
         if not individual_latencies_with_timestamps:
+            print('not valid continue..')
             continue
 
         # Sort by timestamp to ensure oldest are truly first for weighting
@@ -391,12 +403,18 @@ def calculate_opt(data_store: PerformanceDataStore):
         total_weight_for_path = 0.0
 
         for i, (latency, _) in enumerate(individual_latencies_with_timestamps):
-            if i < data_store.max_records_per_type:
+            if i < data_store.max_records_per_type and not is_early:
                 weighted_sum_for_path += latency * WEIGHT_OLD
                 total_weight_for_path += WEIGHT_OLD
-            else:
+            elif i < data_store.max_records_per_type and not is_early:
+                weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
+                total_weight_for_path += WEIGHT_OLD * WEIGHT_EARLY
+            elif not is_early:
                 weighted_sum_for_path += latency * WEIGHT_NEW
                 total_weight_for_path += WEIGHT_NEW
+            else:
+                weighted_sum_for_path += latency * WEIGHT_EARLY
+                total_weight_for_path += WEIGHT_EARLY
 
         current_weighted_avg_latency_for_path = 0.0
         if total_weight_for_path > 0:  # Avoid division by zero
