@@ -457,7 +457,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 20)
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
                         #print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
