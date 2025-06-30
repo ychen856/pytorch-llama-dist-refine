@@ -356,7 +356,7 @@ def calculate_opt(data_store: PerformanceDataStore):
     optimal_key_found = None
 
     WEIGHT_OLD = 0
-    WEIGHT_EARLY = 0.2
+    WEIGHT_EARLY = 0.4
     WEIGHT_NEW = 1
 
 
