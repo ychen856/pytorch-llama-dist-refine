@@ -32,6 +32,8 @@ input_queue = Queue()
 outgoing_queue = Queue()
 timestamp_manager = Timestamp_manager()
 stop_event = threading.Event()
+print_lock = threading.Lock()
+
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     if type == 1: #add buffer layers

@@ -1,5 +1,6 @@
 import collections
 import math
+import threading
 from datetime import datetime, timedelta
 
 class PerformanceDataStore:
@@ -37,7 +38,7 @@ class PerformanceDataStore:
         self._incoming_count = 0
         self._new_record_count = 0
         self._steady_state = False
-
+        self.lock = threading.Lock()
 
     @property
     def start_idx(self):
@@ -126,6 +127,8 @@ class PerformanceDataStore:
         else:
             self.data_storage[key].popleft()  # Remove the oldest
             self.data_storage[key].append(complete_record)
+            with self.lock:
+                print('complete record: ', complete_record)
 
         self.new_record_count = self.new_record_count + 1
 
