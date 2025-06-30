@@ -120,6 +120,7 @@ class PerformanceDataStore:
         end_idx = complete_record["end_index"]
         key = (start_idx, end_idx)
 
+
         if len(self.data_storage[key]) < self.max_records_per_type + self.statistic_period:
             self.data_storage[key].append(complete_record)
         else:
@@ -359,7 +360,7 @@ def calculate_opt(data_store: PerformanceDataStore):
     WEIGHT_NEW = 1
 
 
-    print('DATAAAAAAAAAAAAAA: ', all_data.items())
+    #print('DATAAAAAAAAAAAAAA: ', all_data.items())
     individual_latencies_with_timestamps = []
     for (start_idx, end_idx), records in all_data.items():
         print('(start, end): ', (start_idx, end_idx))
@@ -404,15 +405,19 @@ def calculate_opt(data_store: PerformanceDataStore):
 
         for i, (latency, _) in enumerate(individual_latencies_with_timestamps):
             if i < data_store.max_records_per_type and not is_early:
+                print('A')
                 weighted_sum_for_path += latency * WEIGHT_OLD
                 total_weight_for_path += WEIGHT_OLD
             elif i < data_store.max_records_per_type and not is_early:
+                print('B')
                 weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
                 total_weight_for_path += WEIGHT_OLD * WEIGHT_EARLY
             elif not is_early:
+                print('C')
                 weighted_sum_for_path += latency * WEIGHT_NEW
                 total_weight_for_path += WEIGHT_NEW
             else:
+                print('D')
                 weighted_sum_for_path += latency * WEIGHT_EARLY
                 total_weight_for_path += WEIGHT_EARLY
 
@@ -445,7 +450,7 @@ def calculate_opt(data_store: PerformanceDataStore):
         data_store.data_storage.clear()
 
     data_store._new_record_count = 0
-    data_store.max_records_per_type = 5
+    data_store.max_records_per_type = 0
 
     print('opt result: ', (optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period))
     return optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period
