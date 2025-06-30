@@ -121,14 +121,14 @@ class PerformanceDataStore:
         end_idx = complete_record["end_index"]
         key = (start_idx, end_idx)
 
+        with self.lock:
+            print('complete record: ', complete_record, flush=True)
 
         if len(self.data_storage[key]) < self.max_records_per_type + self.statistic_period:
             self.data_storage[key].append(complete_record)
         else:
             self.data_storage[key].popleft()  # Remove the oldest
             self.data_storage[key].append(complete_record)
-            with self.lock:
-                print('complete record: ', complete_record)
 
         self.new_record_count = self.new_record_count + 1
 
@@ -359,7 +359,7 @@ def calculate_opt(data_store: PerformanceDataStore):
     optimal_key_found = None
 
     WEIGHT_OLD = 0.3
-    WEIGHT_EARLY = 0
+    WEIGHT_EARLY = 0.6
     WEIGHT_NEW = 0.7
 
 

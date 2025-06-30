@@ -51,7 +51,7 @@ class Timestamp_manager(object):
             idx = idx + 1
         with self.lock:
             print('...')
-            print('tatol time: ', end_times[-1][1] - start_times[0][1])
+            print('tatol time: ', end_times[-1][1] - start_times[0][1], flush=True)
 
     def clearAll(self):
         self._start_times = []

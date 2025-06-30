@@ -6,6 +6,7 @@ import time
 import torch
 import yaml
 import gc
+import threading
 from queue import Queue
 
 from datetime import datetime, timedelta
@@ -17,6 +18,7 @@ parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--selection', type=int)
 parser.add_argument('--head', type=int)
 args = parser.parse_args()
+print_lock = threading.Lock()
 
 '''text = 'fodge'
 newx = pickle.dumps(text)
@@ -127,8 +129,9 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #returning_queue.append(resp_message)
 
     #print('client receiving time: ', end_time2 - start_time2)
-    print('http receiving: ', start_idx, rtt)
-    print('rrt: ', rtt)
+    with print_lock:
+        print('http receiving: ', start_idx, rtt, flush=True)
+        print('rrt: ', rtt, flush=True)
     gc.collect()
 
     #middle devices used only
