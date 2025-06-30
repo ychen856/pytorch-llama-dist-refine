@@ -21,19 +21,22 @@ from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get
 from timestamp_manager import Timestamp_manager
 from early_exit import early_exit_lm_head, early_exit_regression
 import http_sender
+from logger import Logger
 
 parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
+parser.add_argument('--log')
 args = parser.parse_args()
 
-performance_data_store = PerformanceDataStore()
+
+logger = Logger(filepath=args.log)
+performance_data_store = PerformanceDataStore(logger)
 input_queue = Queue()
 outgoing_queue = Queue()
-timestamp_manager = Timestamp_manager()
+timestamp_manager = Timestamp_manager(logger)
 stop_event = threading.Event()
 print_lock = threading.Lock()
-
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     if type == 1: #add buffer layers
@@ -201,6 +204,8 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
 
     print('lm_head: ', lm_head)
     print('lm_head_idx: ', lm_head_idx)
+    logger.log("lm_head: {lm_head}")
+    logger.log("lm_head_idx: {lm_head_idx}")
 
     checkpoint_list = []
     checkpoints = sorted(Path(checkpoints_dir).glob("lm_head.*.pth"))
@@ -213,6 +218,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
         if i == 0 or i == lm_head_idx:
             ckpt_path = checkpoints[i]
             print(f'Loading checkpoint "{ckpt_path}"')
+            logger.log('Loading checkpoint "{ckpt_path}"')
 
             checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
 
@@ -262,12 +268,15 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     break
 
                 print('time: ', timestamp_manager)
+                logger.log('time: {timestamp_manager}')
                 timestamp_manager.get_time_diff_every_n_inputs(10)
                 timestamp_manager.clearAll()
 
                 print('batch count: ', batch_count)
+                logger.log('batch count: {batch_count}')
                 if batch_count > total_batch_num:
                     print('end...')
+                    logger.log('end...')
                     return
 
             test_loader = get_wikitext2_testloader_full(tokenizer)
@@ -277,6 +286,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             for i in range(0, nsamples, bs):
                 if i % 50 == 0:
                     print(f"sample {i}")
+                    logger.log('sample {i}')
 
                 # Calculate end index
                 j = min(i + bs, nsamples)
@@ -298,13 +308,16 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     time.sleep(0.0001)
 
                 print('time: ', timestamp_manager)
+                logger.log('time: {timestamp_manager}')
                 timestamp_manager.get_time_diff_every_n_inputs(10)
                 timestamp_manager.clearAll()
                 time.sleep(10)
 
                 print('batch count: ', batch_count)
+                logger.log('batch count: {batch_count}')
                 if batch_count > total_batch_num:
                     print('end...')
+                    logger.log('end...')
                     time.sleep(10)
                     stop_event.set()
                     os._exit(0)
@@ -387,8 +400,11 @@ def task1_data_sending(args):
 
                 end_time = time.time()
 
-                print('rate: ', 0)
+
                 print('server idle!')
+                logger.log('server idle!')
+                logger.log('start idx: 0')
+                logger.log('end idx: 0')
             else:
                 break
 
@@ -454,6 +470,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
 
         print('start idx: ', 0)
+        logger.log('start idx: 0')
         # Forward pass through the model
         try:
             out, ids, mask = models[0](input)
@@ -467,9 +484,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 if k == head_idx:
                     try:
                         is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
-                        #print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
+                        logger.log('early oom')
                         is_oom = True
                         is_early_exit = False
 
@@ -477,11 +494,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
                     if is_early_exit:
                         print('end idx: ', k)
+                        logger.log('end idx: {k}')
                         timestamp_manager.end_times = (idx, time.time())
                         break
 
             except Exception as e:
                 print('oom!!!')
+                logger.log('oom')
                 is_oom = True
 
                 end_idx = k - 1
@@ -494,8 +513,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
         if not is_early_exit:
             print('end idx: ', end_idx)
+            logger.log('end idx: {end_idx}')
 
         print('is early: ', is_early_exit)
+        logger.log('is early: {is_early_exit}')
 
 
 
@@ -545,6 +566,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', new_buff_idx)
             print('opt statistics period: ', statistics_period)
+            logger.log('opt end idx: {end_idx}')
+            logger.log('opt buff idx: {new_buff_idx}')
+            logger.log('opt statistics period: ', statistics_period)
             #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''

@@ -2,11 +2,11 @@ import threading
 
 print_lock = threading.Lock()
 class Timestamp_manager(object):
-    def __init__(self):
+    def __init__(self, logger):
         self._start_times = []
         self._end_times = []
         self.lock = threading.Lock()
-
+        self.logger = logger
     @property
     def start_times(self):
         return self._start_times
@@ -52,6 +52,8 @@ class Timestamp_manager(object):
         with self.lock:
             print('...')
             print('tatol time: ', end_times[-1][1] - start_times[0][1], flush=True)
+            self.logger.log('...')
+            self.logger.log('tatol time: {end_times[-1][1] - start_times[0][1]}')
 
     def clearAll(self):
         self._start_times = []

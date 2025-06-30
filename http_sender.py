@@ -12,12 +12,12 @@ from queue import Queue
 from datetime import datetime, timedelta
 import http_receiver
 
-parser = argparse.ArgumentParser(
+'''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--selection', type=int)
 parser.add_argument('--head', type=int)
-args = parser.parse_args()
+args = parser.parse_args()'''
 print_lock = threading.Lock()
 
 '''text = 'fodge'

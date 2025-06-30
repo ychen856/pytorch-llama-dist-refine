@@ -4,7 +4,7 @@ import threading
 from datetime import datetime, timedelta
 
 class PerformanceDataStore:
-    def __init__(self, max_records_per_type=0, statisitc_period=10):
+    def __init__(self, logger, max_records_per_type=0, statisitc_period=10):
         """
         Initializes the CommunicationDataStore.
 
@@ -38,6 +38,7 @@ class PerformanceDataStore:
         self._incoming_count = 0
         self._new_record_count = 0
         self._steady_state = False
+        self.logger = logger
         self.lock = threading.Lock()
 
     @property
@@ -123,6 +124,7 @@ class PerformanceDataStore:
 
         with self.lock:
             print('complete record: ', complete_record, flush=True)
+            self.logger.log('complete record:  {complete record: }')
 
         if len(self.data_storage[key]) < self.max_records_per_type + self.statistic_period:
             self.data_storage[key].append(complete_record)
