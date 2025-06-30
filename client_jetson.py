@@ -421,7 +421,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     # repeated 5->0, 10->1, 20->3
     global repeated
     #while not input_queue.empty():
-    while(1):
+    while(1 and not stop_event.is_set()):
         if count > max_batch_num * batch_size:
             break
 
