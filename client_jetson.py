@@ -289,7 +289,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
 
     elif mode == 2: #stream arrival
-        while True:
+        while True and not stop_event.is_set():
             if not is_first:
                 while len(timestamp_manager.end_times) < batch_size:
                     time.sleep(0.0001)
