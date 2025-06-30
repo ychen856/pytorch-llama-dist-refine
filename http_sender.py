@@ -10,7 +10,6 @@ import threading
 from queue import Queue
 
 from datetime import datetime, timedelta
-import http_receiver
 
 '''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')

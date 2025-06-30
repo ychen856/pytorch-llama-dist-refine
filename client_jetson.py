@@ -6,21 +6,21 @@ import torch
 from natsort import natsorted
 from queue import Queue
 import numpy as np
-#import math
-#import os
+import math
+import os
 
-#from pathlib import Path
+from pathlib import Path
 import argparse
 import yaml
-#import sys
-#from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
+import sys
+from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
-#from calculate_opt import *
-#from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
-#from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
-#from timestamp_manager import Timestamp_manager
-#from early_exit import early_exit_lm_head, early_exit_regression
-#import http_sender
+from calculate_opt import *
+from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
+from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
+from timestamp_manager import Timestamp_manager
+from early_exit import early_exit_lm_head, early_exit_regression
+import http_sender
 from logger import Logger
 
 parser = argparse.ArgumentParser(
