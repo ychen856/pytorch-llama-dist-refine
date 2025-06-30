@@ -30,6 +30,7 @@ performance_data_store = PerformanceDataStore()
 input_queue = Queue()
 outgoing_queue = Queue()
 timestamp_manager = Timestamp_manager()
+stop_event = threading.Event()
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     if type == 1: #add buffer layers
@@ -300,6 +301,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
                     print('end...')
+                    stop_event.set()
                     sys.exit()
                     return
 
@@ -358,7 +360,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 return'''
 
 def task1_data_sending(args):
-    while 1:
+    while 1 and not stop_event.is_set():
         timeout_count = 0
 
         while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
