@@ -124,7 +124,7 @@ class PerformanceDataStore:
 
         with self.lock:
             print('complete record: ', complete_record, flush=True)
-            self.logger.log('complete record:  {complete record: }')
+            self.logger.log(f'complete record: {complete_record}')
 
         if len(self.data_storage[key]) < self.max_records_per_type + self.statistic_period:
             self.data_storage[key].append(complete_record)
