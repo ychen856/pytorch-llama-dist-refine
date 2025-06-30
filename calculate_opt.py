@@ -354,9 +354,9 @@ def calculate_opt(data_store: PerformanceDataStore):
     min_weighted_latency = float('inf')
     optimal_key_found = None
 
-    WEIGHT_OLD = 0.3
-    WEIGHT_EARLY = 0.6
-    WEIGHT_NEW = 0.7
+    WEIGHT_OLD = 0
+    WEIGHT_EARLY = 0
+    WEIGHT_NEW = 1
 
 
     print('DATAAAAAAAAAAAAAA: ', all_data.items())
