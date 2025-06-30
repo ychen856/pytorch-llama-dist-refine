@@ -361,10 +361,12 @@ def calculate_opt(data_store: PerformanceDataStore):
 
 
     #print('DATAAAAAAAAAAAAAA: ', all_data.items())
-    individual_latencies_with_timestamps = []
+    individual_latencies_with_timestamps_not_early = []
+    individual_latencies_with_timestamps_is_early = []
     for (start_idx, end_idx), records in all_data.items():
         print('(start, end): ', (start_idx, end_idx))
-        latency = 0.0
+        latency_not_early = 0.0
+        latency_is_early = 0.0
         valid_record = True
         is_early = False
         for record in records:
@@ -372,7 +374,7 @@ def calculate_opt(data_store: PerformanceDataStore):
                 record["server_computation_time"] is not None and
                 record["communication_time"] is not None and
                 not record["is_early_exit"]):
-                latency = (record["client_computation_time"] +
+                latency_not_early = (record["client_computation_time"] +
                            record["server_computation_time"] +
                            record["communication_time"])
                 is_early = False
@@ -380,46 +382,56 @@ def calculate_opt(data_store: PerformanceDataStore):
                 record["server_computation_time"] is not None and
                 record["communication_time"] is not None and
                 record["is_early_exit"]):
-                latency = (record["client_computation_time"] +
+                latency_is_early = (record["client_computation_time"] +
                            record["server_computation_time"] +
                            record["communication_time"])
                 is_early = True
             else:
                 valid_record = False
 
-            if valid_record:
-                individual_latencies_with_timestamps.append((latency, record["timestamp"]))
+            if valid_record and not is_early:
+                individual_latencies_with_timestamps_not_early.append((latency_not_early, record["timestamp"]))
+            elif valid_record and is_early:
+                individual_latencies_with_timestamps_is_early.append((latency_is_early, record["timestamp"]))
 
-        if not individual_latencies_with_timestamps:
+
+        if not individual_latencies_with_timestamps_is_early and not individual_latencies_with_timestamps_not_early:
             print('not valid continue..')
             continue
 
         # Sort by timestamp to ensure oldest are truly first for weighting
-        individual_latencies_with_timestamps.sort(key=lambda x: x[1])
-        if len(individual_latencies_with_timestamps) > 1:
-            max_latency_entry = max(individual_latencies_with_timestamps, key=lambda x: x[0])
-            individual_latencies_with_timestamps.remove(max_latency_entry)
+        individual_latencies_with_timestamps_not_early.sort(key=lambda x: x[1])
+        individual_latencies_with_timestamps_is_early.sort(key=lambda x: x[1])
+
+        if len(individual_latencies_with_timestamps_not_early) > 1:
+            max_latency_entry = max(individual_latencies_with_timestamps_not_early, key=lambda x: x[0])
+            individual_latencies_with_timestamps_not_early.remove(max_latency_entry)
+        if len(individual_latencies_with_timestamps_is_early) > 1:
+            max_latency_entry = max(individual_latencies_with_timestamps_is_early, key=lambda x: x[0])
+            individual_latencies_with_timestamps_is_early.remove(max_latency_entry)
 
         weighted_sum_for_path = 0.0
         total_weight_for_path = 0.0
 
-        for i, (latency, _) in enumerate(individual_latencies_with_timestamps):
-            if i < data_store.max_records_per_type and not is_early:
+        for i, (latency, _) in enumerate(individual_latencies_with_timestamps_not_early):
+            if i < data_store.max_records_per_type:
                 print('A')
                 weighted_sum_for_path += latency * WEIGHT_OLD
                 total_weight_for_path += WEIGHT_OLD
-            elif i < data_store.max_records_per_type and not is_early:
+            else:
                 print('B')
-                weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
-                total_weight_for_path += WEIGHT_OLD * WEIGHT_EARLY
-            elif not is_early:
-                print('C')
                 weighted_sum_for_path += latency * WEIGHT_NEW
                 total_weight_for_path += WEIGHT_NEW
+
+        for i, (latency, _) in enumerate(individual_latencies_with_timestamps_is_early):
+            if i < data_store.max_records_per_type:
+                print('C')
+                weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
+                total_weight_for_path += WEIGHT_OLD
             else:
                 print('D')
-                weighted_sum_for_path += latency * WEIGHT_EARLY
-                total_weight_for_path += WEIGHT_EARLY
+                weighted_sum_for_path += latency * WEIGHT_NEW * WEIGHT_EARLY
+                total_weight_for_path += WEIGHT_NEW
 
         current_weighted_avg_latency_for_path = 0.0
         if total_weight_for_path > 0:  # Avoid division by zero
