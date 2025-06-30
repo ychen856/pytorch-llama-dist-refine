@@ -568,7 +568,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             print('opt statistics period: ', statistics_period)
             logger.log('opt end idx: {end_idx}')
             logger.log('opt buff idx: {new_buff_idx}')
-            logger.log('opt statistics period: ', statistics_period)
+            logger.log('opt statistics period: {statistics_period}')
             #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''
