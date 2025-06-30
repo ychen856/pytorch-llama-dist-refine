@@ -27,6 +27,8 @@ parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--log', default='test.log')
+parser.add_argument('--ppl', type=int, default=10)
+parser.add_argument('--weight', type=float, default=0.0)
 args = parser.parse_args()
 
 
@@ -36,7 +38,7 @@ input_queue = Queue()
 outgoing_queue = Queue()
 timestamp_manager = Timestamp_manager(logger)
 stop_event = threading.Event()
-print_lock = threading.Lock()
+stop_event = threading.Event()
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     if type == 1: #add buffer layers
@@ -483,7 +485,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                     except Exception as e:
                         print('early oom!')
                         logger.log(f'early oom')
@@ -562,7 +564,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         if performance_data_store.new_record_count >= statistics_period:
             #print('statistic')
             #statistics_period = statistics_period + 5
-            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store)
+            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.weight)
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', new_buff_idx)
             print('opt statistics period: ', statistics_period)

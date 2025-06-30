@@ -39,7 +39,6 @@ class PerformanceDataStore:
         self._new_record_count = 0
         self._steady_state = False
         self.logger = logger
-        self.lock = threading.Lock()
 
     @property
     def start_idx(self):
@@ -122,9 +121,9 @@ class PerformanceDataStore:
         end_idx = complete_record["end_index"]
         key = (start_idx, end_idx)
 
-        with self.lock:
-            print('complete record: ', complete_record, flush=True)
-            self.logger.log(f'complete record: {complete_record}')
+
+        print('complete record: ', complete_record, flush=True)
+        self.logger.log(f'complete record: {complete_record}')
 
         if len(self.data_storage[key]) < self.max_records_per_type + self.statistic_period:
             self.data_storage[key].append(complete_record)
@@ -334,7 +333,7 @@ class PerformanceDataStore:
 
 
 
-def calculate_opt(data_store: PerformanceDataStore):
+def calculate_opt(data_store: PerformanceDataStore, early_weight):
     """
     Calculates the average of client computation time, server computation time,
     and communication time for each (server_start_index, server_end_index) set, and
@@ -361,7 +360,7 @@ def calculate_opt(data_store: PerformanceDataStore):
     optimal_key_found = None
 
     WEIGHT_OLD = 0.3
-    WEIGHT_EARLY = 0.6
+    WEIGHT_EARLY = early_weight
     WEIGHT_NEW = 0.7
 
 
