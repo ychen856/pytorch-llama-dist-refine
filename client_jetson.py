@@ -11,6 +11,7 @@ import math
 from pathlib import Path
 import argparse
 import yaml
+import sys
 from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
 from calculate_opt import *
@@ -299,6 +300,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
                     print('end...')
+                    sys.exit()
                     return
 
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
