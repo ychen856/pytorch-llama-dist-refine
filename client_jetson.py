@@ -6,14 +6,14 @@ import torch
 from natsort import natsorted
 from queue import Queue
 import numpy as np
-import math
-import os
+#import math
+#import os
 
-from pathlib import Path
+#from pathlib import Path
 import argparse
 import yaml
-import sys
-from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
+#import sys
+#from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
 #from calculate_opt import *
 #from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
@@ -26,7 +26,7 @@ from logger import Logger
 parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
-parser.add_argument('--log')
+parser.add_argument('--log', default='test.log')
 args = parser.parse_args()
 
 
