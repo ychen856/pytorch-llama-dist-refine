@@ -7,6 +7,7 @@ from natsort import natsorted
 from queue import Queue
 import numpy as np
 import math
+import os
 
 from pathlib import Path
 import argparse
@@ -297,12 +298,14 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 print('time: ', timestamp_manager)
                 timestamp_manager.get_time_diff_every_n_inputs(10)
                 timestamp_manager.clearAll()
+                time.sleep(10)
 
                 print('batch count: ', batch_count)
                 if batch_count > total_batch_num:
                     print('end...')
+                    time.sleep(10)
                     stop_event.set()
-                    sys.exit()
+                    os._exit(0)
                     return
 
             testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
