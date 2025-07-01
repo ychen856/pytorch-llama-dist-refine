@@ -234,10 +234,16 @@ if __name__ == '__main__':
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen'''
 
-    nsamples = 500
+    # train loader
+    # loading inputs data
     seqlen = 1024
-    seed = random.seed(time.time())
-    testenc = get_wikitext2_trainloader_full(tokenizer, nsamples, seqlen, seed)
+    # Get input IDs
+    test_loader = get_wikitext2_trainloader_full(tokenizer)
+    # testenc = test_loader.input_ids
+    testenc = test_loader.input_ids
+
+    # Calculate number of samples
+    nsamples = testenc.numel() // seqlen
 
     # List to store negative log likelihoods
     nlls = []
