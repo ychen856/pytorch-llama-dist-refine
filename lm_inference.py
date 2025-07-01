@@ -10,7 +10,7 @@ import json
 from sentencepiece import SentencePieceProcessor
 from tqdm import tqdm
 import argparse
-from data import get_wikitext2_testloader_full, get_wikitext2_trainloader
+from data import get_wikitext2_testloader_full, get_wikitext2_trainloader, get_wikitext2_trainloader_partial
 import torch.nn as nn
 import safetensors
 from natsort import natsorted
@@ -31,6 +31,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--head', type=int)
 parser.add_argument('--ppl', type=int)
+parser.add_argument('--starting_point', type=int)
+parser.add_argument('--fetch_size', type=int)
 args = parser.parse_args()
 
 
@@ -212,11 +214,21 @@ if __name__ == '__main__':
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen'''
 
-    nsamples = 500
+    '''nsamples = 500
     seed = random.seed(time.time())
     seqlen = 1024
 
-    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
+    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)'''
+
+    # loading inputs data
+    seqlen = 1024
+    # Get input IDs
+    test_loader = get_wikitext2_trainloader_partial(tokenizer, args.starting_point, args.fetch_size)
+    # testenc = test_loader.input_ids
+    testenc = test_loader.input_ids
+
+    # Calculate number of samples
+    nsamples = testenc.numel() // seqlen
 
     # List to store negative log likelihoods
     nlls = []
@@ -231,9 +243,9 @@ if __name__ == '__main__':
         j = min(i + bs, nsamples)
 
         # Prepare inputs and move to device
-        #inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        #inputs = inputs.reshape(j - i, seqlen)
-        inputs = testenc[i]
+        inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        inputs = inputs.reshape(j - i, seqlen)
+        #inputs = testenc[i]
 
         lm_logits = None
         is_early_exit = False
