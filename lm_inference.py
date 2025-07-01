@@ -122,7 +122,7 @@ def get_lm_head_idx(end_idx):
 
     lm_head_idx = lm_head_idx + 1
 
-
+    print('lm_head: ', lm_head)
     return lm_head, lm_head_idx
 
 
@@ -133,6 +133,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
     )
 
     lm_head, lm_head_idx = get_lm_head_idx(end_idx)
+    print()
 
 
     checkpoint_list = []
@@ -212,6 +213,7 @@ if __name__ == '__main__':
 
     head_idx = args.head
     #head_idx = 10
+
 
     models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
