@@ -22,12 +22,22 @@ def get_wikitext2_testloader_full(tokenizer):
 
     return testenc
 
-def get_wikitext2_trainloader_full(tokenizer):
+def get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
 
     trainenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
-    return trainenc
+    random.seed(seed)
+    trainloader = []
+
+    for _ in range(nsamples):
+        i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
+        j = i + seqlen
+        inp = trainenc.input_ids[:, i:j].to(device)
+        trainloader.append(inp)
+
+    return trainloader
+
 
 
 def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer, device):

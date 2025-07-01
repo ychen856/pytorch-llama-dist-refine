@@ -10,7 +10,7 @@ import json
 from sentencepiece import SentencePieceProcessor
 from tqdm import tqdm
 import argparse
-from data import get_wikitext2_testloader_full, get_wikitext2_trainloader_full
+from data import get_wikitext2_testloader_full, get_wikitext2_trainloader
 import torch.nn as nn
 import safetensors
 from natsort import natsorted
@@ -234,16 +234,11 @@ if __name__ == '__main__':
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen'''
 
-    # train loader
-    # loading inputs data
+    nsamples = 600
+    seed = random.seed(time.time())
     seqlen = 1024
-    # Get input IDs
-    test_loader = get_wikitext2_trainloader_full(tokenizer)
-    # testenc = test_loader.input_ids
-    testenc = test_loader.input_ids
 
-    # Calculate number of samples
-    nsamples = testenc.numel() // seqlen
+    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
 
     # List to store negative log likelihoods
     nlls = []
