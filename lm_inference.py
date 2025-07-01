@@ -253,8 +253,9 @@ if __name__ == '__main__':
         j = min(i + bs, nsamples)
 
         # Prepare inputs and move to device
-        inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        inputs = inputs.reshape(j - i, seqlen)
+        #inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        #inputs = inputs.reshape(j - i, seqlen)
+        inputs = testenc[i]
 
         lm_logits = None
         is_early_exit = False
