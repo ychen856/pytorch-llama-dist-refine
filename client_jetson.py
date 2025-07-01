@@ -616,6 +616,7 @@ if __name__ == '__main__':
 
     max_layers = args.max_layers
     start_idx = args.start_idx
+    end_idx = args.end_idx
     end_idx_buff = args.end_idx_buff
     head_idx = 2
 
@@ -625,7 +626,7 @@ if __name__ == '__main__':
 
     models = load_model(args.ckpt_dir_hf_sep, start_idx, end_idx_buff, device)
     _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
-    print('hii')
+
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
     n_sample = 10
