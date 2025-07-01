@@ -30,6 +30,7 @@ parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--head', type=int)
+parser.add_argument('--ppl', type=int)
 args = parser.parse_args()
 
 
@@ -99,31 +100,6 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
 
 
     return models
-
-
-def get_lm_head_idx(end_idx):
-
-    lm_heads = [1, 2, 4]
-    lm_head = 1
-    lm_head_idx = 0
-
-    for i in range(0, len(lm_heads)):
-        if lm_heads[i] > end_idx:
-            #lm_head = lm_heads[i - 1]
-            #lm_head_idx = lm_head_idx - 1
-            break
-        elif lm_heads[i] == end_idx:
-            lm_head = lm_heads[i]
-            lm_head_idx = i
-            break
-
-        lm_head = lm_heads[i]
-        lm_head_idx = i
-
-    lm_head_idx = lm_head_idx + 1
-
-    print('lm_head: ', lm_head)
-    return lm_head, lm_head_idx
 
 
 def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
@@ -236,7 +212,7 @@ if __name__ == '__main__':
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen'''
 
-    nsamples = 300
+    nsamples = 500
     seed = random.seed(time.time())
     seqlen = 1024
 
@@ -267,7 +243,7 @@ if __name__ == '__main__':
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                         # print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
