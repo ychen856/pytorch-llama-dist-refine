@@ -620,6 +620,8 @@ if __name__ == '__main__':
     head_idx = 2
 
     performance_data_store.statistic_period = 10
+    performance_data_store.end_idx = end_idx
+    performance_data_store.end_idx_buff = end_idx_buff
 
     models = load_model(args.ckpt_dir_hf_sep, start_idx, end_idx_buff, device)
     _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")

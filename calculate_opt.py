@@ -364,7 +364,6 @@ def calculate_opt(data_store: PerformanceDataStore, early_weight):
     WEIGHT_NEW = 0.7
 
 
-    #print('DATAAAAAAAAAAAAAA: ', all_data.items())
     individual_latencies_with_timestamps_not_early = []
     individual_latencies_with_timestamps_is_early = []
     for (start_idx, end_idx), records in all_data.items():
@@ -431,11 +430,11 @@ def calculate_opt(data_store: PerformanceDataStore, early_weight):
             if i < data_store.max_records_per_type:
                 print('C')
                 weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
-                total_weight_for_path += WEIGHT_OLD
+                total_weight_for_path += WEIGHT_OLD * WEIGHT_EARLY
             else:
                 print('D')
                 weighted_sum_for_path += latency * WEIGHT_NEW * WEIGHT_EARLY
-                total_weight_for_path += WEIGHT_NEW
+                total_weight_for_path += WEIGHT_NEW * WEIGHT_EARLY
 
         current_weighted_avg_latency_for_path = 0.0
         if total_weight_for_path > 0:  # Avoid division by zero
@@ -499,7 +498,6 @@ def calculate_opt2(data_store: PerformanceDataStore):
     min_latency = float('inf')
     current_optimal_set = None
 
-    print('DATAAAAAAAAAAAAAA: ', all_data.items())
     for (start_idx, end_idx), records in all_data.items():
         if not records:
             continue
