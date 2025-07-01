@@ -264,9 +264,8 @@ if __name__ == '__main__':
             for k in range(1, len(models) - 2):
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
-                    is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
-                    '''try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, lm_models, 10)
+                    try:
+                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, 10)
                         # print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')
@@ -278,7 +277,7 @@ if __name__ == '__main__':
                     if is_early_exit:
                         early_count = early_count + 1
                         is_early_exit = True
-                        break'''
+                        break
 
             if not is_early_exit:
                 lm_logits = models[33](out.last_hidden_state)
