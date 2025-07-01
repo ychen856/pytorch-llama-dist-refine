@@ -1,5 +1,5 @@
 # this code is used for seperating the weights into small pieces and store them into seperated .pt files. One time usage.
-
+import random
 from typing import Optional
 
 import numpy as np
@@ -10,7 +10,7 @@ import json
 from sentencepiece import SentencePieceProcessor
 from tqdm import tqdm
 import argparse
-from data import get_wikitext2_testloader_full
+from data import get_wikitext2_testloader_full, get_wikitext2_trainloader_full
 import torch.nn as nn
 import safetensors
 from natsort import natsorted
@@ -219,17 +219,25 @@ if __name__ == '__main__':
 
     print("loading success")
 
-    test_loader = get_wikitext2_testloader_full(tokenizer)
+
     bs = 1
 
+    '''
+    # test loader
     # loading inputs data
     seqlen = 1024
     # Get input IDs
+    test_loader = get_wikitext2_testloader_full(tokenizer)
     #testenc = test_loader.input_ids
     testenc = test_loader.input_ids
 
     # Calculate number of samples
-    nsamples = testenc.numel() // seqlen
+    nsamples = testenc.numel() // seqlen'''
+
+    nsamples = 500
+    seqlen = 1024
+    seed = random.seed(time.time())
+    testenc = get_wikitext2_trainloader_full(tokenizer, nsamples, seqlen, seed)
 
     # List to store negative log likelihoods
     nlls = []
