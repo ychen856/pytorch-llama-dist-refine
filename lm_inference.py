@@ -193,16 +193,16 @@ if __name__ == '__main__':
     #head_idx = 10
 
 
-    models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
+    #models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
-    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
+    #_, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
 
     print("loading success")
 
 
     bs = 1
 
-    '''
+
     # test loader
     # loading inputs data
     seqlen = 1024
@@ -210,9 +210,9 @@ if __name__ == '__main__':
     test_loader = get_wikitext2_testloader_full(tokenizer)
     #testenc = test_loader.input_ids
     testenc = test_loader.input_ids
-
+    print('zzz: ', testenc)
     # Calculate number of samples
-    nsamples = testenc.numel() // seqlen'''
+    nsamples = testenc.numel() // seqlen
 
     '''nsamples = 500
     seed = random.seed(time.time())
@@ -226,6 +226,7 @@ if __name__ == '__main__':
     test_loader = get_wikitext2_trainloader_partial(tokenizer, args.starting_point, args.fetch_size)
     # testenc = test_loader.input_ids
     testenc = test_loader.input_ids
+    print('QQQ: ', testenc)
 
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen
