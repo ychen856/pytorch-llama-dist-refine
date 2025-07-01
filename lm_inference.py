@@ -234,7 +234,7 @@ if __name__ == '__main__':
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen'''
 
-    nsamples = 600
+    nsamples = 300
     seed = random.seed(time.time())
     seqlen = 1024
 
