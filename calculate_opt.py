@@ -359,9 +359,9 @@ def calculate_opt(data_store: PerformanceDataStore, early_weight):
     min_weighted_latency = float('inf')
     optimal_key_found = None
 
-    WEIGHT_OLD = 0.3
+    WEIGHT_OLD = 0
     WEIGHT_EARLY = early_weight
-    WEIGHT_NEW = 0.7
+    WEIGHT_NEW = 1
 
 
     individual_latencies_with_timestamps_not_early = []
@@ -465,7 +465,7 @@ def calculate_opt(data_store: PerformanceDataStore, early_weight):
         data_store.data_storage.clear()
 
     data_store._new_record_count = 0
-    data_store.max_records_per_type = 5
+    data_store.max_records_per_type = 0
 
     print('opt result: ', (optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period))
     return optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period
