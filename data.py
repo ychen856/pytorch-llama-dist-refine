@@ -22,6 +22,13 @@ def get_wikitext2_testloader_full(tokenizer):
 
     return testenc
 
+def get_wikitext2_trainloader_full(tokenizer):
+    testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
+
+    trainenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
+
+    return trainenc
+
 def get_wikitext2_testloader(nsamples, seed, seqlen, tokenizer, device):
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')

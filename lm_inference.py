@@ -225,6 +225,7 @@ if __name__ == '__main__':
     # loading inputs data
     seqlen = 1024
     # Get input IDs
+    #testenc = test_loader.input_ids
     testenc = test_loader.input_ids
 
     # Calculate number of samples
