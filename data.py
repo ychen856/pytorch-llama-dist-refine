@@ -35,7 +35,7 @@ def get_wikitext2_trainloader_full(tokenizer, nsamples, seqlen, seed):
         inp = trainenc.input_ids[:, i:j]
         tar = inp.clone()
         tar[:, :-1] = -100
-        trainloader.append((inp, tar))
+        trainloader.append(inp)
     return trainloader
 
 
