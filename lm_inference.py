@@ -211,6 +211,7 @@ if __name__ == '__main__':
     #testenc = test_loader.input_ids
     testenc = test_loader.input_ids
     print('zzz: ', testenc)
+    print('mmm: ', testenc.shape)
     # Calculate number of samples
     nsamples = testenc.numel() // seqlen
 
