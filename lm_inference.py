@@ -10,7 +10,7 @@ import json
 from sentencepiece import SentencePieceProcessor
 from tqdm import tqdm
 import argparse
-from data import get_wikitext2_testloader_full, get_wikitext2_trainloader, get_wikitext2_trainloader_partial
+from data import get_wikitext2_testloader_full, get_wikitext2_trainloader
 import torch.nn as nn
 import safetensors
 from natsort import natsorted
@@ -31,8 +31,6 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--head', type=int)
 parser.add_argument('--ppl', type=int)
-parser.add_argument('--starting_point', type=int)
-parser.add_argument('--fetch_size', type=int)
 args = parser.parse_args()
 
 
@@ -102,6 +100,7 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
 
 
     return models
+
 
 
 def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
@@ -193,16 +192,16 @@ if __name__ == '__main__':
     #head_idx = 10
 
 
-    #models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
+    models = load_model(args.ckpt_dir_hf_sep, 0, 34, device)
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
-    #_, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
+    _, lm_models = load_lm_head(args.ckpt_dir_hf_sep, head_idx, device, cache_dir="llm_weights")
 
     print("loading success")
 
 
     bs = 1
 
-
+    '''
     # test loader
     # loading inputs data
     seqlen = 1024
@@ -210,28 +209,15 @@ if __name__ == '__main__':
     test_loader = get_wikitext2_testloader_full(tokenizer)
     #testenc = test_loader.input_ids
     testenc = test_loader.input_ids
-    print('zzz: ', testenc)
-    print('mmm: ', testenc.shape)
-    # Calculate number of samples
-    nsamples = testenc.numel() // seqlen
 
-    '''nsamples = 500
+    # Calculate number of samples
+    nsamples = testenc.numel() // seqlen'''
+
+    nsamples = 500
     seed = random.seed(time.time())
     seqlen = 1024
 
-    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)'''
-
-    # loading inputs data
-    seqlen = 1024
-    # Get input IDs
-    test_loader = get_wikitext2_trainloader_partial(tokenizer, args.starting_point, args.fetch_size)
-    # testenc = test_loader.input_ids
-    testenc = test_loader.input_ids
-    print('QQQ: ', testenc)
-    print('shape: ', test_loader.shape)
-
-    # Calculate number of samples
-    nsamples = testenc.numel() // seqlen
+    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
 
     # List to store negative log likelihoods
     nlls = []
@@ -246,9 +232,9 @@ if __name__ == '__main__':
         j = min(i + bs, nsamples)
 
         # Prepare inputs and move to device
-        inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        inputs = inputs.reshape(j - i, seqlen)
-        #inputs = testenc[i]
+        #inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        #inputs = inputs.reshape(j - i, seqlen)
+        inputs = testenc[i]
 
         lm_logits = None
         is_early_exit = False
