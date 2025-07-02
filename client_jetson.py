@@ -635,7 +635,7 @@ if __name__ == '__main__':
     device = torch.device("cuda")
 
 
-    lm_manager.get_all_exit_rates()
+    #lm_manager.get_all_exit_rates()
 
     max_layers = args.max_layers
     start_idx = args.start_idx
