@@ -16,6 +16,7 @@ import sys
 from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
 
 from calculate_opt import *
+#from lm_head_manager import LMHeadManager
 from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm
 from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
@@ -31,13 +32,28 @@ parser.add_argument('--ppl', type=int, default=10)
 parser.add_argument('--weight', type=float, default=0.0)
 args = parser.parse_args()
 
-
+'''head_names = [1, 2, 4, 5]
+ppl_list = [10, 20, 30]
+init_params = {
+    (1, 10): {'a': 56,  'b': 3, 'gamma': 1.0},
+    (1, 20): {'a': 126, 'b': 1, 'gamma': 1.0},
+    (1, 30): {'a': 167, 'b': 2, 'gamma': 1.0},
+    (2, 10): {'a': 69,  'b': 1, 'gamma': 1.0},
+    (2, 20): {'a': 140, 'b': 2, 'gamma': 1.0},
+    (2, 30): {'a': 188, 'b': 2, 'gamma': 1.0},
+    (4, 10): {'a': 99,  'b': 2, 'gamma': 1.0},
+    (4, 20): {'a': 202, 'b': 2, 'gamma': 1.0},
+    (4, 30): {'a': 268, 'b': 2, 'gamma': 1.0},
+    (6, 10): {'a': 103, 'b': 2, 'gamma': 1.0},
+    (6, 20): {'a': 227, 'b': 2, 'gamma': 1.0},
+    (6, 30): {'a': 302, 'b': 2, 'gamma': 1.0}
+}
+lm_manager = LMHeadManager(head_names, ppl_list, init_params)'''
 logger = Logger(filepath=args.log)
 performance_data_store = PerformanceDataStore(logger)
 input_queue = Queue()
 outgoing_queue = Queue()
 timestamp_manager = Timestamp_manager(logger)
-stop_event = threading.Event()
 stop_event = threading.Event()
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
@@ -492,13 +508,17 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                         is_oom = True
                         is_early_exit = False
 
-                        end_idx = k
+                        end_idx = k - 1
 
                     if is_early_exit:
                         print('end idx: ', k)
                         logger.log(f'end idx: {k}')
+                        end_idx = k
                         timestamp_manager.end_times = (idx, time.time())
+                        #lm_manager.update(end_idx, args.ppl, True)
                         break
+
+                    #lm_manager.update(end_idx, args.ppl, False)
 
             except Exception as e:
                 print('oom!!!')
@@ -544,8 +564,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 end_idx = max(1, math.ceil(end_idx / 2))
                 is_oom = False
             #print('statistic: ', statistics_period)
-            #if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
-            if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+            if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
+            #if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                 print('testing higher value(i<30)')
                 performance_data_store.max_end_idx = end_idx
                 end_idx = end_idx + 1
@@ -613,6 +633,9 @@ if __name__ == '__main__':
     print('config type: ', args.config)
 
     device = torch.device("cuda")
+
+
+    lm_manager.get_all_exit_rates()
 
     max_layers = args.max_layers
     start_idx = args.start_idx
