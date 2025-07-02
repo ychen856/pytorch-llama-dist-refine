@@ -513,7 +513,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                     if is_early_exit:
                         print('end idx: ', k)
                         logger.log(f'end idx: {k}')
-                        end_idx = k
                         timestamp_manager.end_times = (idx, time.time())
                         #lm_manager.update(end_idx, args.ppl, True)
                         break
