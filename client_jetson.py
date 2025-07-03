@@ -434,10 +434,11 @@ def task1_data_sending(args):
 
 def task_data_sending(args):
     while 1:
-        data = outgoing_queue.get()
-        performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-        # http_sender.send_data(args.server_ip, args.server_port, data, calculate_opt, timestamp_manager)
-        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        if not outgoing_queue.empty():
+            data = outgoing_queue.get()
+            performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+            # http_sender.send_data(args.server_ip, args.server_port, data, calculate_opt, timestamp_manager)
+            http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
 
 def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_idx, max_layers, batch_num, device):
 
