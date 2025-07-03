@@ -130,8 +130,8 @@ class PerformanceDataStore:
         else:
             self.data_storage[key].popleft()  # Remove the oldest
             self.data_storage[key].append(complete_record)
-
-        self.new_record_count = self.new_record_count + 1
+        if not complete_record['is_early_exit']:
+            self.new_record_count = self.new_record_count + 1
 
         #print('matched data: ', self.data_storage)
         print(f"[{datetime.now()}] Combined record added to main storage for key {key}. Current count: {len(self.data_storage[key])}")
