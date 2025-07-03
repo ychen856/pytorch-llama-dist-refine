@@ -390,7 +390,7 @@ def early_exit_lm_head_shift(lm_models, out, lm_head, ppl):
         elif lm_head == 6:
             early_rate = 0.73
         elif lm_head == 4:
-            early_rate = 0.72
+            early_rate = 0.66406
         elif lm_head == 2:
             early_rate = 0.66113
         elif lm_head == 1:
@@ -403,7 +403,7 @@ def early_exit_lm_head_shift(lm_models, out, lm_head, ppl):
         elif lm_head == 6:
             early_rate = 0.7
         elif lm_head == 4:
-            early_rate = 0.69
+            early_rate = 0.63769
         elif lm_head == 2:
             early_rate = 0.64355
         elif lm_head == 1:
@@ -416,7 +416,7 @@ def early_exit_lm_head_shift(lm_models, out, lm_head, ppl):
         elif lm_head == 6:
             early_rate = 0.667
         elif lm_head == 4:
-            early_rate = 0.667
+            early_rate = 0.61718
         elif lm_head == 2:
             early_rate = 0.63281
         elif lm_head == 1:
@@ -424,7 +424,7 @@ def early_exit_lm_head_shift(lm_models, out, lm_head, ppl):
 
 
     #return True, logits_linear
-    #print('rate????: ', early_count / 1024)
+    print('rate????: ', early_count / 1024)
     if early_count / 1024 > early_rate:
         return True, logits_linear
     else:
