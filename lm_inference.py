@@ -20,7 +20,7 @@ from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCa
 
 import sys
 
-from early_exit import early_exit_lm_head, early_exit_regression
+from early_exit import early_exit_lm_head, early_exit_regression, early_exit_lm_head_shift
 from model_hf import LlamaForCausalLM, LlamaForCausalLM_emb, LlamaForCausalLM_layer_0, LlamaForCausalLM_norm, \
     LlamaForCausalLM_linear
 import yaml
@@ -244,7 +244,7 @@ if __name__ == '__main__':
                 out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                 if k == head_idx:
                     try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
+                        is_early_exit, lm_logits = early_exit_lm_head_shift(lm_models, out, head_idx, args.ppl)
                         # print('is early: ', is_early_exit)
                     except Exception as e:
                         print('early oom!')

@@ -359,6 +359,77 @@ def early_exit_lm_head(lm_models, out, lm_head, ppl):
     else:
         return False, logits_linear
 
+
+def early_exit_lm_head_shift(lm_models, out, lm_head, ppl):
+    threshold = 0.5
+    temperature = 0.5
+
+    logits_norm = lm_models[0](out.last_hidden_state.detach())
+    logits_linear = lm_models[1](logits_norm.detach())
+
+    probs = torch.softmax(logits_linear / temperature, dim=-1)
+    probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
+
+    probs = probs.squeeze(0)
+    probs_sort = probs_sort.squeeze(0)
+    probs_sum = 0
+    early_count = 0
+
+
+    for i in range(0, len(probs)):
+        if torch.max(probs_sort[i]).item() >= threshold:
+            probs_sum = probs_sum + torch.max(probs_sort[i]).item()
+            early_count = early_count + 1
+
+
+    if ppl == 10:
+        if lm_head == 10:
+            early_rate = 0.74
+        elif lm_head == 8:
+            early_rate = 0.745
+        elif lm_head == 6:
+            early_rate = 0.73
+        elif lm_head == 4:
+            early_rate = 0.72
+        elif lm_head == 2:
+            early_rate = 0.69
+        elif lm_head == 1:
+            early_rate = 0.65567
+    elif ppl == 20:
+        if lm_head == 10:
+            early_rate = 0.71
+        elif lm_head == 8:
+            early_rate = 0.707
+        elif lm_head == 6:
+            early_rate = 0.7
+        elif lm_head == 4:
+            early_rate = 0.69
+        elif lm_head == 2:
+            early_rate = 0.67
+        elif lm_head == 1:
+            early_rate = 0.654
+    elif ppl == 30:
+        if lm_head == 10:
+            early_rate = 0.67
+        elif lm_head == 8:
+            early_rate = 0.665
+        elif lm_head == 6:
+            early_rate = 0.667
+        elif lm_head == 4:
+            early_rate = 0.667
+        elif lm_head == 2:
+            early_rate = 0.66
+        elif lm_head == 1:
+            early_rate = 0.644
+
+
+    #return True, logits_linear
+    print('rate????: ', early_count / 1024)
+    if early_count / 1024 > early_rate:
+        return True, logits_linear
+    else:
+        return False, logits_linear
+
 def early_exit_regression(lm_models, out, lm_head, ppl, threshold=0.9):
     threshold = 0.5
     temperature = 0.5
