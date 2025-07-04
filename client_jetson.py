@@ -320,6 +320,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
 
     elif mode == 2: #stream arrival
+        testenc = None
         while True and not stop_event.is_set():
             if not is_first:
                 while len(timestamp_manager.end_times) < batch_size:
@@ -340,8 +341,9 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     stop_event.set()
                     os._exit(0)
                     return
+            if is_first:
+                testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
 
-            testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
             nsamples = len(testenc)
             print('test loader len: ', nsamples)
 
@@ -399,7 +401,7 @@ def task1_data_sending(args):
     while 1 and not stop_event.is_set():
         timeout_count = 0
 
-        while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+        while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
         #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
             timeout_count = timeout_count + 1
 
@@ -588,7 +590,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         if performance_data_store.new_record_count >= statistics_period:
             #print('statistic')
             #statistics_period = statistics_period + 5
-            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.weight)
+            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.weight, logger)
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', new_buff_idx)
             print('opt statistics period: ', statistics_period)
