@@ -660,7 +660,8 @@ if __name__ == '__main__':
 
     n_sample = 20
     batch_num = 30
-    seed = random.seed(time.time())
+    #seed = random.seed(time.time())
+    seed = 0
     seqlen = 1024
     mode = 2
     bs = 1
