@@ -327,7 +327,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
                 print('time: ', timestamp_manager)
                 logger.log(f'time: {timestamp_manager}')
-                timestamp_manager.get_time_diff_every_n_inputs(10)
+                timestamp_manager.get_time_diff_every_n_inputs(20)
                 timestamp_manager.clearAll()
                 time.sleep(10)
 
@@ -560,21 +560,23 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 is_oom = False
             logger.log(f'cycle count: {cycle_count}')
             #print('statistic: ', statistics_period)
-            if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
-            #if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+            #if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
+            if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                 print('testing higher value(i<12)')
                 logger.log(f'testing higher value(i<30)')
                 performance_data_store.max_end_idx = end_idx
                 end_idx = end_idx + 1
                 logger.log(f'new end: {end_idx}')
 
-            if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+            #if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+            if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
                 print('testing lower value (i>12)')
                 logger.log(f'testing lower value (i>30)')
                 end_idx = max(1, end_idx - 1)
                 logger.log(f'new end: {end_idx}')
 
-            if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+            #if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+            if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
                 print('testing higher value (i>30)')
                 logger.log(f'testing higher value (i>30)')
                 performance_data_store.max_end_idx = end_idx
