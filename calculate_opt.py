@@ -363,10 +363,9 @@ def calculate_opt(data_store: PerformanceDataStore, early_weight, logger):
     WEIGHT_EARLY = early_weight
     WEIGHT_NEW = 1
 
-
-    individual_latencies_with_timestamps_not_early = []
-    individual_latencies_with_timestamps_is_early = []
     for (start_idx, end_idx), records in all_data.items():
+        individual_latencies_with_timestamps_not_early = []
+        individual_latencies_with_timestamps_is_early = []
         print('(start, end): ', (start_idx, end_idx))
         logger.log(f"(start, end): ({start_idx}, {end_idx})")
         latency_not_early = 0.0
