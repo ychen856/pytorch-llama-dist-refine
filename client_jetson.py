@@ -572,7 +572,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
             #if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
             #if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
-            if cycle_count > (statistics_period - 12) and input_count >= 24 and (statistics_period) - cycle_count % 4 == 0:
+            if cycle_count > (statistics_period - 12) and input_count >= 24 and (statistics_period - cycle_count) % 4 == 0:
                 print('testing lower value (i>12)')
                 logger.log(f'testing lower value (i>30)')
                 end_idx = max(1, end_idx - 1)
