@@ -53,7 +53,7 @@ class LMHeadManager:
         self.heads[head_name].update(ppl, success)
 
     def predict_exit_rate(self, head_name, ppl):
-        self.logger.log(f'FFFFFFFFFFFF: {self.heads[head_name]}')
+        self.logger.log(f'FFFFFFFFFFFF: {self.heads}')
         return self.heads[head_name].predict_exit_rate(ppl)
 
     def get_all_exit_rates(self):
