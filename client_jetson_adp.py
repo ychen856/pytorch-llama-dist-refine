@@ -32,7 +32,7 @@ parser.add_argument('--log', default='test.log')
 parser.add_argument('--ppl', type=int, default=10)
 parser.add_argument('--weight', type=float, default=0.0)
 args = parser.parse_args()
-
+logger = Logger(filepath=args.log)
 head_names = [1, 2, 4, 6]
 ppl_list = [10, 20, 30]
 init_params = {
@@ -49,10 +49,10 @@ init_params = {
     (6, 20): {'a': 1659, 'b': 841,  'gamma': 1.0},
     (6, 30): {'a': 2266, 'b': 243,  'gamma': 1.0}
 }
-lm_manager = LMHeadManager(head_names, ppl_list, init_params)
+lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
 shock_manager = PredictiveSplittingManager(shock_alpha=1.5, window_size=5, shock_threshold=3)
 
-logger = Logger(filepath=args.log)
+
 performance_data_store = PerformanceDataStore(shock_manager, logger)
 input_queue = Queue()
 outgoing_queue = Queue()

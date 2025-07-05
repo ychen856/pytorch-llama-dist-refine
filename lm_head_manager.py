@@ -43,17 +43,17 @@ class LMHead:
 
 
 class LMHeadManager:
-    def __init__(self, head_names, ppl_list, param_dict):
+    def __init__(self, head_names, ppl_list, param_dict, logger):
         self.heads = {
             head_name: LMHead(head_name, ppl_list, param_dict)
             for head_name in head_names
         }
-
+        self.logger = logger
     def update(self, head_name, ppl, success: bool):
         self.heads[head_name].update(ppl, success)
 
     def predict_exit_rate(self, head_name, ppl):
-        print('FFFFFFFFFFFF: ', self.heads[head_name])
+        self.logger.log(f'FFFFFFFFFFFF: {self.heads[head_name]}')
         return self.heads[head_name].predict_exit_rate(ppl)
 
     def get_all_exit_rates(self):
