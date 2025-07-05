@@ -572,20 +572,21 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
             #if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
             #if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
-            if cycle_count <= (statistics_period - 8) and input_count >= 24 and (statistics_period - cycle_count) % 4 == 0:
-                print('testing lower value (i>12)')
-                logger.log(f'testing lower value (i>30)')
-                end_idx = max(1, end_idx - 1)
-                logger.log(f'new end: {end_idx}')
-
-            #if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
-            #if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
-            if cycle_count >= (statistics_period - 12) and cycle_count < (statistics_period - 8) and input_count >= 24 and end_idx < max_layers:
+            if cycle_count == (statistics_period - 12) and input_count >= 24 and (statistics_period - cycle_count) % 4 == 0:
                 print('testing higher value (i>30)')
                 logger.log(f'testing higher value (i>30)')
                 performance_data_store.max_end_idx = end_idx
                 end_idx = end_idx + 1
                 logger.log(f'new end: {end_idx}')
+
+            #if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+            #if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
+            if cycle_count >= (statistics_period - 12) and input_count >= 24 and end_idx < max_layers:
+                print('testing lower value (i>12)')
+                logger.log(f'testing lower value (i>30)')
+                end_idx = max(1, end_idx - 1)
+                logger.log(f'new end: {end_idx}')
+
 
         #if (input_count) % 10 == 0:
         print('record count: ', performance_data_store.new_record_count)
