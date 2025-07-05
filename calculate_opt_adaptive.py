@@ -345,7 +345,7 @@ class PerformanceDataStore:
 
 
 
-def calculate_opt(data_store: PerformanceDataStore, lm_manager, shock_manager):
+def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manager):
     """
     Calculates the average of client computation time, server computation time,
     and communication time for each (server_start_index, server_end_index) set, and
@@ -431,7 +431,7 @@ def calculate_opt(data_store: PerformanceDataStore, lm_manager, shock_manager):
 
 
         head_name = utils.get_lm_head_idx(start_idx - 1)
-        early_rate = lm_manager.predict_exit_rate(head_name, 10)
+        early_rate = lm_manager.predict_exit_rate(head_name, ppl)
         shock_manager.set_avg_latency(start_idx - 1, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
         WEIGHT_EARLY = exit_rate_manager.compute_weight(early_rate, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
 
