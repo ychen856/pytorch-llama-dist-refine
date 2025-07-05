@@ -539,10 +539,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                         print('end idx: ', k)
                         logger.log(f'end idx: {k}')
                         timestamp_manager.end_times = (idx, time.time())
-                        lm_manager.update(end_idx, args.ppl, True)
+                        lm_manager.update(k, args.ppl, True)
                         break
 
-                    lm_manager.update(end_idx, args.ppl, False)
+                    lm_manager.update(k, args.ppl, False)
 
             except Exception as e:
                 print('oom!!!')
