@@ -364,7 +364,7 @@ def calculate_opt(data_store: PerformanceDataStore, lm_manager, shock_manager):
             latency_diff: float or None
         ) if complete data is available, otherwise None.
     """
-    exit_rate_manager = ExitWeightManager()
+    exit_rate_manager = ExitWeightManager(mode='fixed')
     all_data = data_store.get_all_data()
     if not all_data:
         return None
