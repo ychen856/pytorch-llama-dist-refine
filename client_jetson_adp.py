@@ -31,6 +31,7 @@ parser.add_argument('--config', default='config_server.yaml')
 parser.add_argument('--log', default='test.log')
 parser.add_argument('--ppl', type=int, default=10)
 parser.add_argument('--weight', type=float, default=0.0)
+parser.add_argument('--mode', default='fixed')
 args = parser.parse_args()
 logger = Logger(filepath=args.log)
 head_names = [1, 2, 4, 6]
@@ -589,14 +590,18 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 is_oom = False
             logger.log(f'cycle count: {cycle_count}')
             #print('statistic: ', statistics_period)
-            if (input_count) % 2 == 0 and input_count < 12 and end_idx < max_layers and statistics_period <= 10:
-            #if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+            if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                 print('testing higher value(i<12)')
                 logger.log(f'testing higher value(i<30)')
                 performance_data_store.max_end_idx = end_idx
                 end_idx = end_idx + 1
                 logger.log(f'new end: {end_idx}')
 
+            # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+            # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
+            logger.log(f'testing statistic period: {statistics_period}')
+            logger.log(f'testing cycle count: {cycle_count}')
+            logger.log(f'testing s-c: {statistics_period - cycle_count}')
             if cycle_count > (statistics_period - 12) and input_count >= 24 and (
                     statistics_period - cycle_count) % 4 == 0:
                 print('testing lower value (i>12)')
@@ -604,6 +609,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 end_idx = max(1, end_idx - 1)
                 logger.log(f'new end: {end_idx}')
 
+            # if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+            # if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
             if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and (
                     statistics_period - cycle_count) % 4 == 0:
                 print('testing higher value (i>30)')
@@ -617,7 +624,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         if performance_data_store.new_record_count >= statistics_period:
             #print('statistic')
             #statistics_period = statistics_period + 5
-            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, shock_manager, logger)
+            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', new_buff_idx)
             print('opt statistics period: ', statistics_period)

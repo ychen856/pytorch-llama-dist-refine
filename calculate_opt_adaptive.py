@@ -345,7 +345,7 @@ class PerformanceDataStore:
 
 
 
-def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manager, logger):
+def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock_manager, logger):
     """
     Calculates the average of client computation time, server computation time,
     and communication time for each (server_start_index, server_end_index) set, and
@@ -364,7 +364,8 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manag
             latency_diff: float or None
         ) if complete data is available, otherwise None.
     """
-    exit_rate_manager = ExitWeightManager(mode='fixed')
+    #exit_rate_manager = ExitWeightManager(mode='fixed')
+    exit_rate_manager = ExitWeightManager(mode=mode)
     all_data = data_store.get_all_data()
     if not all_data:
         return None
