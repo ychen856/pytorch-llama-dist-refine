@@ -345,7 +345,7 @@ class PerformanceDataStore:
 
 
 
-def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manager):
+def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manager, logger):
     """
     Calculates the average of client computation time, server computation time,
     and communication time for each (server_start_index, server_end_index) set, and
@@ -379,6 +379,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, shock_manag
         individual_latencies_with_timestamps_not_early = []
         individual_latencies_with_timestamps_is_early = []
         print('(start, end): ', (start_idx, end_idx))
+        logger.log(f"(start, end): ({start_idx}, {end_idx})")
         latency_not_early = 0.0
         latency_is_early = 0.0
         latency_client = 0.0
