@@ -23,6 +23,8 @@ class ExitWeightManager:
                         client_compute_time=None,
                         comm_time=None,
                         server_compute_time=None):
+        if self.mode == "default":
+            return 0
         if self.mode == "fixed":
             return self.lambda_base
 
