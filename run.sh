@@ -2,7 +2,7 @@
 python3.8 client_jetson_adp.py --ppl 10 --mode default --config config_jetson2.yaml --log test.log
 sleep 10
 
-python3.8 client_jetson_adp.py --ppl 10 --mode default --config config_jetson2.yaml --log 07_jetson2_wlan_ppl_10_fixed_1.log
+python3.8 client_jetson_adp.py --ppl 10 --mode default --config config_jetson2.yaml --log 07_jetson2_wlan_ppl_10_default_1.log
 sleep 10
 python3.8 client_jetson_adp.py --ppl 10 --mode fixed --config config_jetson2.yaml --log 07_jetson2_wlan_ppl_10_fixed_1.log
 sleep 10
