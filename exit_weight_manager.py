@@ -1,7 +1,7 @@
 class ExitWeightManager:
     def __init__(self,
                  lambda_base=0.3,
-                 lambda_max=0.7,
+                 lambda_max=0.6,
                  linear_lambda=0.5,
                  mode="bandwidth-aware"):
         """
@@ -25,7 +25,7 @@ class ExitWeightManager:
                         server_compute_time=None):
         if self.mode == "default":
             return 0
-        if self.mode == "fixed":
+        elif self.mode == "fixed":
             return self.lambda_base
 
         elif self.mode == "linear-exit-rate":
@@ -40,7 +40,12 @@ class ExitWeightManager:
                 raise ValueError("Compute time and comm time must be provided in bandwidth-aware mode.")
 
             denom = comm_time + server_compute_time + 1e-6
-            comm_factor = client_compute_time / denom
+            #comm_factor = client_compute_time / denom
+            comm_factor = denom / client_compute_time
+            if comm_factor >= 2:
+                comm_factor = 1
+            else:
+                comm_factor = comm_factor / 2
 
             weight = self.lambda_base + (self.lambda_max - self.lambda_base) * exit_rate * comm_factor
             return weight
