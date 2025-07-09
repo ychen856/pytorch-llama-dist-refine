@@ -42,10 +42,9 @@ class ExitWeightManager:
             denom = comm_time + server_compute_time + 1e-6
             #comm_factor = client_compute_time / denom
             comm_factor = denom / client_compute_time
-            if comm_factor >= 2:
+            if comm_factor < 8:
                 comm_factor = 1
-            else:
-                comm_factor = comm_factor / 2
+
 
             weight = self.lambda_base + (self.lambda_max - self.lambda_base) * exit_rate * comm_factor
             return weight
