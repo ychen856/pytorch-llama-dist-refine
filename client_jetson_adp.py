@@ -641,11 +641,15 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #while new_buff_idx < end_idx_buff:
             #    models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
-            lm_head, _ = get_lm_head_idx(end_idx)
+            '''lm_head, _ = get_lm_head_idx(end_idx)
             if not lm_head == head_idx:
-                head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
+                head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")'''
 
             cycle_count = 0
+
+        lm_head, _ = get_lm_head_idx(end_idx)
+        if not lm_head == head_idx:
+            head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
 
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
         if end_idx_buff < end_idx and end_idx_buff < max_layers:
