@@ -480,6 +480,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
             continue
 
         print('optimal key found: ', (start_idx, end_idx, current_weighted_avg_latency_for_path))
+        logger.log(f'optimal key found: ({start_idx}, {end_idx}, {current_weighted_avg_latency_for_path})')
         if current_weighted_avg_latency_for_path < min_weighted_latency:
             min_weighted_latency = current_weighted_avg_latency_for_path
             optimal_key_found = (start_idx, end_idx, min_weighted_latency)
