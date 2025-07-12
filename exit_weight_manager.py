@@ -1,7 +1,7 @@
 class ExitWeightManager:
     def __init__(self,
                  lambda_base=0.3,
-                 lambda_max=0.6,
+                 lambda_max=0.8,
                  linear_lambda=0.5,
                  mode="bandwidth-aware"):
         """
