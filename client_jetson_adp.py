@@ -642,11 +642,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 end_idx = end_idx + 1
                 logger.log(f'new end: {end_idx}')
 
-        ##test##
-        end_idx = 4
-        end_idx_buff = 5
-        ##end test##
-
 
         #if (input_count) % 10 == 0:
         print('record count: ', performance_data_store.new_record_count)
@@ -716,12 +711,6 @@ if __name__ == '__main__':
     end_idx = args.end_idx
     end_idx_buff = args.end_idx_buff
     head_idx = 2
-
-
-    ##test##
-    end_idx = 4
-    end_idx_buff = 5
-    ##end test##
 
     performance_data_store.statistic_period = 20
     performance_data_store.end_idx = end_idx
