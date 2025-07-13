@@ -34,7 +34,7 @@ parser.add_argument('--weight', type=float, default=0.0)
 parser.add_argument('--mode', default='fixed')
 args = parser.parse_args()
 logger = Logger(filepath=args.log)
-head_names = [1, 2, 4, 6]
+head_names = [1, 2, 3, 4, 6]
 ppl_list = [10, 20, 30]
 init_params = {
     (1, 10): {'a': 407,  'b': 2093, 'gamma': 1.0},
@@ -43,6 +43,9 @@ init_params = {
     (2, 10): {'a': 572,  'b': 1928, 'gamma': 1.0},
     (2, 20): {'a': 1075, 'b': 1425, 'gamma': 1.0},
     (2, 30): {'a': 1415, 'b': 1085, 'gamma': 1.0},
+    (3, 10): {'a': 769,  'b': 1731, 'gamma': 1.0},
+    (3, 20): {'a': 1422, 'b': 1078, 'gamma': 1.0},
+    (3, 30): {'a': 1850, 'b': 650,  'gamma': 1.0},
     (4, 10): {'a': 788,  'b': 1712, 'gamma': 1.0},
     (4, 20): {'a': 1499, 'b': 1001, 'gamma': 1.0},
     (4, 30): {'a': 1973, 'b': 527,  'gamma': 1.0},
@@ -50,6 +53,23 @@ init_params = {
     (6, 20): {'a': 1659, 'b': 841,  'gamma': 1.0},
     (6, 30): {'a': 2266, 'b': 243,  'gamma': 1.0}
 }
+'''init_params = {
+    (1, 10): {'a': 56,  'b': 277, 'gamma': 1.0},
+    (1, 20): {'a': 126, 'b': 207, 'gamma': 1.0},
+    (1, 30): {'a': 167, 'b': 166, 'gamma': 1.0},
+    (2, 10): {'a': 69,  'b': 264, 'gamma': 1.0},
+    (2, 20): {'a': 140, 'b': 193, 'gamma': 1.0},
+    (2, 30): {'a': 188, 'b': 145, 'gamma': 1.0},
+    (3, 10): {'a': 89,  'b': 244, 'gamma': 1.0},
+    (3, 20): {'a': 194, 'b': 139, 'gamma': 1.0},
+    (3, 30): {'a': 252, 'b': 81,  'gamma': 1.0},
+    (4, 10): {'a': 99,  'b': 234, 'gamma': 1.0},
+    (4, 20): {'a': 202, 'b': 131, 'gamma': 1.0},
+    (4, 30): {'a': 268, 'b': 65,  'gamma': 1.0},
+    (6, 10): {'a': 103, 'b': 230, 'gamma': 1.0},
+    (6, 20): {'a': 227, 'b': 106,  'gamma': 1.0},
+    (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0}
+}'''
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
 shock_manager = PredictiveSplittingManager(shock_alpha=1.5, window_size=5, shock_threshold=3)
 
@@ -195,7 +215,7 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
     return models
 def get_lm_head_idx(end_idx):
 
-    lm_heads = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    lm_heads = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20]
     lm_head = 1
     lm_head_idx = 0
 
