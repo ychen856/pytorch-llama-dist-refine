@@ -305,7 +305,7 @@ def early_exit_lm_head(lm_models, out, lm_head, ppl):
         elif lm_head == 4:
             early_rate = 0.72
         elif lm_head == 3:
-            early_rate = 0.65506
+            early_rate = 0.65
         elif lm_head == 2:
             early_rate = 0.69
         elif lm_head == 1:
@@ -319,6 +319,8 @@ def early_exit_lm_head(lm_models, out, lm_head, ppl):
             early_rate = 0.7
         elif lm_head == 4:
             early_rate = 0.69
+        elif lm_head == 3:
+            early_rate = 0.68
         elif lm_head == 2:
             early_rate = 0.67
         elif lm_head == 1:
