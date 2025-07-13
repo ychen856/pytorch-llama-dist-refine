@@ -151,7 +151,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
 
 def get_lm_head_idx(end_idx):
 
-    lm_heads = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    lm_heads = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20]
     lm_head = 1
     lm_head_idx = 0
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
     bs = 1
 
-    '''
+
     # test loader
     # loading inputs data
     seqlen = 1024
@@ -211,13 +211,13 @@ if __name__ == '__main__':
     testenc = test_loader.input_ids
 
     # Calculate number of samples
-    nsamples = testenc.numel() // seqlen'''
+    nsamples = testenc.numel() // seqlen
 
-    nsamples = 500
+    '''nsamples = 500
     seed = random.seed(time.time())
     seqlen = 1024
 
-    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
+    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)'''
 
     # List to store negative log likelihoods
     nlls = []
@@ -232,9 +232,9 @@ if __name__ == '__main__':
         j = min(i + bs, nsamples)
 
         # Prepare inputs and move to device
-        #inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        #inputs = inputs.reshape(j - i, seqlen)
-        inputs = testenc[i]
+        inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        inputs = inputs.reshape(j - i, seqlen)
+        #inputs = testenc[i]
 
         lm_logits = None
         is_early_exit = False
