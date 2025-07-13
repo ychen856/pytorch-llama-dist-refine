@@ -647,12 +647,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         if performance_data_store.new_record_count >= statistics_period:
             #print('statistic')
             #statistics_period = statistics_period + 5
-            end_idx, new_buff_idx, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
+            end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
             print('opt end idx: ', end_idx)
-            print('opt buff idx: ', new_buff_idx)
+            print('opt buff idx: ', end_idx_buff)
             print('opt statistics period: ', statistics_period)
             logger.log(f'opt end idx: {end_idx}')
-            logger.log(f'opt buff idx: {new_buff_idx}')
+            logger.log(f'opt buff idx: {end_idx_buff}')
             logger.log(f'opt statistics period: {statistics_period}')
             #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
