@@ -643,8 +643,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 logger.log(f'new end: {end_idx}')
 
         ##test##
-        end_idx = 1
-        end_idx_buff = 3
+        end_idx = 4
+        end_idx_buff = 5
         ##end test##
 
 
@@ -719,8 +719,8 @@ if __name__ == '__main__':
 
 
     ##test##
-    end_idx = 1
-    end_idx_buff = 3
+    end_idx = 4
+    end_idx_buff = 5
     ##end test##
 
     performance_data_store.statistic_period = 20
