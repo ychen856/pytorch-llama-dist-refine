@@ -202,7 +202,7 @@ if __name__ == '__main__':
     bs = 1
 
 
-    # test loader
+    '''# test loader
     # loading inputs data
     seqlen = 1024
     # Get input IDs
@@ -211,13 +211,13 @@ if __name__ == '__main__':
     testenc = test_loader.input_ids
 
     # Calculate number of samples
-    nsamples = testenc.numel() // seqlen
+    nsamples = testenc.numel() // seqlen'''
 
-    '''nsamples = 500
+    nsamples = 500
     seed = random.seed(time.time())
     seqlen = 1024
 
-    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)'''
+    testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
 
     # List to store negative log likelihoods
     nlls = []
@@ -232,9 +232,9 @@ if __name__ == '__main__':
         j = min(i + bs, nsamples)
 
         # Prepare inputs and move to device
-        inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
-        inputs = inputs.reshape(j - i, seqlen)
-        #inputs = testenc[i]
+        #inputs = testenc[:, (i * seqlen):(j * seqlen)].to(device)
+        #inputs = inputs.reshape(j - i, seqlen)
+        inputs = testenc[i]
 
         lm_logits = None
         is_early_exit = False
