@@ -36,7 +36,7 @@ args = parser.parse_args()
 logger = Logger(filepath=args.log)
 head_names = [1, 2, 3, 4, 6]
 ppl_list = [10, 20, 30]
-init_params = {
+'''init_params = {
     (1, 10): {'a': 407,  'b': 2093, 'gamma': 1.0},
     (1, 20): {'a': 926,  'b': 1574, 'gamma': 1.0},
     (1, 30): {'a': 231,  'b': 2269, 'gamma': 1.0},
@@ -52,8 +52,8 @@ init_params = {
     (6, 10): {'a': 763,  'b': 1737, 'gamma': 1.0},
     (6, 20): {'a': 1659, 'b': 841,  'gamma': 1.0},
     (6, 30): {'a': 2266, 'b': 243,  'gamma': 1.0}
-}
-'''init_params = {
+}'''
+init_params = {
     (1, 10): {'a': 56,  'b': 277, 'gamma': 1.0},
     (1, 20): {'a': 126, 'b': 207, 'gamma': 1.0},
     (1, 30): {'a': 167, 'b': 166, 'gamma': 1.0},
@@ -69,7 +69,7 @@ init_params = {
     (6, 10): {'a': 103, 'b': 230, 'gamma': 1.0},
     (6, 20): {'a': 227, 'b': 106,  'gamma': 1.0},
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0}
-}'''
+}
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
 shock_manager = PredictiveSplittingManager(shock_alpha=1.5, window_size=5, shock_threshold=3)
 
