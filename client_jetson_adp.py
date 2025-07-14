@@ -1,3 +1,4 @@
+import gc
 import threading
 import queue
 import time
@@ -683,6 +684,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         while end_idx_buff > end_idx + 3:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
+        gc.collect()
         torch.cuda.empty_cache()
 
 
