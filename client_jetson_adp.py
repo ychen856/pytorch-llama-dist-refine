@@ -366,6 +366,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 timestamp_manager.clearAll()
 
                 time.sleep(10)
+                gc.collect()
 
                 print('batch count: ', batch_count)
 
@@ -694,8 +695,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
 
     print('end T2...')
-
-
 
 
 
