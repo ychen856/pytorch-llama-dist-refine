@@ -675,8 +675,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             cycle_count = 0
 
         # test...
-        end_idx = 2
-        end_idx_buff = 3
+        end_idx = 1
+        end_idx_buff = 2
         # test...
 
         lm_head, _ = get_lm_head_idx(end_idx)
@@ -722,8 +722,8 @@ if __name__ == '__main__':
     head_idx = 2
 
     #test...
-    end_idx = 2
-    end_idx_buff = 3
+    end_idx = 1
+    end_idx_buff = 2
     # test...
 
     performance_data_store.statistic_period = 20
