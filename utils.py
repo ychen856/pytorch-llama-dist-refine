@@ -24,11 +24,13 @@ def get_lm_head_idx(end_idx):
     return lm_head, lm_head_idx
 
 
-def remove_outliers_iqr(data):
-    q1 = np.percentile(data, 25)
-    q3 = np.percentile(data, 75)
+def remove_latency_outliers_iqr(data):
+    latencies = [latency for _, latency in data]
+    q1 = np.percentile(latencies, 25)
+    q3 = np.percentile(latencies, 75)
     iqr = q3 - q1
-    lower_bound = q1 - 1.5 * iqr
-    upper_bound = q3 + 1.5 * iqr
-    filtered = [x for x in data if lower_bound <= x <= upper_bound]
+    lower = q1 - 1.5 * iqr
+    upper = q3 + 1.5 * iqr
+
+    filtered = [(t, l) for (t, l) in data if lower <= l <= upper]
     return filtered
