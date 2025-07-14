@@ -393,6 +393,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
         valid_record = True
         is_early = False
         for record in records:
+            logger.log(f'records: {record}')
             if (record["client_computation_time"] is not None and
                 record["server_computation_time"] is not None and
                 record["communication_time"] is not None and
