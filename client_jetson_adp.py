@@ -675,7 +675,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             cycle_count = 0
 
         # test...
-        end_idx = 2
+        end_idx = 3
         end_idx_buff = 4
         # test...
 
@@ -722,7 +722,7 @@ if __name__ == '__main__':
     head_idx = 2
 
     #test...
-    end_idx = 2
+    end_idx = 3
     end_idx_buff = 4
     # test...
 
