@@ -536,47 +536,49 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
         print('start idx: ', 0)
         logger.log(f'start idx: 0')
-        # Forward pass through the model
-        try:
-            out, ids, mask = models[0](input)
-        except Exception as e:
-            print(e)
 
-
-        for k in range(1, end_idx + 1):
+        with torch.no_grad():
+            # Forward pass through the model
             try:
-                out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
-                logger.log(f'zzzzz: {k}, {head_idx}')
-
-                if k == head_idx:
-                    try:
-                        is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
-                    except Exception as e:
-                        print('early oom!')
-                        logger.log(f'early oom')
-                        is_oom = True
-                        is_early_exit = False
-
-                        end_idx = k - 1
-
-                    if is_early_exit:
-                        print('end idx: ', k)
-                        logger.log(f'end idx: {k}')
-                        timestamp_manager.end_times = (idx, time.time())
-                        lm_manager.update(k, args.ppl, True)
-                        break
-
-                    lm_manager.update(k, args.ppl, False)
-
+                out, ids, mask = models[0](input)
             except Exception as e:
-                print('oom!!!')
-                logger.log(f'oom')
-                is_oom = True
+                print(e)
 
-                end_idx = k - 1
 
-                #print('updated end idx: ', end_idx)
-                break
+            for k in range(1, end_idx + 1):
+                try:
+                    out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
+                    logger.log(f'zzzzz: {k}, {head_idx}')
+
+                    if k == head_idx:
+                        try:
+                            is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
+                        except Exception as e:
+                            print('early oom!')
+                            logger.log(f'early oom')
+                            is_oom = True
+                            is_early_exit = False
+
+                            end_idx = k - 1
+
+                        if is_early_exit:
+                            print('end idx: ', k)
+                            logger.log(f'end idx: {k}')
+                            timestamp_manager.end_times = (idx, time.time())
+                            lm_manager.update(k, args.ppl, True)
+                            break
+
+                        lm_manager.update(k, args.ppl, False)
+
+                except Exception as e:
+                    print('oom!!!')
+                    logger.log(f'oom')
+                    is_oom = True
+
+                    end_idx = k - 1
+
+                    #print('updated end idx: ', end_idx)
+                    break
 
 
         end_time = time.time()
