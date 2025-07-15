@@ -1,5 +1,5 @@
 from collections import deque
-from utils import *
+import utils
 
 class PredictiveSplittingManager:
     def __init__(self, lm_manager, logger, shock_alpha=2, window_size=5, shock_threshold=3):
@@ -87,6 +87,7 @@ class PredictiveSplittingManager:
         best_est = float('inf')
 
         for k in self.avg_client:
+            head_name, _ = utils.get_lm_head_idx(k)
             if k not in self.avg_comm or k not in self.avg_server:
                 continue
 
@@ -94,10 +95,10 @@ class PredictiveSplittingManager:
                 k * client_comp_per_layer if shock_c else self.avg_client[k]
             )
             comm_part = (
-                comm_avg * (1 - self.lm_manager.predict_exit_rate(get_lm_head_idx(k), ppl)) if shock_m else self.avg_comm[k]
+                comm_avg * (1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_m else self.avg_comm[k]
             )
             server_part = (
-                (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(get_lm_head_idx(k), ppl)) if shock_s else self.avg_server[k]
+                (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
             )
 
             est = client_part + comm_part + server_part
