@@ -73,10 +73,22 @@ class S(BaseHTTPRequestHandler):
             time.sleep(decrypt_data[1])
             newx = pickle.dumps(['Data received successfully!'])
             self.wfile.write(newx)
+        else:
+            incoming_queue.put(decrypt_data)
+            end_time = time.time()
+            # print('server receiving time: ', end_time - start_time)
 
-            return
+            # time.sleep(1)
+            self.send_response(200)
+            self.end_headers()
 
-        incoming_queue.put(decrypt_data)
+            output_message = outgoing_queue.get()
+            print('http returning: ', output_message)
+
+            newx = pickle.dumps([output_message, 'Data received successfully!'])
+            self.wfile.write(newx)
+
+        '''incoming_queue.put(decrypt_data)
         end_time = time.time()
         #print('server receiving time: ', end_time - start_time)
 
@@ -88,7 +100,7 @@ class S(BaseHTTPRequestHandler):
         print('http returning: ', output_message)
 
         newx = pickle.dumps([output_message, 'Data received successfully!'])
-        self.wfile.write(newx)
+        self.wfile.write(newx)'''
 
         #self.return_message()
 
