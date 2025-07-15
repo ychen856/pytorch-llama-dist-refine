@@ -349,6 +349,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
     elif mode == 2:  # stream arrival
 
         testenc = None
+        outgoing_queue.put(['server', 0])
 
         while True and not stop_event.is_set():
 
