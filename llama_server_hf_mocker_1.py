@@ -155,6 +155,7 @@ def task1_data_receiving(args):
         http_receiver.run(port=args.server_port)
 
 def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=True):
+    sleep_time = 0
     pid = os.getpid()
     curr_thread = current_thread().name
     curr_process = current_process().name
@@ -171,6 +172,9 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
             input = incoming_queue.get()
         else:
             input = http_receiver.get_in_queue_data()
+
+        if input[0] == 'server':
+            sleep_time = input[0]
 
         #received original data
         start_idx = input[0]
@@ -243,6 +247,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
         print('logits: ', lm_logits)
         print('logit size: ', lm_logits.size())
 
+        time.sleep(sleep_time)
         total_comp_time = time.time() - start_comp_time
 
         #print('out: ', out)

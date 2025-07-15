@@ -68,9 +68,18 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
 
         decrypt_data = pickle.loads(post_data)
+
+        if decrypt_data[0] == 'communication':
+            time.sleep(decrypt_data[1])
+            newx = pickle.dumps(['Data received successfully!'])
+            self.wfile.write(newx)
+
+            return
+
         incoming_queue.put(decrypt_data)
         end_time = time.time()
         #print('server receiving time: ', end_time - start_time)
+
         #time.sleep(1)
         self.send_response(200)
         self.end_headers()
