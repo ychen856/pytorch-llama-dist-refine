@@ -1,7 +1,7 @@
 from collections import deque
 
 class PredictiveSplittingManager:
-    def __init__(self, logger, shock_alpha=1.5, window_size=5, shock_threshold=2):
+    def __init__(self, logger, shock_alpha=2, window_size=5, shock_threshold=3):
         self.alpha = shock_alpha
         self.window_size = window_size
         self.shock_threshold = shock_threshold
@@ -55,11 +55,7 @@ class PredictiveSplittingManager:
         self.history_latency.append((obs_client, obs_comm, obs_server))
 
     def is_trigger_override(self):
-        self.logger.log(f'HISTORY!!!!!!!!!! {sum(self.history)}')
-        self.logger.log(f'avg client: {sum(self.avg_client)}')
-        self.logger.log(f'length: {len(self.avg_client)}')
-        self.logger.log(f'AVERAGE!!!!!!!!!! {(sum(self.avg_client) + sum(self.avg_comm) + sum(self.avg_server)) / len(self.avg_client)}')
-        return sum(self.history) >= self.shock_threshold * (sum(self.avg_client) + sum(self.avg_comm) + sum(self.avg_server)) / len(self.avg_client)
+        return sum(self.history) >= self.shock_threshold
 
     def decide_k(self, k_opt):
         shock_c, shock_m, shock_s = self.last_shock_flags
