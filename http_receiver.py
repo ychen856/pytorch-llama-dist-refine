@@ -18,6 +18,7 @@ args = parser.parse_args()
 
 incoming_queue = Queue()
 outgoing_queue = Queue()
+sleep_time = 0
 
 def get_in_queue_data():
     '''if len(incoming_queue) > 0:
@@ -70,29 +71,15 @@ class S(BaseHTTPRequestHandler):
         decrypt_data = pickle.loads(post_data)
 
         if decrypt_data[0] == 'communication':
-            time.sleep(decrypt_data[1])
-            newx = pickle.dumps(['Data received successfully!'])
-            self.wfile.write(newx)
-        else:
-            incoming_queue.put(decrypt_data)
-            end_time = time.time()
-            # print('server receiving time: ', end_time - start_time)
+            sleep_time = decrypt_data[1]
+            set_outgoing_queue(['T'])
 
-            # time.sleep(1)
-            self.send_response(200)
-            self.end_headers()
 
-            output_message = outgoing_queue.get()
-            print('http returning: ', output_message)
-
-            newx = pickle.dumps([output_message, 'Data received successfully!'])
-            self.wfile.write(newx)
-
-        '''incoming_queue.put(decrypt_data)
+        incoming_queue.put(decrypt_data)
         end_time = time.time()
         #print('server receiving time: ', end_time - start_time)
 
-        #time.sleep(1)
+        time.sleep(sleep_time)
         self.send_response(200)
         self.end_headers()
 
@@ -100,7 +87,7 @@ class S(BaseHTTPRequestHandler):
         print('http returning: ', output_message)
 
         newx = pickle.dumps([output_message, 'Data received successfully!'])
-        self.wfile.write(newx)'''
+        self.wfile.write(newx)
 
         #self.return_message()
 

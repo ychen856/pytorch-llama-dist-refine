@@ -101,7 +101,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     resp_str = b''
 
 
-    if not len(resp_data) == 1:
+    if not resp_data[0] == 'T':
         for i in range(4, len(resp_data)):
             resp_str = resp_str + resp_data[i]
         end_time2 = time.time()
