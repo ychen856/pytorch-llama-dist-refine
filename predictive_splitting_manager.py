@@ -104,6 +104,7 @@ class PredictiveSplittingManager:
                 best_est = est
                 best_k = k
 
+        self.reset_history()
         return best_k if best_k is not None else k_opt
 
 
