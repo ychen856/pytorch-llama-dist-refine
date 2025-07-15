@@ -72,7 +72,7 @@ init_params = {
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0}
 }
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
-shock_manager = PredictiveSplittingManager(logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
+shock_manager = PredictiveSplittingManager(lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
 
 sleep_time = 0
 performance_data_store = PerformanceDataStore(shock_manager, logger)
@@ -683,7 +683,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''
         elif performance_data_store.steady_state and shock_manager.is_trigger_override():
-            end_idx = shock_manager.decide_k(end_idx)
+            end_idx = shock_manager.decide_k(args.ppl, end_idx)
             end_idx_buff = end_idx + 1
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')

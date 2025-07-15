@@ -1,7 +1,8 @@
 from collections import deque
+from utils import *
 
 class PredictiveSplittingManager:
-    def __init__(self, logger, shock_alpha=2, window_size=5, shock_threshold=3):
+    def __init__(self, lm_manager, logger, shock_alpha=2, window_size=5, shock_threshold=3):
         self.alpha = shock_alpha
         self.window_size = window_size
         self.shock_threshold = shock_threshold
@@ -18,6 +19,7 @@ class PredictiveSplittingManager:
         self.last_obs_latency = (0.0, 0.0, 0.0)
         self.last_k = None
 
+        self.lm_manager = lm_manager
         self.logger = logger
 
     def reset_history(self):
@@ -57,7 +59,7 @@ class PredictiveSplittingManager:
     def is_trigger_override(self):
         return sum(self.history) >= self.shock_threshold
 
-    def decide_k(self, k_opt):
+    def decide_k(self, ppl, k_opt):
         shock_c, shock_m, shock_s = self.last_shock_flags
 
         client_k = 0
@@ -92,10 +94,10 @@ class PredictiveSplittingManager:
                 k * client_comp_per_layer if shock_c else self.avg_client[k]
             )
             comm_part = (
-                comm_avg if shock_m else self.avg_comm[k]
+                comm_avg * (1 - self.lm_manager.predict_exit_rate(ppl, get_lm_head_idx(k))) if shock_m else self.avg_comm[k]
             )
             server_part = (
-                (34 - k) * server_comp_per_layer if shock_s else self.avg_server[k]
+                (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(ppl, get_lm_head_idx(k))) if shock_s else self.avg_server[k]
             )
 
             est = client_part + comm_part + server_part
