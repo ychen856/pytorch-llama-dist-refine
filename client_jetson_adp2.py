@@ -684,6 +684,14 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             outgoing_queue.put(packed_data)'''
         elif shock_manager.is_trigger_override():
             end_idx = shock_manager.decide_k(end_idx)
+            end_idx_buff = end_idx + 1
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
+            logger.log(f'new end: {end_idx}')
 
 
             #while new_buff_idx < end_idx_buff:
