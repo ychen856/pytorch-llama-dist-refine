@@ -94,10 +94,10 @@ class PredictiveSplittingManager:
                 k * client_comp_per_layer if shock_c else self.avg_client[k]
             )
             comm_part = (
-                comm_avg * (1 - self.lm_manager.predict_exit_rate(ppl, get_lm_head_idx(k))) if shock_m else self.avg_comm[k]
+                comm_avg * (1 - self.lm_manager.predict_exit_rate(get_lm_head_idx(k), ppl)) if shock_m else self.avg_comm[k]
             )
             server_part = (
-                (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(ppl, get_lm_head_idx(k))) if shock_s else self.avg_server[k]
+                (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(get_lm_head_idx(k), ppl)) if shock_s else self.avg_server[k]
             )
 
             est = client_part + comm_part + server_part
