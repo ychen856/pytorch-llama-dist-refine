@@ -175,6 +175,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
 
         if input[0] == 'server':
             sleep_time = input[0]
+            continue
 
         #received original data
         start_idx = input[0]
