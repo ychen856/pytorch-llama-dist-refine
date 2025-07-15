@@ -504,8 +504,11 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
 
     if data_store._statisitc_period > 20:
         data_store._steady_state = True
-    else:
         data_store.data_storage.clear()
+    '''else:
+        data_store.data_storage.clear()'''
+
+
 
     data_store._new_record_count = 0
     data_store.max_records_per_type = 0
