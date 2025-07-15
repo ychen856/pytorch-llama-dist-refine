@@ -682,7 +682,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''
-        elif shock_manager.is_trigger_override() and performance_data_store.steady_state:
+        elif performance_data_store.steady_state and shock_manager.is_trigger_override():
             end_idx = shock_manager.decide_k(end_idx)
             end_idx_buff = end_idx + 1
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
