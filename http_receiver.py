@@ -18,7 +18,6 @@ args = parser.parse_args()
 
 incoming_queue = Queue()
 outgoing_queue = Queue()
-sleep_time = 0
 
 def get_in_queue_data():
     '''if len(incoming_queue) > 0:
@@ -50,6 +49,7 @@ def pop_incoming_queue():
 
 
 class S(BaseHTTPRequestHandler):
+    sleep_time = 0
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -71,7 +71,7 @@ class S(BaseHTTPRequestHandler):
         decrypt_data = pickle.loads(post_data)
 
         if decrypt_data[0] == 'communication':
-            sleep_time = decrypt_data[1]
+            S.sleep_time = decrypt_data[1]
             set_outgoing_queue(['T'])
 
 
@@ -79,7 +79,7 @@ class S(BaseHTTPRequestHandler):
         end_time = time.time()
         #print('server receiving time: ', end_time - start_time)
 
-        time.sleep(sleep_time)
+        time.sleep(S.sleep_time)
         self.send_response(200)
         self.end_headers()
 
