@@ -179,6 +179,8 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
             http_receiver.set_outgoing_queue(['T'])
             continue
 
+
+        print('sleep timeQQQQQ: ', sleep_time)
         #received original data
         start_idx = input[0]
         out = input[1]
@@ -251,6 +253,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
         print('logit size: ', lm_logits.size())
 
         time.sleep(sleep_time)
+
         total_comp_time = time.time() - start_comp_time
 
         #print('out: ', out)
