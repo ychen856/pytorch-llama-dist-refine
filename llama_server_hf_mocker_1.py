@@ -174,7 +174,8 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
             input = http_receiver.get_in_queue_data()
 
         if input[0] == 'server':
-            sleep_time = input[0]
+            sleep_time = input[1]
+            print('sleep time: ', sleep_time)
             continue
 
         #received original data
