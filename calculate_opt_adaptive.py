@@ -8,7 +8,7 @@ from utils import *
 from exit_weight_manager import ExitWeightManager
 
 class PerformanceDataStore:
-    def __init__(self, shock_manager, logger, max_records_per_type=3, statisitc_period=10):
+    def __init__(self, shock_manager, logger, max_records_per_type=0, statisitc_period=10):
         """
         Initializes the CommunicationDataStore.
 
@@ -508,7 +508,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
         data_store.data_storage.clear()
 
     data_store._new_record_count = 0
-    data_store.max_records_per_type = 3
+    data_store.max_records_per_type = 0
 
     print('opt result: ', (optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period))
     return optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period
