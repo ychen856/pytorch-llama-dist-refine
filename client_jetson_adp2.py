@@ -72,7 +72,7 @@ init_params = {
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0}
 }
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
-shock_manager = PredictiveSplittingManager(shock_alpha=1.5, window_size=5, shock_threshold=3)
+shock_manager = PredictiveSplittingManager(logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
 
 sleep_time = 0
 performance_data_store = PerformanceDataStore(shock_manager, logger)
