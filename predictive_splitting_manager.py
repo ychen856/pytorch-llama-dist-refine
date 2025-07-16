@@ -108,7 +108,11 @@ class PredictiveSplittingManager:
 
             est = client_part + comm_part + server_part
 
-
+            self.logger.log(f'k: {k}')
+            self.logger.log(f'est: {est}')
+            self.logger.log(f'client part: {comm_part}')
+            self.logger.log(f'server part: {server_part}')
+            self.logger.log(f'comm poart: {comm_part}')
             if est < best_est:
                 best_est = est
                 best_k = k
