@@ -91,7 +91,7 @@ class PredictiveSplittingManager:
         best_k = None
         best_est = float('inf')
 
-        for k in self.avg_client:
+        '''for k in self.avg_client:
             head_name, _ = utils.get_lm_head_idx(k)
             if k not in self.avg_comm or k not in self.avg_server:
                 continue
@@ -105,6 +105,27 @@ class PredictiveSplittingManager:
             server_part = (
                 (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
             )
+
+            est = client_part + comm_part + server_part
+
+            self.logger.log(f'k: {k}')
+            self.logger.log(f'avg client: {self.avg_client[k]}')
+            self.logger.log(f'avg server: {self.avg_server[k]}')
+            self.logger.log(f'avg comm: {self.avg_comm[k]}')
+            self.logger.log(f'est: {est}')
+            self.logger.log(f'client part: {client_part}')
+            self.logger.log(f'server part: {server_part}')
+            self.logger.log(f'comm poart: {comm_part}')
+            if est < best_est:
+                best_est = est
+                best_k = k'''
+
+        for k in range(1, 4):
+            head_name, _ = utils.get_lm_head_idx(k)
+
+            client_part = k * client_comp_per_layer
+            comm_part = comm_avg * (1 - self.lm_manager.predict_exit_rate(head_name, ppl))
+            server_part = (34 - k) * server_comp_per_layer * (1 - self.lm_manager.predict_exit_rate(head_name, ppl))
 
             est = client_part + comm_part + server_part
 
