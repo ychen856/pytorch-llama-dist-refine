@@ -684,8 +684,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''
         elif performance_data_store.steady_state and shock_manager.is_trigger_override():
-            end_idx = shock_manager.decide_k(args.ppl, end_idx)
-            end_idx_buff = end_idx + 1
+            end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager,
+                                                                     args.mode, shock_manager, logger)
+            #end_idx = shock_manager.decide_k(args.ppl, end_idx)
+            #end_idx_buff = end_idx + 1
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
