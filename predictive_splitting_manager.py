@@ -2,7 +2,7 @@ from collections import deque
 import utils
 
 class PredictiveSplittingManager:
-    def __init__(self, lm_manager, logger, shock_alpha=2, window_size=5, shock_threshold=3):
+    def __init__(self, lm_manager, logger, shock_alpha=2, window_size=10, shock_threshold=7):
         self.alpha = shock_alpha
         self.window_size = window_size
         self.shock_threshold = shock_threshold
@@ -26,6 +26,11 @@ class PredictiveSplittingManager:
         self.history.clear()
         self.history_k.clear()
         self.history_latency.clear()
+
+    def reset_avg(self):
+        self.avg_client.clear()
+        self.avg_comm.clear()
+        self.avg_server.clear()
 
     def set_avg_latency(self, k, client_time, comm_time, server_time):
         self.avg_client[k] = client_time
@@ -102,13 +107,14 @@ class PredictiveSplittingManager:
             )
 
             est = client_part + comm_part + server_part
-            self.set_avg_latency(k, client_part, comm_part, server_part)
+
 
             if est < best_est:
                 best_est = est
                 best_k = k
 
         self.reset_history()
+        self.reset_avg()
         return best_k if best_k is not None else k_opt
 
 
