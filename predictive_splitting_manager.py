@@ -75,7 +75,7 @@ class PredictiveSplittingManager:
         comm_total_latency = 0
 
         for k, (obs_client, obs_comm, obs_server) in zip(self.history_k, self.history_latency):
-            client_k += k
+            client_k += k + 1
             server_k += (34 - k)
             comm_k += 1
 
@@ -120,7 +120,7 @@ class PredictiveSplittingManager:
                 best_est = est
                 best_k = k'''
 
-        for k in range(1, 4):
+        for k in range(1, 5):
             head_name, _ = utils.get_lm_head_idx(k)
 
             client_part = k * client_comp_per_layer
