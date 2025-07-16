@@ -415,8 +415,8 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
                 latency_is_early = (record["client_computation_time"] +
                            record["server_computation_time"] +
                            record["communication_time"])
-                '''latency_client += record["client_computation_time"]
-                client_count = client_count + 1'''
+                latency_client += record["client_computation_time"]
+                client_count = client_count + 1
                 is_early = True
             else:
                 valid_record = False
