@@ -102,6 +102,7 @@ class PredictiveSplittingManager:
             )
 
             est = client_part + comm_part + server_part
+            self.set_avg_latency(k, client_part, comm_part, server_part)
 
             if est < best_est:
                 best_est = est
