@@ -111,9 +111,9 @@ class PredictiveSplittingManager:
             self.logger.log(f'k: {k}')
             self.logger.log(f'avg client: {self.avg_client[k]}')
             self.logger.log(f'avg server: {self.avg_server[k]}')
-            self.logger.log(f'avg comm: {self.avg_server[k]}')
+            self.logger.log(f'avg comm: {self.avg_comm[k]}')
             self.logger.log(f'est: {est}')
-            self.logger.log(f'client part: {comm_part}')
+            self.logger.log(f'client part: {client_part}')
             self.logger.log(f'server part: {server_part}')
             self.logger.log(f'comm poart: {comm_part}')
             if est < best_est:
