@@ -124,6 +124,7 @@ class PredictiveSplittingManager:
                             1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
             )
 
+            self.set_avg_latency(k, client_part, comm_part, server_part)
             est = client_part + comm_part + server_part
 
             self.logger.log(f'k: {k}')

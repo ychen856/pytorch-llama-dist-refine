@@ -697,6 +697,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'new end: {end_idx}')
 
+            cycle_count = 0
+
 
             #while new_buff_idx < end_idx_buff:
             #    models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
