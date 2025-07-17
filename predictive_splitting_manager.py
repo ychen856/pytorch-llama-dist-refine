@@ -3,7 +3,7 @@ from Linear_compute_time_model import LinearComputeTimeModel
 import utils
 
 class PredictiveSplittingManager:
-    def __init__(self, lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3):
+    def __init__(self, lm_manager, logger, shock_alpha=1.5, window_size=10, shock_threshold=7):
         self.alpha = shock_alpha
         self.window_size = window_size
         self.shock_threshold = shock_threshold
@@ -50,18 +50,6 @@ class PredictiveSplittingManager:
         shock_m = obs_comm   > base_comm   * self.alpha
         shock_s = obs_server > base_server * self.alpha
 
-        self.logger.log(f'0000000000000000')
-        self.logger.log(f'0000000000000000')
-        self.logger.log(f'0000000000000000')
-        self.logger.log(f'k: {k}')
-        self.logger.log(f'base_client: {base_client}')
-        self.logger.log(f'base_server: {base_server}')
-        self.logger.log(f'base_comm: {base_comm}')
-
-
-        self.logger.log(f'obs_client: {obs_client}')
-        self.logger.log(f'obs_server: {obs_server}')
-        self.logger.log(f'obs_comm: {obs_comm}')
 
         self.last_shock_flags = (shock_c, shock_m, shock_s)
         return shock_c or shock_m or shock_s
