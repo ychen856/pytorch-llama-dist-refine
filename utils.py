@@ -34,3 +34,9 @@ def remove_latency_outliers_iqr(data):
 
     filtered = [(t, l) for (t, l) in data if lower <= l <= upper]
     return filtered
+
+def fit_linear_model(ks, total_times):
+    X = np.vstack([np.ones(len(ks)), ks]).T  # [1, k]
+    y = np.array(total_times)
+    coef = np.linalg.lstsq(X, y, rcond=None)[0]  # returns [t0, delta_t]
+    return coef[0], coef[1]

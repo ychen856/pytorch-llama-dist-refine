@@ -1,4 +1,5 @@
 from collections import deque
+from Linear_compute_time_model import LinearComputeTimeModel
 import utils
 
 class PredictiveSplittingManager:
@@ -64,7 +65,77 @@ class PredictiveSplittingManager:
     def is_trigger_override(self):
         return sum(self.history) >= self.shock_threshold
 
+
     def decide_k(self, ppl, k_opt):
+        startup_c, per_layer_c = utils.fit_linear_model(self.history_k, [c for (c, _, _) in self.history_latency])
+        startup_s, per_layer_s = utils.fit_linear_model(
+            [34 - k for k in self.history_k],
+            [s for (_, _, s) in self.history_latency]
+        )
+        client_model = LinearComputeTimeModel(startup_c, per_layer_c)
+        server_model = LinearComputeTimeModel(startup_s, per_layer_s)
+
+        shock_c, shock_m, shock_s = self.last_shock_flags
+
+        client_k = 0
+        server_k = 0
+        comm_k = 0
+        client_total_latency = 0
+        server_total_latency = 0
+        comm_total_latency = 0
+
+        for k, (obs_client, obs_comm, obs_server) in zip(self.history_k, self.history_latency):
+            client_k += k + 1
+            server_k += (34 - k)
+            comm_k += 1
+
+            client_total_latency += obs_client
+            server_total_latency += obs_server
+            comm_total_latency += obs_comm
+
+        # 防止除以零
+        client_comp_per_layer = client_total_latency / max(client_k, 1e-6)
+        server_comp_per_layer = server_total_latency / max(server_k, 1e-6)
+        comm_avg = comm_total_latency / max(comm_k, 1e-6)
+
+        best_k = None
+        best_est = float('inf')
+
+        for k in self.avg_client:
+            head_name, _ = utils.get_lm_head_idx(k)
+            if k not in self.avg_comm or k not in self.avg_server:
+                continue
+
+            client_part = (
+                client_model.estimate_total_time(k) if shock_c else self.avg_client[k]
+            )
+            comm_part = (
+                comm_avg * (1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_m else self.avg_comm[k]
+            )
+            server_part = (
+                server_model.estimate_total_time(34 - k) * (
+                            1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
+            )
+
+            est = client_part + comm_part + server_part
+
+            self.logger.log(f'k: {k}')
+            self.logger.log(f'avg client: {self.avg_client[k]}')
+            self.logger.log(f'avg server: {self.avg_server[k]}')
+            self.logger.log(f'avg comm: {self.avg_comm[k]}')
+            self.logger.log(f'est: {est}')
+            self.logger.log(f'client part: {client_part}')
+            self.logger.log(f'server part: {server_part}')
+            self.logger.log(f'comm poart: {comm_part}')
+            if est < best_est:
+                best_est = est
+                best_k = k
+
+        self.reset_history()
+        # self.reset_avg()
+        return best_k if best_k is not None else k_opt
+
+    def decide_k2(self, ppl, k_opt):
         shock_c, shock_m, shock_s = self.last_shock_flags
 
         client_k = 0
