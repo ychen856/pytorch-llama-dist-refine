@@ -46,8 +46,7 @@ class ExitWeightManager:
             comm_factor = denom / client_compute_time
             logger.log(f'comm_factor: {comm_factor}')
             logger.log(f'exit_rate: {exit_rate}')
-            if comm_factor < 8:
-                comm_factor = 1
+
 
             weight = self.lambda_base + (self.lambda_max - self.lambda_base) * exit_rate * comm_factor
             return weight
