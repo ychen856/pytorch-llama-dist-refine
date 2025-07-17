@@ -68,7 +68,7 @@ init_params = {
     (4, 20): {'a': 202, 'b': 131, 'gamma': 1.0},
     (4, 30): {'a': 268, 'b': 65,  'gamma': 1.0},
     (6, 10): {'a': 103, 'b': 230, 'gamma': 1.0},
-    (6, 20): {'a': 227, 'b': 106,  'gamma': 1.0},
+    (6, 20): {'a': 227, 'b': 106, 'gamma': 1.0},
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0}
 }
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
@@ -383,7 +383,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
                     return
 
-            if batch_count == 0:
+            if batch_count == 20:
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
@@ -564,7 +564,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             for k in range(1, end_idx + 1):
                 try:
                     out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
-                    logger.log(f'zzzzz: {k}, {head_idx}')
 
                     if k == head_idx:
                         try:
@@ -690,7 +689,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'new end: {end_idx}')
 
+            performance_data_store.new_record_count = 0
             cycle_count = 0
+
 
 
             #while new_buff_idx < end_idx_buff:

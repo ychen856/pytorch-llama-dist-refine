@@ -489,8 +489,6 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
             optimal_key_found = (start_idx, end_idx, min_weighted_latency)
 
 
-    shock_manager.reset_history()
-
     if optimal_key_found is None:
         return None  # No valid optimal path found across any key_tuple
 
@@ -512,6 +510,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
 
     data_store._new_record_count = 0
     data_store.max_records_per_type = 0
+    shock_manager.reset_history()
 
     print('opt result: ', (optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period))
     return optimal_key_found[0] - 1, optimal_key_found[0], data_store._statisitc_period
