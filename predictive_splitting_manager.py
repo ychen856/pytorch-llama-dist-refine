@@ -67,11 +67,16 @@ class PredictiveSplittingManager:
 
 
     def decide_k(self, ppl, k_opt):
-        startup_c, per_layer_c = utils.fit_linear_model(self.history_k, [c for (c, _, _) in self.history_latency])
+        startup_c, per_layer_c = utils.fit_linear_model([k + 1 for k in self.history_k], [c for (c, _, _) in self.history_latency])
         startup_s, per_layer_s = utils.fit_linear_model(
             [34 - k for k in self.history_k],
             [s for (_, _, s) in self.history_latency]
         )
+
+        self.logger.log(f'client startup_c: {startup_c}')
+        self.logger.log(f'client per layer: {per_layer_c}')
+        self.logger.log(f'server startup_c: {startup_s}')
+        self.logger.log(f'server per layer: {per_layer_s}')
         client_model = LinearComputeTimeModel(startup_c, per_layer_c)
         server_model = LinearComputeTimeModel(startup_s, per_layer_s)
 
@@ -107,7 +112,7 @@ class PredictiveSplittingManager:
                 continue
 
             client_part = (
-                client_model.estimate_total_time(k) if shock_c else self.avg_client[k]
+                client_model.estimate_total_time(k + 1) if shock_c else self.avg_client[k]
             )
             comm_part = (
                 comm_avg * (1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_m else self.avg_comm[k]
