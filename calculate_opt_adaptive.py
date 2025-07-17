@@ -137,7 +137,7 @@ class PerformanceDataStore:
             self.data_storage[key].append(complete_record)
 
         self.shock_manager.record_latency(k=complete_record["start_index"] - 1, obs_client=complete_record["client_computation_time"],
-                                   obs_comm=complete_record["server_computation_time"], obs_server=complete_record["communication_time"])
+                                   obs_comm=complete_record["communication_time"], obs_server=complete_record["server_computation_time"])
 
         if not complete_record['is_early_exit']:
             self.new_record_count = self.new_record_count + 1
