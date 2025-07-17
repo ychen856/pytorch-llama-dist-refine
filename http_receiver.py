@@ -79,8 +79,8 @@ class S(BaseHTTPRequestHandler):
         end_time = time.time()
         #print('server receiving time: ', end_time - start_time)
 
-        #time.sleep(S.sleep_time)
-        time.sleep(1)
+        time.sleep(S.sleep_time)
+
         self.send_response(200)
         self.end_headers()
 
