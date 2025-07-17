@@ -3,7 +3,7 @@ from Linear_compute_time_model import LinearComputeTimeModel
 import utils
 
 class PredictiveSplittingManager:
-    def __init__(self, lm_manager, logger, shock_alpha=2, window_size=10, shock_threshold=7):
+    def __init__(self, lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3):
         self.alpha = shock_alpha
         self.window_size = window_size
         self.shock_threshold = shock_threshold
