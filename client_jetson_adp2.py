@@ -683,6 +683,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #outgoing_queue.put([end_idx + 1, None, None, None, None, None])
             '''packed_data = serialize_and_compress(end_idx + 1, [None, None, None], None, None, None, None)
             outgoing_queue.put(packed_data)'''
+
+            cycle_count = 0
         elif performance_data_store.steady_state and shock_manager.is_trigger_override():
             end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager,
                                                                      args.mode, shock_manager, logger)
@@ -705,7 +707,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             if not lm_head == head_idx:
                 head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")'''
 
-            cycle_count = 0
+
 
         '''# test...
         end_idx = 4
