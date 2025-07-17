@@ -436,8 +436,8 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
         head_name, _ = utils.get_lm_head_idx(start_idx - 1)
         early_rate = lm_manager.predict_exit_rate(head_name, ppl)
         logger.log(f'exit rate: {early_rate}')
-        shock_manager.set_avg_latency(start_idx - 1, logger, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
-        WEIGHT_EARLY = exit_rate_manager.compute_weight(early_rate, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
+        shock_manager.set_avg_latency(start_idx - 1, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
+        WEIGHT_EARLY = exit_rate_manager.compute_weight(logger, early_rate, latency_client/(client_count + 1e-6), latency_comm/(comm_count + 1e-6), latency_server/(server_count + 1e-6))
         logger.log(f'early weight: {WEIGHT_EARLY}')
 
         # Sort by timestamp to ensure oldest are truly first for weighting
