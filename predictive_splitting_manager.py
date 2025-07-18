@@ -17,6 +17,7 @@ class PredictiveSplittingManager:
         self.history_latency = deque(maxlen=window_size)
 
         self.last_shock_flags = (False, False, False)
+        self.shock_flags = {}
         self.last_obs_latency = (0.0, 0.0, 0.0)
         self.last_k = None
 
@@ -134,6 +135,12 @@ class PredictiveSplittingManager:
                 server_model.estimate_total_time(34 - k) * (
                             1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
             )
+
+            if shock_s:
+                self.logger.log(f'is shock server')
+                self.logger.log(f'new: {server_model.estimate_total_time(34 - k) * (1 - self.lm_manager.predict_exit_rate(head_name, ppl))}')
+                self.logger.log(f'org: {self.avg_server[k]}')
+
 
             self.set_avg_latency(k, client_part, comm_part, server_part)
             est = client_part + comm_part + server_part
