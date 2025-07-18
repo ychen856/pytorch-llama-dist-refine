@@ -142,7 +142,7 @@ class PredictiveSplittingManager:
                 self.logger.log(f'org: {self.avg_server[k]}')
 
 
-            self.set_avg_latency(k, client_part, comm_part, server_part)
+            #self.set_avg_latency(k, client_part, comm_part, server_part)
             est = client_part + comm_part + server_part
 
             self.logger.log(f'k: {k}')
