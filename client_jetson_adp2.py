@@ -689,6 +689,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'new end: {end_idx}')
 
+            data_store._statisitc_period = max(10, math.floor(data_store._statisitc_period * 2 / 3))
             performance_data_store.new_record_count = 0
             cycle_count = 0
 
