@@ -93,6 +93,7 @@ class PredictiveSplittingManager:
         server_model = LinearComputeTimeModel(startup_s, per_layer_s)
 
         shock_c, shock_m, shock_s = self.last_shock_flags
+        logger.log(f'shock flags: {self.last_shock_flags}')
 
         client_k = 0
         server_k = 0
