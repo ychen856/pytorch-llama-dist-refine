@@ -136,11 +136,6 @@ class PredictiveSplittingManager:
                             1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
             )
 
-            if shock_s:
-                self.logger.log(f'is shock server')
-                self.logger.log(f'new: {server_model.estimate_total_time(34 - k) * (1 - self.lm_manager.predict_exit_rate(head_name, ppl))}')
-                self.logger.log(f'org: {self.avg_server[k]}')
-
 
             #self.set_avg_latency(k, client_part, comm_part, server_part)
             est = client_part + comm_part + server_part
@@ -158,7 +153,7 @@ class PredictiveSplittingManager:
                 best_k = k
 
         self.reset_history()
-        # self.reset_avg()
+        self.reset_avg()
         return best_k if best_k is not None else k_opt
 
     def decide_k2(self, ppl, k_opt):
