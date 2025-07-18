@@ -252,7 +252,6 @@ class PerformanceDataStore:
 
         client_match_end_index_key = server_start_index - 1
 
-        print('pending client data: ', self.pending_client_data)
         matched_client_record = None
         if client_match_end_index_key in self.pending_client_data and self.pending_client_data[
             client_match_end_index_key]:

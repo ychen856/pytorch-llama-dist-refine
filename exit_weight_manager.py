@@ -44,6 +44,8 @@ class ExitWeightManager:
             logger.log(f'client_compute_time: {client_compute_time}')
             #comm_factor = client_compute_time / denom
             comm_factor = denom / client_compute_time
+            if comm_factor < 1:
+                comm_factor = 1
             logger.log(f'comm_factor: {comm_factor}')
             logger.log(f'exit_rate: {exit_rate}')
 
