@@ -46,6 +46,14 @@ class PredictiveSplittingManager:
         except KeyError:
             return False
 
+        self.logger.log(f'base client: {base_client}')
+        self.logger.log(f'base comm: {base_comm}')
+        self.logger.log(f'base server: {base_server}')
+
+        self.logger.log(f'obs client: {obs_client}')
+        self.logger.log(f'obs comm: {obs_comm}')
+        self.logger.log(f'obs server: {obs_server}')
+
         shock_c = obs_client > base_client * self.alpha
         shock_m = obs_comm   > base_comm   * self.alpha
         shock_s = obs_server > base_server * self.alpha
@@ -57,6 +65,7 @@ class PredictiveSplittingManager:
     def record_latency(self, k, obs_client, obs_comm, obs_server):
         self.last_k = k
         self.last_obs_latency = (obs_client, obs_comm, obs_server)
+
 
         shock = self.is_shock(k, obs_client, obs_comm, obs_server)
         self.logger.log(f'is shock! {shock}')
