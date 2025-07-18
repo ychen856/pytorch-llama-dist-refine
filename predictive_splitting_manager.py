@@ -59,6 +59,7 @@ class PredictiveSplittingManager:
         self.last_obs_latency = (obs_client, obs_comm, obs_server)
 
         shock = self.is_shock(k, obs_client, obs_comm, obs_server)
+        self.logger.log(f'is shock! {shock}')
         self.history.append(shock)
         self.history_k.append(k)
         self.history_latency.append((obs_client, obs_comm, obs_server))
