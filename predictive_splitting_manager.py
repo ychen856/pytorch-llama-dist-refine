@@ -188,6 +188,9 @@ class PredictiveSplittingManager:
             est = client_part + comm_part + server_part
 
             self.logger.log(f'k: {k}')
+            self.logger.log(f'shock c: {shock_c}')
+            self.logger.log(f'shock m: {shock_m}')
+            self.logger.log(f'shock s: {shock_s}')
             self.logger.log(f'avg client: {self.avg_client[k]}')
             self.logger.log(f'avg server: {self.avg_server[k]}')
             self.logger.log(f'avg comm: {self.avg_comm[k]}')
