@@ -495,7 +495,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
 
     if optimal_key_found:
         if data_store.optimal_latency_history *  1.1 < min_weighted_latency:
-            data_store._statisitc_period = max(10, math.floor(data_store._statisitc_period * 2 / 3))
+            data_store._statisitc_period = max(10, math.floor((data_store._statisitc_period * 2 / 3) / 2) * 2)
         elif data_store.optimal_latency_history *  1.1 > min_weighted_latency:
             data_store._statisitc_period = min(100, data_store._statisitc_period + 6)
 
