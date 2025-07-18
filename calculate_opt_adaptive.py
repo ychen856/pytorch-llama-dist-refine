@@ -446,13 +446,13 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
         individual_latencies_with_timestamps_is_early.sort(key=lambda x: x[1])
 
         if len(individual_latencies_with_timestamps_not_early) > 1:
-            individual_latencies_with_timestamps_not_early = remove_latency_outliers_iqr(individual_latencies_with_timestamps_not_early)
-            #max_latency_entry = max(individual_latencies_with_timestamps_not_early, key=lambda x: x[0])
-            #individual_latencies_with_timestamps_not_early.remove(max_latency_entry)
+            #individual_latencies_with_timestamps_not_early = remove_latency_outliers_iqr(individual_latencies_with_timestamps_not_early)
+            max_latency_entry = max(individual_latencies_with_timestamps_not_early, key=lambda x: x[0])
+            individual_latencies_with_timestamps_not_early.remove(max_latency_entry)
         if len(individual_latencies_with_timestamps_is_early) > 1:
-            individual_latencies_with_timestamps_is_early = remove_latency_outliers_iqr(individual_latencies_with_timestamps_is_early)
-            #max_latency_entry = max(individual_latencies_with_timestamps_is_early, key=lambda x: x[0])
-            #individual_latencies_with_timestamps_is_early.remove(max_latency_entry)
+            #individual_latencies_with_timestamps_is_early = remove_latency_outliers_iqr(individual_latencies_with_timestamps_is_early)
+            max_latency_entry = max(individual_latencies_with_timestamps_is_early, key=lambda x: x[0])
+            individual_latencies_with_timestamps_is_early.remove(max_latency_entry)
 
         weighted_sum_for_path = 0.0
         total_weight_for_path = 0.0
