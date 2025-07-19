@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import nnls
 def get_lm_head_idx(end_idx):
 
     lm_heads = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20]
@@ -34,6 +35,16 @@ def remove_latency_outliers_iqr(data):
 
     filtered = [(t, l) for (t, l) in data if lower <= l <= upper]
     return filtered
+
+
+def fit_linear_model_non_negative(xs, ys):
+    """
+    Fit T = t0 + delta_t * x, with t0 ≥ 0, delta_t ≥ 0
+    """
+    X = np.vstack([np.ones(len(xs)), xs]).T  # shape: (N, 2)
+    y = np.array(ys)
+    coef, _ = nnls(X, y)
+    return coef[0], coef[1]  # t0, delta_t
 
 def fit_linear_model(ks, total_times):
     X = np.vstack([np.ones(len(ks)), ks]).T  # [1, k]
