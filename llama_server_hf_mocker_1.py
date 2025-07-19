@@ -156,6 +156,7 @@ def task1_data_receiving(args):
 
 def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=True):
     sleep_time = 0
+    comm_sleep_time = 0
     pid = os.getpid()
     curr_thread = current_thread().name
     curr_process = current_process().name
@@ -173,12 +174,16 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
         else:
             input = http_receiver.get_in_queue_data()
 
-        if input[0] == 'server' or input[0] == 'communication':
+        if input[0] == 'server':
             sleep_time = input[1]
             print('sleep time: ', sleep_time)
             http_receiver.set_outgoing_queue(['T'])
             continue
 
+        if input[0] == 'communication':
+            comm_sleep_time = input[1]
+            http_receiver.set_outgoing_queue(['T'])
+            continue
 
         #received original data
         start_idx = input[0]
@@ -259,6 +264,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
         print('end compute time: ', time.time())
         print('total computation time: ', total_comp_time)
 
+        time.sleep(comm_sleep_time)
         http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
         '''shift_logits = lm_logits[:, :-1, :].contiguous()
 

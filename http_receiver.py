@@ -70,8 +70,8 @@ class S(BaseHTTPRequestHandler):
 
         decrypt_data = pickle.loads(post_data)
 
-        if decrypt_data[0] == 'communication':
-            S.sleep_time = decrypt_data[1]
+        #if decrypt_data[0] == 'communication':
+            #S.sleep_time = decrypt_data[1]
             #set_outgoing_queue(['T'])
 
 
