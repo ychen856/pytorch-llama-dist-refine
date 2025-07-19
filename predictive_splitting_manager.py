@@ -80,8 +80,8 @@ class PredictiveSplittingManager:
 
     def decide_k(self, ppl, k_opt):
         self.logger.log(f'history: {self.history_latency}')
-        startup_c, per_layer_c = utils.remove_latency_outliers_iqr([k + 1 for k in self.history_k], [c for (c, _, _) in self.history_latency])
-        startup_s, per_layer_s = utils.remove_latency_outliers_iqr(
+        startup_c, per_layer_c = utils.fit_linear_model_non_negative([k + 1 for k in self.history_k], [c for (c, _, _) in self.history_latency])
+        startup_s, per_layer_s = utils.fit_linear_model_non_negative(
             [34 - k for k in self.history_k],
             [s for (_, _, s) in self.history_latency]
         )

@@ -350,6 +350,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
         testenc = None
         outgoing_queue.put(['server', 0])
+        outgoing_queue.put(['communication', 0])
 
         while True and not stop_event.is_set():
 
