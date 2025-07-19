@@ -74,7 +74,7 @@ init_params = {
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
 shock_manager = PredictiveSplittingManager(lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
 
-sleep_time = 0
+sleep_time_per_layer = 0
 performance_data_store = PerformanceDataStore(shock_manager, logger)
 input_queue = Queue()
 outgoing_queue = Queue()
@@ -347,8 +347,8 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
 
     elif mode == 2:  # stream arrival
-
         testenc = None
+        global sleep_time_per_layer
         outgoing_queue.put(['server', 0])
         outgoing_queue.put(['communication', 0])
 
@@ -385,6 +385,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                     return
 
             if batch_count == 20:
+                sleep_time_per_layer = 0.3
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
@@ -398,7 +399,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
-                outgoing_queue.put(['communication', 1])
+                #outgoing_queue.put(['communication', 1])
 
             if is_first:
                 testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
@@ -557,17 +558,19 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         with torch.no_grad():
             # Forward pass through the model
             try:
+                time.sleep(sleep_time_per_layer)
                 out, ids, mask = models[0](input)
             except Exception as e:
                 print(e)
 
-            time.sleep(sleep_time)
+
             for k in range(1, end_idx + 1):
                 try:
+                    time.sleep(sleep_time_per_layer)
                     out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
-
                     if k == head_idx:
                         try:
+                            time.sleep(sleep_time_per_layer)
                             is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                         except Exception as e:
                             print('early oom!')
