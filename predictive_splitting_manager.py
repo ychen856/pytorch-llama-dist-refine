@@ -134,7 +134,7 @@ class PredictiveSplittingManager:
             )
             server_part = (
                 server_model.estimate_total_time(34 - k) * (
-                            1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if shock_s else self.avg_server[k]
+                            1 - self.lm_manager.predict_exit_rate(head_name, ppl)) if (shock_m or shock_s) else self.avg_server[k]
             )
 
 
