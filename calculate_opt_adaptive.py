@@ -545,7 +545,7 @@ def calculate_opt2(data_store: PerformanceDataStore):
     current_optimal_set = None
 
     for (start_idx, end_idx), records in all_data.items():
-        if not records:
+        if (not records) or (len(records) < 3):
             continue
 
         total_client_time = 0.0
