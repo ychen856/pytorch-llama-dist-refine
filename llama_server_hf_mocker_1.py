@@ -173,7 +173,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
         else:
             input = http_receiver.get_in_queue_data()
 
-        if input[0] == 'server':
+        if input[0] == 'server' or input[0] == 'communication':
             sleep_time = input[1]
             print('sleep time: ', sleep_time)
             http_receiver.set_outgoing_queue(['T'])

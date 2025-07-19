@@ -72,7 +72,7 @@ class S(BaseHTTPRequestHandler):
 
         if decrypt_data[0] == 'communication':
             S.sleep_time = decrypt_data[1]
-            set_outgoing_queue(['T'])
+            #set_outgoing_queue(['T'])
 
 
         incoming_queue.put(decrypt_data)
