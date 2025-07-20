@@ -696,7 +696,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             performance_data_store._statisitc_period = max(10, math.floor((performance_data_store._statisitc_period * 2 / 3) / 2) * 2)
             performance_data_store.new_record_count = 0
             logger.log(f'new period: {performance_data_store._statisitc_period}')
-            performance_data_store.new_record_count = 0
+            performance_data_store._new_record_count = 0
             cycle_count = 0
 
 
