@@ -32,6 +32,9 @@ class ExitWeightManager:
             # 線性版本：early_weight = λ * exit_rate + (1-λ)
             return self.linear_lambda * exit_rate + (1 - self.linear_lambda)
 
+        elif self.mode == "exit-rate2":
+            return exit_rate
+
         elif self.mode == "exit-rate":
             return self.lambda_base + (self.lambda_max - self.lambda_base) * exit_rate
 
