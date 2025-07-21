@@ -105,36 +105,36 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
         # resp_message = [start_idx, total_comp_time, idx]
         resp_message = pickle.loads(resp_str)
 
+        print('zzzzzzzz: ', resp_message[0])
         if resp_message[0] == "T":
             http_receiver.outgoing_queue.put(["T"])
-            return
+        else:
+            resp_message = resp_message[0]
+            resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
+            print('server side resp: ', resp_message)
 
-        resp_message = resp_message[0]
-        resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
-        print('server side resp: ', resp_message)
+            server_start_idx = text[0]
+            start_idx = text[6]
+            idx = text[4]
+            input = text[1]
+            client_comp_time = text[5]
 
-        server_start_idx = text[0]
-        start_idx = text[6]
-        idx = text[4]
-        input = text[1]
-        client_comp_time = text[5]
+            if not resp_message[0] == -1:
+                timestamp_manager.end_times = (resp_message[2], end_time2)
 
-        if not resp_message[0] == -1:
-            timestamp_manager.end_times = (resp_message[2], end_time2)
+            if not (resp_message[0] == 0 or resp_message[0] == -1):
+                print('data stored!')
+                performance_data_store.incoming_count = performance_data_store.incoming_count + 1
+                performance_data_store.add_server_info(datetime.now() + timedelta(milliseconds=50), resp_message[0], 34, resp_message[1], resp_message[3] - resp_message[1])
 
-        if not (resp_message[0] == 0 or resp_message[0] == -1):
-            print('data stored!')
-            performance_data_store.incoming_count = performance_data_store.incoming_count + 1
-            performance_data_store.add_server_info(datetime.now() + timedelta(milliseconds=50), resp_message[0], 34, resp_message[1], resp_message[3] - resp_message[1])
+            #returning_queue.put(resp_message)
+            print('http receiving: ', server_start_idx, rtt)
+            print('rrt: ', rtt)
+            gc.collect()
 
-        #returning_queue.put(resp_message)
-        print('http receiving: ', server_start_idx, rtt)
-        print('rrt: ', rtt)
-        gc.collect()
-
-        # middle devices used only
-        if client_comp_time is not None:
-            http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
+            # middle devices used only
+            if client_comp_time is not None:
+                http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
 
     except:
         print('error')
