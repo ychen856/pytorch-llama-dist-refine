@@ -505,6 +505,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             input = http_receiver.get_in_queue_data()'''
         input = http_receiver.get_in_queue_data()
 
+        print('????: ', input)
         if input[0] == 'gateway':
             sleep_time_per_layer = input[1]
             print('sleep time: ', sleep_time_per_layer)
