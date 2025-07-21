@@ -94,7 +94,6 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     resp = conn.getresponse()
 
     resp_data = resp.readlines()
-    print('TTTTTTTTTTTTTTTT:', resp_data)
     resp_str = b''
 
     for i in range(4, len(resp_data)):
@@ -105,6 +104,10 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     try:
         # resp_message = [start_idx, total_comp_time, idx]
         resp_message = pickle.loads(resp_str)
+
+        if resp_message[0] == "T":
+            http_receiver.outgoing_queue.put(["T"])
+            return
 
         resp_message = resp_message[0]
         resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
@@ -125,22 +128,18 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
             performance_data_store.add_server_info(datetime.now() + timedelta(milliseconds=50), resp_message[0], 34, resp_message[1], resp_message[3] - resp_message[1])
 
         #returning_queue.put(resp_message)
+        print('http receiving: ', server_start_idx, rtt)
+        print('rrt: ', rtt)
+        gc.collect()
+
+        # middle devices used only
+        if client_comp_time is not None:
+            http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
+
     except:
         print('error')
 
-    #print('return message: ', resp_message[0])
-    #returning_queue.append(resp_message)
 
-    #print('client receiving time: ', end_time2 - start_time2)
-    print('http receiving: ', server_start_idx, rtt)
-    print('rrt: ', rtt)
-    gc.collect()
-
-    #middle devices used only
-    if client_comp_time is not None:
-        http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
-    else:
-        http_receiver.outgoing_queue.put(['T'])
 
 if __name__ == "__main__":
     with open(args.config) as f:
