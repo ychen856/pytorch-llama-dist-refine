@@ -3,7 +3,6 @@
 import gc
 import math
 import threading
-from datetime import datetime
 
 import torch
 import time
@@ -11,7 +10,6 @@ from pathlib import Path
 import argparse
 import random
 
-from transformers.modeling_outputs import BaseModelOutputWithPast
 
 import http_receiver
 #import http_receiver2 as http_receiver
@@ -507,6 +505,15 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             input = http_receiver.get_in_queue_data()'''
         input = http_receiver.get_in_queue_data()
 
+        if input[0] == 'gateway':
+            sleep_time_per_layer = input[1]
+            print('sleep time: ', sleep_time_per_layer)
+            http_receiver.set_outgoing_queue(['T'])
+            continue
+
+        elif input[0] == 'server':
+            outgoing_queue_forward.put(['server', input[1]])
+            continue
 
         #if received original data
         start_idx = input[0]
@@ -529,15 +536,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             layer_amount = opt_layer_amount
             # http_receiver.set_outgoing_queue([-1, None, None])
             continue
-        elif input[0] == 'gateway':
-            sleep_time_per_layer = input[1]
-            print('sleep time: ', sleep_time_per_layer)
-            http_receiver.set_outgoing_queue(['T'])
-            continue
 
-        elif input[0] == 'server':
-            outgoing_queue_forward.put(['server', input[1]])
-            continue
         #end recieved original data
 
         print('start idx: ', start_idx)
