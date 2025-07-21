@@ -702,6 +702,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             performance_data_store._statisitc_period = max(10, math.floor((performance_data_store._statisitc_period * 2 / 3) / 2) * 2)
             performance_data_store.new_record_count = 0
             performance_data_store.data_storage.clear()
+            performance_data_store.data_store.data_storage = {
+            "client_to_server": collections.defaultdict(collections.deque),
+            "edge_to_server": collections.defaultdict(collections.deque)
+            }
             logger.log(f'new period: {performance_data_store._statisitc_period}')
             cycle_count = 0'''
 
