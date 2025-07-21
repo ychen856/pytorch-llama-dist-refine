@@ -94,7 +94,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     resp = conn.getresponse()
 
     resp_data = resp.readlines()
-    #print('TTTTTTTTTTTTTTTT:', resp_data)
+    print('TTTTTTTTTTTTTTTT:', resp_data)
     resp_str = b''
 
     if not resp_data[0] == 'T':
