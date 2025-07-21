@@ -625,7 +625,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         if is_early_exit or end_idx >= 34:
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
-
+            performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
+                                                        end_idx_buff, total_comp_time, head_idx, True)
 
         if not is_early_exit and end_idx < 34 and start_idx != 0:
             #not prune the feature vectur
@@ -635,7 +636,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #print('outgoing queue PUT!')
             #print('insert gateway statistics: ', [start_idx, end_idx, end_idx - start_idx, end_idx_buff, total_comp_time])
 
-            performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time)
+            performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
             #existed_statistic = find_row(calculate_opt.gateway_comp_statistics, 0, start_idx)
             existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
