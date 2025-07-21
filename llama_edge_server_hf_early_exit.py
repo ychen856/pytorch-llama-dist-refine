@@ -48,7 +48,7 @@ parser.add_argument('--mode', default='fixed')
 args = parser.parse_args()
 
 logger = Logger(filepath=args.log)
-head_names = [1, 2, 3, 4, 6]
+head_names = [1, 2, 3, 4, 6, 8, 10]
 ppl_list = [10, 20, 30]
 '''init_params = {
     (1, 10): {'a': 407,  'b': 2093, 'gamma': 1.0},
