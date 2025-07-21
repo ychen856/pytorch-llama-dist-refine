@@ -64,7 +64,7 @@ communication:
     #server_ip: 104.171.203.49
     #server_port: 8000
 
-    #--gateway_ip: 10.7.48.14
+    #gateway_ip: 10.7.48.14
     #gateway_ip: 192.168.0.136
 
     # lab pc
@@ -72,8 +72,8 @@ communication:
     #gateway_port: 8000
 
     #lab server
-    #gateway_ip: 10.7.48.68
-    #gateway_port: 8000
+    gateway_ip: 10.7.48.68
+    gateway_port: 8000
 
     #nrp edge server
     #gateway_ip: test-edge-server-service.nrp-nautilus.io
