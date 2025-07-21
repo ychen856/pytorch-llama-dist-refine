@@ -98,7 +98,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #print('TTTTTTTTTTTTTTTT:', resp_data)
     resp_str = b''
 
-
+    logger.log(f'resp data: ', resp_data)
     if not resp_data[0] == 'T':
         for i in range(4, len(resp_data)):
             resp_str = resp_str + resp_data[i]
