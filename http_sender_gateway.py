@@ -64,11 +64,7 @@ def pop_incoming_queue():
 
 def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager):
     start_time = time.time()
-    server_start_idx = text[0]
-    start_idx = text[6]
-    idx = text[4]
-    input = text[1]
-    client_comp_time = text[5]
+
     newx = pickle.dumps(text)
     total_size = len(newx)
     print('communication size: ', total_size)
@@ -102,6 +98,12 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     resp_str = b''
 
     if not resp_data[0] == 'T':
+        server_start_idx = text[0]
+        start_idx = text[6]
+        idx = text[4]
+        input = text[1]
+        client_comp_time = text[5]
+
         for i in range(4, len(resp_data)):
             resp_str = resp_str + resp_data[i]
         end_time2 = time.time()
