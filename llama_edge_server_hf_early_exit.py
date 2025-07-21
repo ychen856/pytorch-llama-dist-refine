@@ -512,7 +512,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             http_receiver.set_outgoing_queue(['T'])
             continue
 
-        if input[9] == 'communication':
+        if input[0] == 'communication':
             http_receiver.set_outgoing_queue(['T'])
             continue
 
