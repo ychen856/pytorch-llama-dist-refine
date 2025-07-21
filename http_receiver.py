@@ -8,11 +8,6 @@ import http_sender
 from queue import Queue
 import multiprocessing
 
-parser = argparse.ArgumentParser(
-    description='Pytorch Imagenet Training')
-parser.add_argument('--config', default='config_server.yaml')
-args = parser.parse_args()
-
 #incoming_queue = []
 #outgoing_queue = []
 
