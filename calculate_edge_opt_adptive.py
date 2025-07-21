@@ -148,16 +148,12 @@ class PerformanceDataStore:
         else:
             raise ValueError(f"Unknown record_type: {record_type}")
 
-        '''target_deque = self.data_storage[record_type][key]
-        if len(target_deque) >= self.max_records_per_type:
+        target_deque = self.data_storage[record_type][key]
+        if len(target_deque) >= self.max_records_per_type + self.statistic_period:
             target_deque.popleft()  # Remove the oldest if max size reached
-        target_deque.append(complete_record)'''
-        print('FFFFFFF: ', self.data_storage)
-        if len(self.data_storage) == 0 or len(self.data_storage[record_type][key]) < self.max_records_per_type + self.statistic_period:
-            self.data_storage[record_type][key].append(complete_record)
-        else:
-            self.data_storage[record_type][key].popleft()  # Remove the oldest
-            self.data_storage[record_type][key].append(complete_record)
+
+        target_deque.append(complete_record)
+
 
         if not complete_record['is_early_exit']:
             self.new_record_count = self.new_record_count + 1
