@@ -384,7 +384,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
                     return
 
-            if batch_count == 20:
+            '''if batch_count == 20:
                 sleep_time_per_layer = 0.3
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
@@ -399,7 +399,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
                 logger.log(f'??????????????????????')
-                #outgoing_queue.put(['communication', 1])
+                #outgoing_queue.put(['communication', 1])'''
 
             if is_first:
                 testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
@@ -494,8 +494,8 @@ def task1_data_sending(args):
 
         data = outgoing_queue.get()
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-        #http_sender.send_data(args.server_ip, args.server_port, data, calculate_opt, timestamp_manager)
-        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        #http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager)
 
 
 '''def task2_computation():

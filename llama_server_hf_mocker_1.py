@@ -196,7 +196,6 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
 
 
         print('start idx: ', start_idx)
-        #input = http_receiver.get_in_queue_data()
         print('start compute time: ', time.time())
         start_time = time.time()
         # Forward pass through the model
@@ -267,27 +266,10 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
 
         time.sleep(comm_sleep_time)
         http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
-        '''shift_logits = lm_logits[:, :-1, :].contiguous()
-
-        print('shift logits: ', shift_logits)
-
-        # Compute loss
-        loss_fct = nn.CrossEntropyLoss()
-        print('what is this? ', shift_logits.reshape(-1, shift_logits.size(-1)))
-
-        preds = F.softmax(shift_logits.reshape(-1, shift_logits.size(-1))).argmax(dim=-1)
-        print('preds: ', preds)
-        #inps = torch.tensor([1]).cuda()
-        #new_preds = torch.cat((inps, preds))
-        #print('new preds: ', new_preds)
-        reshaped_tensor = preds.view(1, -1)
-        print('output size: ', reshaped_tensor.size())
-        print('reshape: ', reshaped_tensor)
-        print(tokenizer.batch_decode(reshaped_tensor, skip_special_tokens=True, clean_up_tokenization_spaces=False))'''
 
 
 
-    print('round time: ', time.time() - start_time_0)
+    #print('round time: ', time.time() - start_time_0)
 
 def init_worker(mps, fps, cut):
     global memorizedPaths, filepaths, cutoff
@@ -347,3 +329,4 @@ if __name__ == '__main__':
     thread1.join()
     thread2.join()
     print('total_time: ', time.time() - start_time)
+

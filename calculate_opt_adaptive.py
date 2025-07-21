@@ -4,7 +4,6 @@ import threading
 from datetime import datetime, timedelta
 
 import utils
-from utils import *
 from exit_weight_manager import ExitWeightManager
 
 class PerformanceDataStore:
@@ -460,8 +459,8 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
         for i, (latency, _) in enumerate(individual_latencies_with_timestamps_not_early):
             if i < data_store.max_records_per_type:
                 print('A')
-                weighted_sum_for_path += latency * WEIGHT_OLD
-                total_weight_for_path += WEIGHT_OLD
+                weighted_sum_for_path += latency * WEIGHT_OLD * WEIGHT_EARLY
+                total_weight_for_path += WEIGHT_OLD * WEIGHT_EARLY
             else:
                 print('B')
                 weighted_sum_for_path += latency * WEIGHT_NEW
