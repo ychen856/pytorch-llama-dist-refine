@@ -672,7 +672,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #statistics_period = statistics_period + 5
             end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
             if is_fisrt_opt:
-                outgoing_queue.put('opt', end_idx)
+                outgoing_queue.put(['opt', end_idx])
                 is_fisrt_opt = False
 
             print('opt end idx: ', end_idx)
