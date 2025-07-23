@@ -6,7 +6,7 @@ import utils
 from exit_weight_manager import ExitWeightManager
 
 class PerformanceDataStore:
-    def __init__(self, shock_manager, logger, max_records_per_type=0, statisitc_period=10):
+    def __init__(self, shock_manager, global_initial_estimator, logger, max_records_per_type=0, statisitc_period=10):
         """
         Initializes the CommunicationDataStore.
 
@@ -48,6 +48,7 @@ class PerformanceDataStore:
         self._new_record_count = 0
         self._steady_state = False
         self.shock_manager = shock_manager
+        self.global_initial_estimator = global_initial_estimator
         self.logger = logger
 
 
@@ -166,6 +167,11 @@ class PerformanceDataStore:
                                               obs_client=complete_record["edge_server_computation_time"],
                                               obs_comm=complete_record["communication_time_edge_to_server"],
                                               obs_server=complete_record["server_computation_time"])
+            self.global_initial_estimator.add_sample(complete_record["edge_server_start_index"],
+                                                     complete_record["edge_server_end_index"] - complete_record["edge_server_start_index"] + 1,
+                                                     complete_record["edge_server_computation_time"],
+                                                     complete_record["communication_time_edge_to_server"],
+                                                     complete_record["server_computation_time"])
 
         # print(f"[{datetime.now()}] Combined record added to main storage for type '{record_type}' with key {key}. Current count: {len(target_deque)}")
 

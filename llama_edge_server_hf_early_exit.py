@@ -34,9 +34,11 @@ from calculate_edge_opt_adptive import *
 #from calculate_opt import Calcualte_opt, find_row
 from early_exit import early_exit_cpu, early_exit_cuda, early_exit_lm_head
 from predictive_splitting_manager import PredictiveSplittingManager
+from predictive_splitting_manager_2 import EdgeSplittingManagerPool
 from timestamp_manager import Timestamp_manager
 from threading import current_thread, Thread
 from multiprocessing import current_process
+from global_initial_estimator import GlobalInitialStageEstimator
 from logger import Logger
 parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
@@ -92,12 +94,13 @@ init_params = {
 
 }
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
-shock_manager = PredictiveSplittingManager(lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
-
+#shock_manager = PredictiveSplittingManager(lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
+edgeSplittingManagerPool = EdgeSplittingManagerPool(34, lm_manager, logger)
+global_initial_estimator = GlobalInitialStageEstimator(lm_manager, logger, 34)
 incoming_queue = Queue()
 outgoing_queue_forward = Queue()
 outgoing_queue_return = Queue()
-performance_data_store = PerformanceDataStore(shock_manager, logger)
+performance_data_store = PerformanceDataStore(edgeSplittingManagerPool, global_initial_estimator, logger)
 timestamp_manager = Timestamp_manager(logger)
 nsamples = 0
 temp = []
@@ -452,6 +455,11 @@ def task1_data_sending(args):
                 timestamp_manager.start_times = (idx, start_time)
 
                 input = incoming_queue.get()
+
+                if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
+                    incoming_queue.put(input)
+                    continue
+
                 start_idx = input[0]
                 out = input[1]
                 ids = input[2]
@@ -511,14 +519,18 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             print('sleep time: ', sleep_time_per_layer)
             http_receiver.set_outgoing_queue(['T'])
             continue
-
         if input[0] == 'communication':
             http_receiver.set_outgoing_queue(['T'])
             continue
-
-        elif input[0] == 'server':
+        if input[0] == 'server':
             outgoing_queue_forward.put(['server', input[1]])
             continue
+        if input[0] == 'opt':
+            end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1] + 1)
+            end_idx_buff = end_idx + 1
+            http_receiver.set_outgoing_queue(['T'])
+            continue
+
 
         #if received original data
         start_idx = input[0]
@@ -575,7 +587,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     if k == head_idx:
                         try:
                             time.sleep(sleep_time_per_layer)
-                            is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx)
+                            is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                             #print('is early: ', is_early_exit)
                         except Exception as e:
                             print('early oom!')
@@ -676,7 +688,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         #if (input_count) % 10 == 0:
         if performance_data_store.new_record_count >= statistics_period:
             #print(performance_data_store.get_all_data_by_type("edge_to_server"))
-            end_idx, end_idx_buff, statistics_period = calculate_edge_server_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger, start_idx)
+            end_idx, end_idx_buff, statistics_period = calculate_edge_server_opt(performance_data_store, args.ppl, lm_manager, args.mode, edgeSplittingManagerPool, logger, start_idx)
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
             end_idx_buff = min(max_layers, end_idx_buff)
@@ -687,10 +699,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             if not lm_head == head_idx:
                 head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
             cycle_count = 0
-        '''elif performance_data_store.steady_state and shock_manager.is_trigger_override():
-            end_idx = shock_manager.decide_k(args.ppl, end_idx)
+        elif performance_data_store.steady_state and edgeSplittingManagerPool.is_trigger_override():
+            end_idx = edgeSplittingManagerPool.decide_m(start_idx, end_idx, args.ppl)
             end_idx_buff = end_idx + 1
-            shock_manager.reset_history()
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
@@ -702,12 +713,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             performance_data_store._statisitc_period = max(10, math.floor((performance_data_store._statisitc_period * 2 / 3) / 2) * 2)
             performance_data_store.new_record_count = 0
             performance_data_store.data_storage.clear()
-            performance_data_store.data_store.data_storage = {
+            performance_data_store.data_storage = {
             "client_to_server": collections.defaultdict(collections.deque),
             "edge_to_server": collections.defaultdict(collections.deque)
             }
             logger.log(f'new period: {performance_data_store._statisitc_period}')
-            cycle_count = 0'''
+            cycle_count = 0
 
         #max_layers = start_idx + max_layer_amount
 
