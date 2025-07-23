@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import nnls
 def get_lm_head_idx(end_idx):
 
-    lm_heads = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    lm_heads = [1, 2, 3, 4, 6, 8, 10]
     lm_head = 1
     lm_head_idx = 0
 
