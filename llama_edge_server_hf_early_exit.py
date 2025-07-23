@@ -526,8 +526,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put(['server', input[1]])
             continue
         if input[0] == 'opt':
-            end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1] + 1)
-            end_idx_buff = end_idx + 1
+            #end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1] + 1)
+            #end_idx_buff = end_idx + 1
             http_receiver.set_outgoing_queue(['T'])
             continue
 

@@ -131,7 +131,7 @@ class EdgeSplittingManagerPool:
         is_shock = manager.is_shock(m, edge_time, comm_time, server_time)
         self.total_shocks.append(is_shock)
         manager.record_latency(m, edge_time, comm_time, server_time)
-        self.logger.log(f"shock: {is_shock}, total recent shocks: {sum(self.total_shocks)}")
+        #self.logger.log(f"shock: {is_shock}, total recent shocks: {sum(self.total_shocks)}")
         return is_shock
 
     def set_avg_latency(self, start_idx, m, edge_time, comm_time, server_time):
