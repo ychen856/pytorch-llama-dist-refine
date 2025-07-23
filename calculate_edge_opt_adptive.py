@@ -162,11 +162,11 @@ class PerformanceDataStore:
 
         if not complete_record['is_early_exit']:
             self.new_record_count = self.new_record_count + 1
-
-            self.shock_manager.record_latency(k=complete_record["edge_server_end_index"] - complete_record["edge_server_start_index"] + 1,
-                                              obs_client=complete_record["edge_server_computation_time"],
-                                              obs_comm=complete_record["communication_time_edge_to_server"],
-                                              obs_server=complete_record["server_computation_time"])
+            self.shock_manager.record_latency_and_check_shock(complete_record["edge_server_start_index"],
+                                                              complete_record["edge_server_end_index"] - complete_record["edge_server_start_index"] + 1,
+                                                                complete_record["edge_server_computation_time"],
+                                                                complete_record["communication_time_edge_to_server"],
+                                                                complete_record["server_computation_time"])
             self.global_initial_estimator.add_sample(complete_record["edge_server_start_index"],
                                                      complete_record["edge_server_end_index"] - complete_record["edge_server_start_index"] + 1,
                                                      complete_record["edge_server_computation_time"],
