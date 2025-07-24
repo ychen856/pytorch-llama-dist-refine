@@ -441,7 +441,7 @@ def task1_data_sending(args):
         #print('zzz', calculate_opt.steady_state)
         #while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
         #while outgoing_queue.empty() and input_queue.qsize() > 0:
-        while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0: #and calculate_opt.steady_state:
+        while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
         #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
             timeout_count = timeout_count + 1
 
@@ -625,6 +625,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     break
 
             print('is early: ', is_early_exit)
+            logger.log(f'is early: {is_early_exit}')
 
         if not is_early_exit and end_idx >= 33:
             start_time = time.time()
