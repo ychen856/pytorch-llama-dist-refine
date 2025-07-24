@@ -108,13 +108,13 @@ temp = []
 
 
 def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
-    if type == 1: #add buffer layers
-        #print('increase buffer')
+    if type == 1:  # add buffer layers
+        # print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
-            args.ckpt_dir_hf,
+            args.ckpt_dir_hf_sep,
             return_unused_kwargs=True
         )
-        #print('config: ', config)
+        # print('config: ', config)
 
         checkpoint_list = []
         checkpoints = sorted(Path(args.ckpt_dir_hf_sep).glob("consolidated.*.pth"))
@@ -138,15 +138,13 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         else:
             end_idx_buff = max_layers
 
-
         if device.type == 'cuda':
             torch.set_default_tensor_type(torch.cuda.HalfTensor)
         else:
             torch.set_default_tensor_type(torch.BFloat16Tensor)
 
-
         for i in range(start_idx, end_idx_buff + 1):
-            #print('i: ', i)
+            # print('i: ', i)
             try:
                 if i == 0:
                     models.append(LlamaForCausalLM_emb(config))
@@ -188,7 +186,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
 
         start_idx_buff = max(0, start_idx - 3)
         #print('FFFFFFFFFFff: ', max_layers)
-        checkpoints = checkpoints[start_idx_buff:max_layers]
+        checkpoints = checkpoints[start_idx_buff : max_layers]
         checkpoint_idx = start_idx_buff
 
         '''print('start idxzzzz: ', start_idx_buff)
@@ -198,6 +196,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         print('end idx buff: ', end_idx_buff)'''
         for checkpoint in checkpoints:
             print('checkpoint idx: ', checkpoint_idx)
+            logger.log(f'checkpoint idx: {checkpoint_idx}')
             if checkpoint_idx > end_idx_buff:
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
@@ -206,6 +205,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
 
             checkpoint_idx = checkpoint_idx + 1
+
 
         end_idx_buff = max_layers
 
