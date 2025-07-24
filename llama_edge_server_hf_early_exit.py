@@ -569,6 +569,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         print('start idx: ', start_idx)
         print('end idx: ', end_idx)
+        logger.log(f'start_buff_idx: {start_idx_buff}')
         logger.log(f'start_idx: {start_idx}')
         logger.log(f'end_idx: {end_idx}')
 
