@@ -33,7 +33,6 @@ class PerformanceDataStore:
         # Key: server_start_index (since this is what we have)
         # Value: List of server records with that start_index
         self.pending_server_data = collections.defaultdict(collections.deque)
-
         self.optimal_latency_history = math.inf
 
 
@@ -49,6 +48,8 @@ class PerformanceDataStore:
         self._steady_state = False
         self.shock_manager = shock_manager
         self.global_initial_estimator = global_initial_estimator
+
+        self.optimal_latency_map = {}
         self.logger = logger
 
 
@@ -515,6 +516,25 @@ class PerformanceDataStore:
         }
         return status
 
+    def get_optimal_end_idx(self, start_idx):
+        """
+        回傳該 start_idx 對應的最佳 end_idx 與 latency。
+        若該 start_idx 尚未記錄，則回傳 None。
+        """
+        return self.optimal_latency_map.get(start_idx, None)
+
+    def set_optimal_set(self, start_idx, end_idx, latency):
+        """
+        若該 start_idx 尚未記錄，或 latency 優於目前記錄的值，則更新。
+        否則不更新。
+        """
+        current = self.optimal_latency_map.get(start_idx)
+        if current is None or latency < current[1]:
+            self.optimal_latency_map[start_idx] = (end_idx, latency)
+            return True  # 表示有更新
+        return False  # 表示未更新
+
+
 
 def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock_manager, logger, edge_server_start_idx: int):
     """
@@ -662,6 +682,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         else:  # No valid records or weights applied after removal
             continue
 
+        data_store.set_optimal_set(es_start, optimal_es_end_idx, current_weighted_avg_latency)
         # Find the path with the minimum weighted average latency
         if current_weighted_avg_latency < min_weighted_avg_latency:
             min_weighted_avg_latency = current_weighted_avg_latency
@@ -690,6 +711,8 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
     data_store._new_record_count = 0
     data_store.max_records_per_type = 0
     shock_manager.reset_history()
+
+    print('opt sets: ', data_store.optimal_latency_map)
 
     return optimal_es_end_idx, optimal_es_end_idx + 2,  data_store._statisitc_period
 
