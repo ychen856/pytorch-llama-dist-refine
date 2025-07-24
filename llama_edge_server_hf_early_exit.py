@@ -558,6 +558,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if result:
             end_idx, _ = result
 
+        print('start idx: ', start_idx)
+        print('end idx: ', end_idx)
+
         if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 3:  #remove buffer
@@ -565,8 +568,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         torch.cuda.empty_cache()
 
-        print('start idx: ', start_idx)
-        print('end idx: ', end_idx)
+
         #input = http_receiver.get_in_queue_data()
         #print('start compute time: ', time.time())
         start_time = time.time()
