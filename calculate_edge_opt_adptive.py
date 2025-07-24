@@ -682,7 +682,8 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         else:  # No valid records or weights applied after removal
             continue
 
-        data_store.set_optimal_set(es_start, optimal_es_end_idx, current_weighted_avg_latency)
+
+        data_store.set_optimal_set(es_start, es_end, current_weighted_avg_latency)
         # Find the path with the minimum weighted average latency
         if current_weighted_avg_latency < min_weighted_avg_latency:
             min_weighted_avg_latency = current_weighted_avg_latency
