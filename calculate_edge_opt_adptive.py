@@ -588,6 +588,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         if not latencies_with_timestamps:
             continue
 
+        print('(start, end): ', (es_start, es_end))
         # Sort by timestamp to ensure oldest are truly first for weighting
         latencies_with_timestamps.sort(key=lambda x: x[1])
 
@@ -611,6 +612,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         comm_count = 0.0
         server_count = 0.0
         for i, (latency, _, edge_comp_time, server_comp_time, comm_time, is_early) in enumerate(latencies_with_timestamps):
+            print('record(latency, timestamp, edge_comp_time, server_comp_time, comm_time, is_early): ', (latency, _, edge_comp_time, server_comp_time, comm_time, is_early))
             if not is_early:
                 latency_edge_server += edge_comp_time
                 latency_comm += comm_time

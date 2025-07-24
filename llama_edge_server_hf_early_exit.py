@@ -187,23 +187,21 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
 
         start_idx_buff = max(0, start_idx - 3)
-        print('FFFFFFFFFFff: ', max_layers)
+        #print('FFFFFFFFFFff: ', max_layers)
         checkpoints = checkpoints[start_idx_buff:max_layers]
         checkpoint_idx = start_idx_buff
 
-        print('start idxzzzz: ', start_idx_buff)
+        '''print('start idxzzzz: ', start_idx_buff)
         for layer in models:
             print('layer: ', layer)
 
-        print('end idx buff: ', end_idx_buff)
+        print('end idx buff: ', end_idx_buff)'''
         for checkpoint in checkpoints:
             print('checkpoint idx: ', checkpoint_idx)
             if checkpoint_idx > end_idx_buff:
-                print('yaaay')
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
             elif models[checkpoint_idx] is None:
-                print('nooon')
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
 

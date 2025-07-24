@@ -105,13 +105,13 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
         # resp_message = [start_idx, total_comp_time, idx]
         resp_message = pickle.loads(resp_str)
 
-        print('zzzzzzzz: ', resp_message[0])
+        #print('zzzzzzzz: ', resp_message[0])
         if resp_message[0] == ["T"]:
             http_receiver.outgoing_queue.put(["T"])
         else:
             resp_message = resp_message[0]
             resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
-            print('server side resp: ', resp_message)
+            #print('server side resp: ', resp_message)
 
             server_start_idx = text[0]
             start_idx = text[6]
