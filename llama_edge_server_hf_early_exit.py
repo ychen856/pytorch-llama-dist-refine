@@ -526,7 +526,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if input[0] == 'opt':
             #end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
             #end_idx_buff = end_idx + 1
+
             start_idx = input[1]
+            logger.log(f'opt start: {start_idx}')
 
             max_layers = start_idx - 3 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
@@ -551,7 +553,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         is_early_exit = False
         is_oom = False
 
-        if out is None:
+        '''if out is None:
             print()
             http_receiver.set_outgoing_queue([-1, None, None])
             max_layers = start_idx - 3 + max_layer_amount
@@ -563,7 +565,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             end_idx = start_idx + opt_layer_amount
             layer_amount = opt_layer_amount
             # http_receiver.set_outgoing_queue([-1, None, None])
-            continue
+            continue'''
 
         #end recieved original data
 
