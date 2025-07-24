@@ -593,9 +593,15 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         latencies_with_timestamps.sort(key=lambda x: x[1])
 
         # --- NEW LOGIC: Remove the data row with the most latency ---
-        if len(latencies_with_timestamps) > 1:  # Need at least two records to remove one and still have data
-            max_latency_entry = max(latencies_with_timestamps, key=lambda x: x[0])
-            latencies_with_timestamps.remove(max_latency_entry)
+        if len(latencies_with_timestamps) > 2:  # Need at least two records to remove one and still have data
+            #max_latency_entry = max(latencies_with_timestamps, key=lambda x: x[0])
+            #latencies_with_timestamps.remove(max_latency_entry)
+            for flag in [True, False]:
+                # Get candidates that match the flag
+                flagged_entries = [entry for entry in latencies_with_timestamps if entry[5] == flag]
+                if len(flagged_entries) > 0:
+                    max_entry = max(flagged_entries, key=lambda x: x[0])  # Find max segment_latency
+                    latencies_with_timestamps.remove(max_entry)
             # print(f"DEBUG ES_OPT: For path {(es_start, es_end)}, removed record with latency {max_latency_entry[0]:.4f}")
         # --- END NEW LOGIC ---
 
@@ -632,6 +638,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
                                                         latency_comm / (comm_count + 1e-6),
                                                         latency_server / (server_count + 1e-6))
         logger.log(f'early weight: {WEIGHT_EARLY}')
+
         # Apply weighted average
         for i, (latency, _, edge_comp_time, server_comp_time, comm_time, is_early) in enumerate(latencies_with_timestamps):
             if i < data_store.max_records_per_type:

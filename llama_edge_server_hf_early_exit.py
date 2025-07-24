@@ -511,7 +511,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             input = http_receiver.get_in_queue_data()'''
         input = http_receiver.get_in_queue_data()
 
-        print('????: ', input)
+        #print('????: ', input)
         if input[0] == 'gateway':
             sleep_time_per_layer = input[1]
             print('sleep time: ', sleep_time_per_layer)
@@ -664,7 +664,46 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             if len(existed_opt) == 0:
                 end_idx = start_idx + 2
             else:
-                if (input_count + 1) % 2 == 0 and input_count < 20 and end_idx < max_layers and statistics_period <= 10:
+                if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+                    print('testing higher value(i<12)')
+                    logger.log(f'testing higher value(i<30)')
+                    '''performance_data_store.max_end_idx = end_idx
+                    end_idx = end_idx + 1
+                    logger.log(f'new end: {end_idx}')'''
+
+                    performance_data_store.max_layer_amount = layer_amount
+                    layer_amount = layer_amount + 1
+
+                # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+                # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
+                logger.log(f'testing statistic period: {statistics_period}')
+                logger.log(f'testing cycle count: {cycle_count}')
+                logger.log(f'testing s-c: {statistics_period - cycle_count}')
+                if cycle_count > (statistics_period - 12) and input_count >= 24 and (
+                        statistics_period - cycle_count) % 4 == 0:
+                    print('testing lower value (i>12)')
+                    logger.log(f'testing lower value (i>30)')
+                    '''end_idx = max(1, end_idx - 1)
+                    logger.log(f'new end: {end_idx}')'''
+                    layer_amount = max(1, layer_amount - 2)
+
+
+                # if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+                # if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
+                if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and (
+                        statistics_period - cycle_count) % 4 == 0:
+                    print('testing higher value (i>30)')
+                    logger.log(f'testing higher value (i>30)')
+                    '''performance_data_store.max_end_idx = end_idx
+                    end_idx = end_idx + 1
+                    logger.log(f'new end: {end_idx}')'''
+                    performance_data_store.max_layer_amount = layer_amount
+                    layer_amount = layer_amount + 1
+
+
+
+
+                '''if (input_count + 1) % 2 == 0 and input_count < 20 and end_idx < max_layers and statistics_period <= 10:
                 #if (input_count + 1) % 3 == 0 and input_count < 20 and end_idx < max_layers and statistics_period <= 20:
                     #print('testing higher value(i<30)')
                     performance_data_store.max_layer_amount = layer_amount
@@ -679,7 +718,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 #if cycle_count > (statistics_period - 12) and input_count >= 20 and end_idx < max_layers and cycle_count % 3 == 0:
                     #print('testing higher value (i>30): ')
                     performance_data_store.max_layer_amount = layer_amount
-                    layer_amount = layer_amount + 1
+                    layer_amount = layer_amount + 1'''
 
                 end_idx = start_idx + layer_amount
 
