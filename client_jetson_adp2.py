@@ -522,7 +522,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     early_count = 0
     statistics_period = performance_data_store.statistic_period
     batch_size = 20
-    is_fisrt_opt = True
     # repeated 5->0, 10->1, 20->3
     global repeated
     #while not input_queue.empty():
@@ -671,9 +670,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #print('statistic')
             #statistics_period = statistics_period + 5
             end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
-            if is_fisrt_opt:
-                outgoing_queue.put(['opt', end_idx])
-                is_fisrt_opt = False
+            outgoing_queue.put(['opt', end_idx + 1])
 
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', end_idx_buff)
@@ -697,6 +694,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'new end: {end_idx}')
+
+            outgoing_queue.put(['opt', end_idx + 1])
 
             performance_data_store._statisitc_period = max(10, math.floor((performance_data_store._statisitc_period * 2 / 3) / 2) * 2)
             performance_data_store.new_record_count = 0
