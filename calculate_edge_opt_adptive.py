@@ -572,11 +572,15 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
     WEIGHT_OLD = 0
     WEIGHT_NEW = 1
 
+
+    for key_tuple, records_list in data_store.get_all_data_by_type('edge_to_server').items():
+        logger.log(f'(key_tuple, record_list):({key_tuple}, {records_list})')
+
     for key_tuple, records_list in relevant_data_by_full_key.items():
         current_es_start_idx, current_es_end_idx, server_start_idx = key_tuple
+        logger.log(f'record (start, end): ({current_es_start_idx}, {current_es_end_idx})')
 
         for record in records_list:
-            logger.log(f'record (start, end): ({current_es_start_idx}, {current_es_end_idx})')
             if (record.get("edge_server_computation_time") is not None and
                 record.get("server_computation_time") is not None and
                 record.get("communication_time_edge_to_server") is not None and
