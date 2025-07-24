@@ -712,7 +712,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
     data_store.max_records_per_type = 0
     shock_manager.reset_history()
 
-    print('opt sets: ', data_store.optimal_latency_map)
+    logger.log(f'optimal map: {data_store.optimal_latency_map}')
 
     return optimal_es_end_idx, optimal_es_end_idx + 2,  data_store._statisitc_period
 

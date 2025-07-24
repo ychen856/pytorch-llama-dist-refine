@@ -560,6 +560,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         print('start idx: ', start_idx)
         print('end idx: ', end_idx)
+        logger.log(f'start_idx: {start_idx}')
+        logger.log(f'end_idx: {end_idx}')
 
         if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
