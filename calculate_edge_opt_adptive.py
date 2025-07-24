@@ -576,6 +576,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         current_es_start_idx, current_es_end_idx, server_start_idx = key_tuple
 
         for record in records_list:
+            logger.log(f'record (start, end): ({current_es_start_idx}, {current_es_end_idx})')
             if (record.get("edge_server_computation_time") is not None and
                 record.get("server_computation_time") is not None and
                 record.get("communication_time_edge_to_server") is not None and
