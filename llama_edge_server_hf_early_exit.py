@@ -554,21 +554,23 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #end recieved original data
 
-        result = performance_data_store.get_optimal_end_idx(start_idx)
+        '''result = performance_data_store.get_optimal_end_idx(start_idx)
         if result:
             end_idx, _ = result
 
-        print('start idx: ', start_idx)
-        print('end idx: ', end_idx)
-        logger.log(f'start_idx: {start_idx}')
-        logger.log(f'end_idx: {end_idx}')
+        
 
         if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 3:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
-        torch.cuda.empty_cache()
+        torch.cuda.empty_cache()'''
+
+        print('start idx: ', start_idx)
+        print('end idx: ', end_idx)
+        logger.log(f'start_idx: {start_idx}')
+        logger.log(f'end_idx: {end_idx}')
 
 
         #input = http_receiver.get_in_queue_data()
@@ -775,12 +777,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         #max_layers = start_idx + max_layer_amount
 
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
-        '''if end_idx_buff < end_idx and end_idx_buff < max_layers:
+        if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 3:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
-        torch.cuda.empty_cache()'''
+        torch.cuda.empty_cache()
 
 
     performance_data_store.statistic_period = statistics_period
