@@ -604,7 +604,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'start_idx: {start_idx}')
         logger.log(f'end_idx: {end_idx}')
 
-
+        logger.log(f'input: {input}')
         #input = http_receiver.get_in_queue_data()
         #print('start compute time: ', time.time())
         start_time = time.time()
@@ -618,7 +618,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx]) # forward the original input to the server
 
             continue
-
 
         start_comp_time = time.time()
         with torch.no_grad():
