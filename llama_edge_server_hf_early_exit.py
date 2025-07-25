@@ -656,7 +656,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         print('oom!!!')
                         is_oom = True
 
-                        end_idx = min(0, k - 1)
+                        end_idx = max(0, k - 1)
 
                         #print('updated end idx: ', end_idx)
                         break
