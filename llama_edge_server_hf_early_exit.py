@@ -462,6 +462,7 @@ def task1_data_sending(args):
                 input = incoming_queue.get()
 
                 if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
+                    logger.log(f'I think this is where the error comes from...')
                     incoming_queue.put(input)
                     continue
 
