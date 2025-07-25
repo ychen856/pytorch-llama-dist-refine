@@ -583,17 +583,18 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #end recieved original data
 
-        '''result = performance_data_store.get_optimal_end_idx(start_idx)
+        result = performance_data_store.get_optimal_end_idx(start_idx)
         if result:
             end_idx, _ = result
 
         
 
-        if end_idx_buff < end_idx and end_idx_buff < max_layers:
+        '''if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 3:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
-
+        
+        
         torch.cuda.empty_cache()'''
 
         print('start idx: ', start_idx)
