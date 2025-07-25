@@ -122,7 +122,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
             if not resp_message[0] == -1:
                 timestamp_manager.end_times = (resp_message[2], end_time2)
 
-            if not (resp_message[0] == 0 or resp_message[0] == -1 or client_comp_time == 0):
+            #if not (resp_message[0] == 0 or resp_message[0] == -1 or client_comp_time == 0):
+            if not (client_comp_time == 0 or resp_message[0] == -1):
                 print('data stored!')
                 performance_data_store.incoming_count = performance_data_store.incoming_count + 1
                 performance_data_store.add_server_info(datetime.now() + timedelta(milliseconds=50), resp_message[0], 34, resp_message[1], resp_message[3] - resp_message[1])

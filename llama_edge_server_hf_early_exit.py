@@ -623,6 +623,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         start_comp_time = time.time()
         #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
         if start_idx >= start_idx_buff:
+            logger.log(f'again - start idx: {start_idx}')
+            logger.log(f'agin - end idx: {end_idx}')
             #find opt
             # TODO
 
