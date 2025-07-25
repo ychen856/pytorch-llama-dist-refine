@@ -814,7 +814,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
         if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
-        while end_idx_buff > end_idx + 3:  #remove buffer
+        while end_idx_buff > end_idx + 2:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
         models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
