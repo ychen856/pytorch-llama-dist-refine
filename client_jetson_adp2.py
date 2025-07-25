@@ -683,7 +683,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             outgoing_queue.put(packed_data)'''
 
             cycle_count = 0
-        elif performance_data_store.steady_state and shock_manager.is_trigger_override():
+        '''elif performance_data_store.steady_state and shock_manager.is_trigger_override():
             end_idx = shock_manager.decide_k(args.ppl, end_idx)
             end_idx_buff = end_idx + 1
             shock_manager.reset_history()
@@ -701,16 +701,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             performance_data_store.new_record_count = 0
             performance_data_store.data_storage.clear()
             logger.log(f'new period: {performance_data_store._statisitc_period}')
-            cycle_count = 0
-
-
-
-            #while new_buff_idx < end_idx_buff:
-            #    models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
-
-            '''lm_head, _ = get_lm_head_idx(end_idx)
-            if not lm_head == head_idx:
-                head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")'''
+            cycle_count = 0'''
 
 
 
