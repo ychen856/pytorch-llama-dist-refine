@@ -196,16 +196,17 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         print('end idx buff: ', end_idx_buff)'''
         logger.log(f'start_idx_buff: {start_idx_buff}')
         logger.log(f'end_idx_buff: {end_idx_buff}')
+        logger.log(f'models length: {len(models)}')
         for checkpoint in checkpoints:
             print('checkpoint idx: ', checkpoint_idx)
             logger.log(f'checkpoint idx: {checkpoint_idx}')
-            logger.log(f'checkpoint list: {checkpoint_list}')
             logger.log(f'checkpoint: {checkpoint}')
             if checkpoint_idx > end_idx_buff:
                 logger.log(f'A')
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
-            elif models[checkpoint_idx] is None:
+            #elif models[checkpoint_idx] is None:
+            elif len(models) <= checkpoint_idx:
                 logger.log(f'B')
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
