@@ -200,6 +200,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
             print('checkpoint idx: ', checkpoint_idx)
             logger.log(f'checkpoint idx: {checkpoint_idx}')
             logger.log(f'checkpoint list: {checkpoint_list}')
+            logger.log(f'checkpoint: {checkpoint}')
             if checkpoint_idx > end_idx_buff:
                 logger.log(f'A')
                 ckpt_path = checkpoint
