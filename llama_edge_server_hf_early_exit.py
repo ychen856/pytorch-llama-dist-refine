@@ -670,6 +670,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         # print('out: ', out)
         print('end compute time: ', time.time())
         print('total computation time: ', total_comp_time)
+        logger.log(f'total computation time: {total_comp_time}')
 
 
 
@@ -682,7 +683,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
 
-        if not is_early_exit and end_idx < 34 and start_idx != 0:
+        #if not is_early_exit and end_idx < 34 and start_idx != 0:
+        if not is_early_exit and end_idx < 34:
             #not prune the feature vectur
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
 
