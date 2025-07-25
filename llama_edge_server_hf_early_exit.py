@@ -33,7 +33,6 @@ from queue import Queue
 from calculate_edge_opt_adptive import *
 #from calculate_opt import Calcualte_opt, find_row
 from early_exit import early_exit_cpu, early_exit_cuda, early_exit_lm_head
-from predictive_splitting_manager import PredictiveSplittingManager
 from predictive_splitting_manager_2 import EdgeSplittingManagerPool
 from timestamp_manager import Timestamp_manager
 from threading import current_thread, Thread
@@ -538,19 +537,16 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put(['server', input[1]])
             continue
         if input[0] == 'opt':
-            #end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
-            #end_idx_buff = end_idx + 1
-
             start_idx = input[1]
             logger.log(f'opt start: {start_idx}')
 
-            max_layers = start_idx - 3 + max_layer_amount
+            end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
+            end_idx_buff = end_idx + 1
+
+            max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
             #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
-            lm_head, _ = get_lm_head_idx(end_idx)
-            if not lm_head == head_idx:
-                head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
-            start_idx_buff = max(0, start_idx - 3)
+            start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
             layer_amount = opt_layer_amount
 
@@ -587,6 +583,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx, _ = result
+
+                lm_head, _ = get_lm_head_idx(end_idx)
+                if not lm_head == head_idx:
+                    head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
 
         
 
@@ -628,6 +628,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     out, ids, mask = models[0](input)
                 except Exception as e:
                     print(e)
+                    logger.log(f'{e}')
 
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
