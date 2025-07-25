@@ -604,7 +604,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'start_idx: {start_idx}')
         logger.log(f'end_idx: {end_idx}')
 
-        logger.log(f'input: {input}')
+
         #input = http_receiver.get_in_queue_data()
         #print('start compute time: ', time.time())
         start_time = time.time()
@@ -618,6 +618,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx]) # forward the original input to the server
 
             continue
+
 
         start_comp_time = time.time()
         with torch.no_grad():
@@ -666,7 +667,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         print('oom!!!')
                         is_oom = True
 
-                        end_idx = max(0, k - 1)
+                        end_idx = k - 1
 
                         #print('updated end idx: ', end_idx)
                         break
@@ -703,15 +704,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
-
+        elif end_idx < 0:
+            outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
         #if not is_early_exit and end_idx < 34 and start_idx != 0:
-        if not is_early_exit and end_idx < 34:
+        elif not is_early_exit and end_idx < 34:
             #not prune the feature vectur
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
-
-
-            #print('outgoing queue PUT!')
-            #print('insert gateway statistics: ', [start_idx, end_idx, end_idx - start_idx, end_idx_buff, total_comp_time])
 
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
