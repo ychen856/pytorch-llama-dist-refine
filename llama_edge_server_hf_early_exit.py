@@ -171,6 +171,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         #print('decrease buffer')
         models = models[:-1]
         end_idx_buff = end_idx_buff - 1
+
     if type == 3:   #reallocate model
         #print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
@@ -184,7 +185,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         checkpoints = natsorted(checkpoints)
         assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
 
-        start_idx_buff = max(0, start_idx - 3)
+        start_idx_buff = max(0, start_idx - 2)
         #print('FFFFFFFFFFff: ', max_layers)
         checkpoints = checkpoints[start_idx_buff : max_layers]
         checkpoint_idx = start_idx_buff
@@ -283,13 +284,16 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         #prune_wanda_allocation(args, models, tokenizer, device=torch.device("cuda:0"))
     if type == 4:   #reload the whole model
         load_model(args.ckpt_dir_hf_sep, 0, end_idx_buff, torch.device("cuda:0"))
+    if type == 5:   #drop early layer
+        for i in range(0, start_idx - 2):
+            models[i] = None
 
     '''for i in range(0, len(models)):
                 model = models[i]
                 for name, param in model.named_parameters():
                     if param.requires_grad:
                         print(name, param.data)'''
-
+    gc.collect()
     return models, end_idx_buff
 
 
@@ -428,6 +432,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
             lm_models[i].to(device)
 
+    gc.collect()
     return lm_head, lm_models
 
 
@@ -539,7 +544,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'opt start: {start_idx}')
 
             max_layers = start_idx - 3 + max_layer_amount
-            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             lm_head, _ = get_lm_head_idx(end_idx)
             if not lm_head == head_idx:
                 head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
@@ -603,7 +609,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         # Forward pass through the model
         #if start_idx == 0 or start_idx > max_layers or start_idx < start_idx_buff:
-        if start_idx > max_layers or start_idx < start_idx_buff:
+        if start_idx > max_layers or start_idx < start_idx_buff or start_idx > end_idx:
             print('direct sent!')
 
             #sending original data
@@ -784,7 +790,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             cycle_count = 0
         elif performance_data_store.steady_state and edgeSplittingManagerPool.is_trigger_override():
             end_idx = edgeSplittingManagerPool.decide_m(start_idx, end_idx, args.ppl)
-            end_idx_buff = end_idx + 1
+            end_idx_buff = end_idx + 2
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
@@ -810,6 +816,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 3:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+
+        models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
 
         torch.cuda.empty_cache()
 
