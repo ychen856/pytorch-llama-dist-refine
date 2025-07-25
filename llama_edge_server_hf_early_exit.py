@@ -622,6 +622,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         start_comp_time = time.time()
         with torch.no_grad():
+            if start_idx == 0:
+                try:
+                    time.sleep(sleep_time_per_layer)
+                    out, ids, mask = models[0](input)
+                except Exception as e:
+                    print(e)
+
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
                 logger.log(f'again - start idx: {start_idx}')
@@ -635,6 +642,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     print('layer: ', k)
                     try:
                         time.sleep(sleep_time_per_layer)
+                        if k == 0:
+                            out, ids, mask = models[0](input)
+                            continue
+
                         out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
                         if k == head_idx:
                             try:
