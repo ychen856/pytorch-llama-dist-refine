@@ -601,7 +601,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         start_time = time.time()
 
         # Forward pass through the model
-        if start_idx == 0 or start_idx > max_layers or start_idx < start_idx_buff:
+        #if start_idx == 0 or start_idx > max_layers or start_idx < start_idx_buff:
+        if start_idx > max_layers or start_idx < start_idx_buff:
             print('direct sent!')
 
             #sending original data
