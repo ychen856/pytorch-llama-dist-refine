@@ -621,44 +621,45 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
         start_comp_time = time.time()
-        #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
-        if start_idx >= start_idx_buff:
-            logger.log(f'again - start idx: {start_idx}')
-            logger.log(f'agin - end idx: {end_idx}')
-            #find opt
-            # TODO
+        with torch.no_grad():
+            #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
+            if start_idx >= start_idx_buff:
+                logger.log(f'again - start idx: {start_idx}')
+                logger.log(f'agin - end idx: {end_idx}')
+                #find opt
+                # TODO
 
-            end_time = time.time()
-            #print('0: ', end_time - start_time)
-            for k in range(start_idx, end_idx + 1):
-                print('layer: ', k)
-                try:
-                    time.sleep(sleep_time_per_layer)
-                    out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
-                    if k == head_idx:
-                        try:
-                            time.sleep(sleep_time_per_layer)
-                            is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
-                            #print('is early: ', is_early_exit)
-                        except Exception as e:
-                            print('early oom!')
-                            is_oom = True
-                            is_early_exit = False
+                end_time = time.time()
+                #print('0: ', end_time - start_time)
+                for k in range(start_idx, end_idx + 1):
+                    print('layer: ', k)
+                    try:
+                        time.sleep(sleep_time_per_layer)
+                        out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
+                        if k == head_idx:
+                            try:
+                                time.sleep(sleep_time_per_layer)
+                                is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
+                                #print('is early: ', is_early_exit)
+                            except Exception as e:
+                                print('early oom!')
+                                is_oom = True
+                                is_early_exit = False
 
-                            end_idx = k
+                                end_idx = k
 
-                        if is_early_exit:
-                            timestamp_manager.end_times = (idx, time.time())
-                            break
+                            if is_early_exit:
+                                timestamp_manager.end_times = (idx, time.time())
+                                break
 
-                except Exception as e:
-                    print('oom!!!')
-                    is_oom = True
+                    except Exception as e:
+                        print('oom!!!')
+                        is_oom = True
 
-                    end_idx = k - 1
+                        end_idx = k - 1
 
-                    #print('updated end idx: ', end_idx)
-                    break
+                        #print('updated end idx: ', end_idx)
+                        break
 
             print('is early: ', is_early_exit)
             logger.log(f'is early: {is_early_exit}')
