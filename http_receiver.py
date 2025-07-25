@@ -87,35 +87,6 @@ class S(BaseHTTPRequestHandler):
 
         #self.return_message()
 
-    def return_message(self):
-        '''outgoing_data = []
-        while 1:
-            while not outgoing_queue.empty():
-                outgoing_data = outgoing_queue.get()
-
-            if len(outgoing_data) > 0:
-                break'''
-
-        while outgoing_queue.empty():
-            time.sleep(1.5)
-        # Process the received data here:
-        start_time = time.time()
-        # Process the received data here:
-        self.send_response(200)
-        self.send_header('Content-type', 'application/octet-stream')
-        self.end_headers()
-        #print('outgoing queue:')
-        output_message = outgoing_queue.get()
-        print('http returning: ', output_message)
-        #newx = pickle.dumps(output_message)
-        newx = pickle.dumps('Data received successfully!')
-        #print('sent data: ', newx)
-        self.wfile.write(newx)
-        #outgoing_queue.pop(0)
-        end_time = time.time()
-        print('server sending time: ', end_time - start_time)
-        print('end response')
-
 
 def run(server_class=HTTPServer, handler_class=S, server_ip='', port=80):
     #server_address = ('10.7.48.14', port)
