@@ -174,6 +174,7 @@ class PerformanceDataStore:
                                                      complete_record["communication_time_edge_to_server"],
                                                      complete_record["server_computation_time"])
 
+        self.logger.log(f'complete record: {complete_record}')
         # print(f"[{datetime.now()}] Combined record added to main storage for type '{record_type}' with key {key}. Current count: {len(target_deque)}")
 
     def add_client_info(self, timestamp, client_end_index, end_index_buffer, client_computation_time, early_exit_index,
