@@ -510,6 +510,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
     opt_layer_amount = 2
     statistics_period = performance_data_store.statistic_period
     sleep_time_per_layer = 0
+    is_exploring = True
     while(1):
         print('http sender outgoing queue size: ', outgoing_queue_forward.qsize())
         print('start time: ', time.time())
@@ -578,8 +579,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             # http_receiver.set_outgoing_queue([-1, None, None])
             continue'''
 
+        logger.log(f'is exploring: {is_exploring}')
         #end recieved original data
-        if performance_data_store.steady_state:
+        if performance_data_store.steady_state and is_exploring:
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx, _ = result
@@ -696,7 +698,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'total computation time: {total_comp_time}')
 
 
-
+        is_exploring = False
         if is_dummy:
             break
 
@@ -739,6 +741,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
                     performance_data_store.max_layer_amount = layer_amount
                     layer_amount = layer_amount + 1
+                    is_exploring = True
 
                 # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
                 # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
@@ -752,6 +755,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     '''end_idx = max(1, end_idx - 1)
                     logger.log(f'new end: {end_idx}')'''
                     layer_amount = max(1, layer_amount - 2)
+                    is_exploring = True
 
 
                 # if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
@@ -765,6 +769,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     logger.log(f'new end: {end_idx}')'''
                     performance_data_store.max_layer_amount = layer_amount
                     layer_amount = layer_amount + 1
+                    is_exploring = True
 
 
 
