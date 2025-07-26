@@ -705,7 +705,11 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
         return None'''
 
     logger.log(f'opt map: {data_store.get_optimal_end_idx(edge_server_start_idx)}')
-    optimal_es_end_idx, min_weighted_avg_latency = data_store.get_optimal_end_idx(edge_server_start_idx)
+    result = data_store.get_optimal_end_idx(edge_server_start_idx)
+    if result:
+        optimal_es_end_idx, min_weighted_avg_latency = result
+    else:
+        return None, None, None
 
     if data_store.optimal_latency_history * 1.1 < min_weighted_avg_latency:
         data_store._statisitc_period = max(10, math.floor(data_store._statisitc_period * 2 / 3))

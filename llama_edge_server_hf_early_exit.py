@@ -562,6 +562,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                                                                                  lm_manager, args.mode,
                                                                                  edgeSplittingManagerPool, logger,
                                                                                  start_idx)
+            if not end_idx:
+                end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
+                end_idx_buff = end_idx + 1
 
             max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
