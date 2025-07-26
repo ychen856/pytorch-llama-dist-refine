@@ -454,7 +454,7 @@ def task1_data_sending(args):
         #while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
         #while outgoing_queue.empty() and input_queue.qsize() > 0:
         #while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
-        while incoming_queue.qsize() > 0:
+        while incoming_queue.qsize() > 0 and performance_data_store.steady_state:
             timeout_count = timeout_count + 1
 
             start_time = time.time()

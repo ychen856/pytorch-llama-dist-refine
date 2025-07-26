@@ -306,43 +306,43 @@ class PerformanceDataStore:
                 )
                 self.pending_server_data[server_match_start_index_key] = new_deque
 
-            if is_early_exit:
-                complete_record = {
-                    "timestamp": edge_data["timestamp"],
-                    "edge_server_start_index": edge_data["edge_server_start_index"],
-                    "edge_server_end_index": edge_data["edge_server_end_index"],
-                    "edge_server_buffer_index": edge_data["edge_server_buffer_index"],
-                    "is_early_exit": is_early_exit,
-                    "early_exit_index": early_exit_index,
-                    "edge_server_computation_time": edge_data["edge_server_computation_time"],
-                    "server_start_index": edge_data["edge_server_end_index"] + 1,
-                    "server_end_index": 34,
-                    "server_computation_time": 0,
-                    "communication_time_edge_to_server": 0,
-                }
+        if is_early_exit:
+            complete_record = {
+                "timestamp": edge_data["timestamp"],
+                "edge_server_start_index": edge_data["edge_server_start_index"],
+                "edge_server_end_index": edge_data["edge_server_end_index"],
+                "edge_server_buffer_index": edge_data["edge_server_buffer_index"],
+                "is_early_exit": is_early_exit,
+                "early_exit_index": early_exit_index,
+                "edge_server_computation_time": edge_data["edge_server_computation_time"],
+                "server_start_index": edge_data["edge_server_end_index"] + 1,
+                "server_end_index": 34,
+                "server_computation_time": 0,
+                "communication_time_edge_to_server": 0,
+            }
 
-                self._add_complete_record_to_main_storage("edge_to_server", complete_record)
-            elif matched_server_record:
-                complete_record = {
-                    "timestamp": edge_data["timestamp"],
-                    "edge_server_start_index": edge_data["edge_server_start_index"],
-                    "edge_server_end_index": edge_data["edge_server_end_index"],
-                    "edge_server_buffer_index": edge_data["edge_server_buffer_index"],
-                    "is_early_exit": is_early_exit,
-                    "early_exit_index": early_exit_index,
-                    "edge_server_computation_time": edge_data["edge_server_computation_time"],
-                    "server_start_index": matched_server_record["server_start_index"],
-                    "server_end_index": matched_server_record["server_end_index"],
-                    "server_computation_time": matched_server_record["server_computation_time"],
-                    "communication_time_edge_to_server": matched_server_record["communication_time_to_server"],
-                }
+            self._add_complete_record_to_main_storage("edge_to_server", complete_record)
+        elif matched_server_record:
+            complete_record = {
+                "timestamp": edge_data["timestamp"],
+                "edge_server_start_index": edge_data["edge_server_start_index"],
+                "edge_server_end_index": edge_data["edge_server_end_index"],
+                "edge_server_buffer_index": edge_data["edge_server_buffer_index"],
+                "is_early_exit": is_early_exit,
+                "early_exit_index": early_exit_index,
+                "edge_server_computation_time": edge_data["edge_server_computation_time"],
+                "server_start_index": matched_server_record["server_start_index"],
+                "server_end_index": matched_server_record["server_end_index"],
+                "server_computation_time": matched_server_record["server_computation_time"],
+                "communication_time_edge_to_server": matched_server_record["communication_time_to_server"],
+            }
 
-                self._add_complete_record_to_main_storage("edge_to_server", complete_record)
-            else:
-                # Server data will try to find edge data when it arrives, so just store edge data for now.
-                # The add_server_info function will handle the matching.
-                self.pending_edge_server_data[edge_server_end_index].append(edge_data)
-                # print(f"[{datetime.now()}] Edge Server: Stored as pending for edge_server_end_index={edge_server_end_index}.")
+            self._add_complete_record_to_main_storage("edge_to_server", complete_record)
+        else:
+            # Server data will try to find edge data when it arrives, so just store edge data for now.
+            # The add_server_info function will handle the matching.
+            self.pending_edge_server_data[edge_server_end_index].append(edge_data)
+            # print(f"[{datetime.now()}] Edge Server: Stored as pending for edge_server_end_index={edge_server_end_index}.")
 
     def add_server_info(self, timestamp, server_start_index, server_end_index, server_computation_time,
                         communication_time_to_server):
