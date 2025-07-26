@@ -537,7 +537,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if input[0] == 'server':
             outgoing_queue_forward.put(['server', input[1]])
             continue
-        if input[0] == 'opt':
+        if input[0] == 'opt' and not performance_data_store.steady_state:
             start_idx = input[1]
             logger.log(f'opt start: {start_idx}')
 
@@ -554,6 +554,25 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             http_receiver.set_outgoing_queue(['T'])
             continue
+        elif input[0] == 'opt':
+            start_idx = input[1]
+            logger.log(f'opt start: {start_idx}')
+
+            end_idx, end_idx_buff, statistics_period = calculate_edge_server_opt(performance_data_store, args.ppl,
+                                                                                 lm_manager, args.mode,
+                                                                                 edgeSplittingManagerPool, logger,
+                                                                                 start_idx)
+
+            max_layers = start_idx - 2 + max_layer_amount
+            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+            # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
+            start_idx_buff = max(0, start_idx - 2)
+            end_idx = start_idx + opt_layer_amount
+            layer_amount = opt_layer_amount
+
+            http_receiver.set_outgoing_queue(['T'])
+            continue
+
 
 
         #if received original data
