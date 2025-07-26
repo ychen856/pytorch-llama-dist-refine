@@ -553,6 +553,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
             http_receiver.set_outgoing_queue(['T'])
+            is_exploring = False
             continue
         elif input[0] == 'opt':
             start_idx = input[1]
@@ -603,7 +604,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         logger.log(f'is exploring: {is_exploring}')
         #end recieved original data
-        if performance_data_store.steady_state and is_exploring:
+        if performance_data_store.steady_state and not is_exploring:
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx, _ = result
@@ -723,7 +724,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'total computation time: {total_comp_time}')
 
 
-        is_exploring = False
         if is_dummy:
             break
 
@@ -836,6 +836,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             if not lm_head == head_idx:
                 head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
             cycle_count = 0
+            is_exploring = False
         elif performance_data_store.steady_state and edgeSplittingManagerPool.is_trigger_override():
             end_idx = edgeSplittingManagerPool.decide_m(start_idx, end_idx, args.ppl)
             end_idx_buff = end_idx + 2
@@ -856,6 +857,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             }
             logger.log(f'new period: {performance_data_store._statisitc_period}')
             cycle_count = 0
+            is_exploring = False
 
         #max_layers = start_idx + max_layer_amount
 
