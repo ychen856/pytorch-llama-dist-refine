@@ -709,7 +709,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
     if result:
         optimal_es_end_idx, min_weighted_avg_latency = result
     else:
-        return None, None, None
+        return None, None, data_store._statisitc_period
 
     if data_store.optimal_latency_history * 1.1 < min_weighted_avg_latency:
         data_store._statisitc_period = max(10, math.floor(data_store._statisitc_period * 2 / 3))
