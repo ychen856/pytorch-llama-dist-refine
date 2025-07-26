@@ -647,6 +647,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         start_comp_time = time.time()
         with torch.no_grad():
             if start_idx == 0:
+                logger.log(f'AAAAAAAAAAAAAAA')
                 try:
                     time.sleep(sleep_time_per_layer)
                     out, ids, mask = models[0](input)
@@ -656,6 +657,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
+                logger.log(f'BBBBBBBBBBBBBBB')
                 logger.log(f'again - start idx: {start_idx}')
                 logger.log(f'agin - end idx: {end_idx}')
                 #find opt
@@ -726,13 +728,16 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
         if is_early_exit or end_idx >= 34:
+            logger.log(f'CCCCCCCCCCCCCCCCC')
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
         elif end_idx < 0:
+            logger.log(f'DDDDDDDDDDDDDDDDDD')
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
         #if not is_early_exit and end_idx < 34 and start_idx != 0:
         elif not is_early_exit and end_idx < 34:
+            logger.log(f'EEEEEEEEEEEEEEEEEEE')
             #not prune the feature vectur
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
 
@@ -740,11 +745,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #existed_statistic = find_row(calculate_opt.gateway_comp_statistics, 0, start_idx)
             existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
-            if len(existed_opt) > 0:
+            '''if len(existed_opt) > 0:
                 input_count = input_count + 1
-                cycle_count = cycle_count + 1
+                cycle_count = cycle_count + 1'''
 
-
+            input_count = input_count + 1
+            cycle_count = cycle_count + 1
 
             if is_oom:
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
