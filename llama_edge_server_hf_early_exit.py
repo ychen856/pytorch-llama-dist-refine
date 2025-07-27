@@ -226,8 +226,11 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
 
         logger.log(f'model length: {len(models)}')
         logger.log(f'start idx buff: {start_idx_buff}')
+        print('model length: ', len(models))
+        print('start idx buff: ', start_idx_buff)
         checkpoint_idx = 0
         for i in range(0, end_idx_buff + 1):
+            print('i: ', i)
             logger.log(f'i: {i}')
             if i < start_idx_buff:
                 models[i] = None
