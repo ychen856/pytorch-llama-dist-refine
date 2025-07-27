@@ -536,6 +536,8 @@ class PerformanceDataStore:
         否則不更新。
         """
         current = self.optimal_latency_map.get(start_idx)
+        self.logger.log(f'add-on: ({start_idx}, {end_idx}, {latency})')
+        self.logger.log(f'current: {current}')
         if current is None or latency < current[1]:
             self.optimal_latency_map[start_idx] = (end_idx, latency)
             return True  # 表示有更新

@@ -649,7 +649,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         start_comp_time = time.time()
         with torch.no_grad():
             if start_idx == 0:
-                logger.log(f'AAAAAAAAAAAAAAA')
                 try:
                     time.sleep(sleep_time_per_layer)
                     out, ids, mask = models[0](input)
@@ -659,7 +658,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
-                logger.log(f'BBBBBBBBBBBBBBB')
                 logger.log(f'again - start idx: {start_idx}')
                 logger.log(f'agin - end idx: {end_idx}')
                 #find opt
@@ -730,19 +728,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
         if is_early_exit or end_idx >= 34:
-            logger.log(f'CCCCCCCCCCCCCCCCC')
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
-            logger.log(
-                f'QQQQQQQQQQQQQQQQ: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {True}')
-
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
         elif end_idx < 0:
-            logger.log(f'DDDDDDDDDDDDDDDDDD')
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
         #if not is_early_exit and end_idx < 34 and start_idx != 0:
         elif not is_early_exit and end_idx < 34:
-            logger.log(f'EEEEEEEEEEEEEEEEEEE')
             #not prune the feature vectur
             if end_idx <= start_idx:
                 outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
@@ -751,10 +743,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 continue
 
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
-
-            logger.log(
-                f'RRRRRRRRRRRRRRR: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {False}')
-
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
             #existed_statistic = find_row(calculate_opt.gateway_comp_statistics, 0, start_idx)
@@ -812,8 +800,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     performance_data_store.max_layer_amount = layer_amount
                     layer_amount = layer_amount + 1
                     is_exploring = True
-
-
 
 
                 '''if (input_count + 1) % 2 == 0 and input_count < 20 and end_idx < max_layers and statistics_period <= 10:
