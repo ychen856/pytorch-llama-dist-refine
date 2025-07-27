@@ -334,9 +334,7 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
     for i in range(0, start_idx):
         models.append(None)
 
-    print('start idx: ', start_idx)
     for i in range(start_idx, end_idx + 1):
-        print('i: ', i)
         #print('check point list [i]: ', checkpoint_list[i])
         if i == 0:
             models.append(LlamaForCausalLM_emb(config))
