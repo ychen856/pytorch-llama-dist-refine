@@ -731,6 +731,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if is_early_exit or end_idx >= 34:
             logger.log(f'CCCCCCCCCCCCCCCCC')
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
+            logger.log(
+                f'QQQQQQQQQQQQQQQQ: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {True}')
+
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
         elif end_idx < 0:
@@ -741,6 +744,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'EEEEEEEEEEEEEEEEEEE')
             #not prune the feature vectur
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
+
+            logger.log(
+                f'QQQQQQQQQQQQQQQQ: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {True}')
 
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
