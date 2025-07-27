@@ -837,6 +837,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'end_idx: {end_idx}')
             logger.log(f'end_idx_buff: {end_idx_buff}')
             logger.log(f'statistics_period: {statistics_period}')
+            if not end_idx:
+                end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
+                end_idx_buff = end_idx + 1
+
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
             end_idx_buff = min(max_layers, end_idx_buff)
