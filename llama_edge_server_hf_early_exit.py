@@ -642,7 +642,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #sending original data
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx]) # forward the original input to the server
-
+            end_idx = start_idx + 2
+            layer_amount = 2
             continue
 
 
