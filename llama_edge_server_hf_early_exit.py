@@ -834,6 +834,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             print('end_idx: ', end_idx)
             print('end_idx_buff: ', end_idx_buff)
             print('statistics_period: ', statistics_period)
+            logger.log(f'end_idx: {end_idx}')
+            logger.log(f'end_idx_buff: {end_idx_buff}')
+            logger.log(f'statistics_period: {statistics_period}')
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
             end_idx_buff = min(max_layers, end_idx_buff)
