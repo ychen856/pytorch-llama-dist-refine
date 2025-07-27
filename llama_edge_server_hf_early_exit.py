@@ -545,7 +545,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             end_idx_buff = end_idx + 1
 
             max_layers = start_idx - 2 + max_layer_amount
-            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
@@ -568,7 +568,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 end_idx_buff = end_idx + 1
 
             max_layers = start_idx - 2 + max_layer_amount
-            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
@@ -861,8 +861,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         #max_layers = start_idx + max_layer_amount
 
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
-        if end_idx_buff < end_idx and end_idx_buff < max_layers:
-            models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
+        if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 2:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
