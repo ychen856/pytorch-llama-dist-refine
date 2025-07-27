@@ -694,6 +694,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
                     except Exception as e:
                         print('oom!!!')
+                        logger.log(f'oom')
                         is_oom = True
 
                         end_idx = k - 1
@@ -743,10 +744,16 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         elif not is_early_exit and end_idx < 34:
             logger.log(f'EEEEEEEEEEEEEEEEEEE')
             #not prune the feature vectur
+            if end_idx <= start_idx:
+                outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
+                performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), end_idx,
+                                                            end_idx, end_idx_buff, 0, head_idx, False)
+                continue
+
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
 
             logger.log(
-                f'QQQQQQQQQQQQQQQQ: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {True}')
+                f'RRRRRRRRRRRRRRR: {datetime.now() + timedelta(milliseconds=50)}, {start_idx}, {end_idx}, {end_idx_buff}, {total_comp_time}, {head_idx}, {False}')
 
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
