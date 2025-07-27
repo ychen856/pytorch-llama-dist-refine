@@ -389,6 +389,12 @@ class PerformanceDataStore:
                 )
                 self.pending_edge_server_data[edge_match_key] = new_deque
 
+
+        self.logger.log(f'server data: {server_data}')
+        self.logger.log(f'edge data: {matched_edge_record}')
+
+
+
         if matched_edge_record:
             complete_record = {
                 "timestamp": matched_edge_record["timestamp"],  # Use edge's timestamp as event start
