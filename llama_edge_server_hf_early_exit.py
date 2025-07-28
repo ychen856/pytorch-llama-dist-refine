@@ -663,13 +663,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         start_comp_time = time.time()
         with torch.no_grad():
-            if start_idx == 0:
+            '''if start_idx == 0:
                 try:
                     time.sleep(sleep_time_per_layer)
                     out, ids, mask = models[0](input)
                 except Exception as e:
                     print(e)
-                    logger.log(f'{e}')
+                    logger.log(f'{e}')'''
 
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
@@ -742,11 +742,11 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if is_dummy:
             break
 
-        if is_oom:
+        '''if is_oom:
             end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
             layer_amount = end_idx - start_idx
             end_idx_buff = end_idx + 1
-            #is_oom = False
+            #is_oom = False'''
 
         if is_early_exit or end_idx >= 34:
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
@@ -771,6 +771,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             '''if len(existed_opt) > 0:
                 input_count = input_count + 1
                 cycle_count = cycle_count + 1'''
+
+            if is_oom:
+                end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
+                layer_amount = end_idx - start_idx
+                end_idx_buff = end_idx + 1
+                continue
+                # is_oom = False
 
             input_count = input_count + 1
             cycle_count = cycle_count + 1
