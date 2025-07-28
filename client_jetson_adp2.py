@@ -465,7 +465,7 @@ def task1_data_sending(args):
         timeout_count = 0
 
         #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
-        '''while outgoing_queue.qsize() < 2 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+        while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state:
         #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
             timeout_count = timeout_count + 1
 
@@ -490,7 +490,7 @@ def task1_data_sending(args):
                 logger.log(f'start idx: 0')
                 logger.log(f'end idx: 0')
             else:
-                break'''
+                break
 
 
         data = outgoing_queue.get()
