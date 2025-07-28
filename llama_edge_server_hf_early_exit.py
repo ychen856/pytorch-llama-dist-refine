@@ -184,7 +184,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         checkpoints = natsorted(checkpoints)
         assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
 
-        start_idx_buff = max(0, start_idx - 3)
+        start_idx_buff = max(0, start_idx - 2)
         #print('FFFFFFFFFFff: ', max_layers)
         checkpoints = checkpoints[start_idx_buff : max_layers]
         checkpoint_idx = start_idx_buff
@@ -555,10 +555,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
             end_idx_buff = end_idx + 1
 
-            max_layers = start_idx - 3 + max_layer_amount
+            max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
-            start_idx_buff = max(0, start_idx - 3)
+            start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
             layer_amount = opt_layer_amount
 
@@ -635,9 +635,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         
         torch.cuda.empty_cache()'''
 
+        print('start idx buff: ', start_idx_buff)
+        print('end idx buff: ', end_idx_buff)
         print('start idx: ', start_idx)
         print('end idx: ', end_idx)
-        logger.log(f'start_buff_idx: {start_idx_buff}')
+        logger.log(f'start_idx_buff: {start_idx_buff}')
+        logger.log(f'end_idx_buff: {end_idx_buff}')
         logger.log(f'start_idx: {start_idx}')
         logger.log(f'end_idx: {end_idx}')
 
@@ -655,7 +658,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #sending original data
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx]) # forward the original input to the server
-            start_idx_buff = max(0, start_idx - 3)
+            start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + 2
             layer_amount = 2
             continue
