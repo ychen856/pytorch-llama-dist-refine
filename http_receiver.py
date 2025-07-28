@@ -25,6 +25,9 @@ def get_in_queue_data():
     print('http receiver incoming queue size: ', incoming_queue.qsize())
     return incoming_queue.get()
 
+def get_in_queue_len():
+    return incoming_queue.qsize()
+
 def get_out_queue_data():
     '''if len(incoming_queue) > 0:
         return incoming_queue[0]
