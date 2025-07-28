@@ -599,7 +599,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         mask = input[3]
         idx = input[4]
         is_early_exit = False
-        is_oom = False
 
         '''if out is None:
             print()
@@ -617,7 +616,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         logger.log(f'is exploring: {is_exploring}')
         #end recieved original data
-        if performance_data_store.steady_state and not is_exploring:
+        if performance_data_store.steady_state and not is_exploring and not is_oom:
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx, _ = result
@@ -626,7 +625,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 if not lm_head == head_idx:
                     head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
 
-        
+        is_oom = False
 
         '''if end_idx_buff < end_idx and end_idx_buff < max_layers:
             models, end_idx_buff = layer_reallocation(1, start_idx, end_idx_buff, max_layers, models)
@@ -741,6 +740,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if is_dummy:
             break
 
+        if is_oom:
+            end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
+            layer_amount = end_idx - start_idx
+            #is_oom = False
 
         if is_early_exit or end_idx >= 34:
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
@@ -769,10 +772,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             input_count = input_count + 1
             cycle_count = cycle_count + 1
 
-            if is_oom:
-                end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
-                layer_amount = end_idx - start_idx
-                is_oom = False
 
             if len(existed_opt) == 0:
                 end_idx = start_idx + 2
