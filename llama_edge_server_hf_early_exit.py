@@ -586,6 +586,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             layer_amount = opt_layer_amount
 
             http_receiver.set_outgoing_queue(['T'])
+            is_exploring = False
             continue
 
 
