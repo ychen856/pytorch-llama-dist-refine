@@ -652,7 +652,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         # Forward pass through the model
         #if start_idx == 0 or start_idx > max_layers or start_idx < start_idx_buff:
         #if start_idx > max_layers or start_idx < start_idx_buff or start_idx >= end_idx:
-        if start_idx < start_idx_buff or start_idx >= end_idx:
+        if start_idx < start_idx_buff or start_idx > end_idx:
             print('direct sent!')
             logger.log(f'direct sent!')
 
@@ -766,6 +766,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                                                             end_idx, end_idx_buff, 0, head_idx, False)
                 continue
 
+
+            input_count = input_count + 1
+            cycle_count = cycle_count + 1
+
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
@@ -775,15 +779,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 input_count = input_count + 1
                 cycle_count = cycle_count + 1'''
 
+
             if is_oom:
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
                 end_idx_buff = end_idx + 1
                 continue
                 # is_oom = False
-
-            input_count = input_count + 1
-            cycle_count = cycle_count + 1
 
 
             if len(existed_opt) == 0:
