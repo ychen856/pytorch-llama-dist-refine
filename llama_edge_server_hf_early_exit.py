@@ -717,7 +717,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             print('is early: ', is_early_exit)
             print('new ned: ', end_idx)
             logger.log(f'is early: {is_early_exit}')
-            logger.log(f'new end: ', end_idx)
+            logger.log(f'new end: {end_idx}')
 
         if not is_early_exit and end_idx >= 33:
             start_time = time.time()
