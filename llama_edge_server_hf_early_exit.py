@@ -673,8 +673,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
             if start_idx >= start_idx_buff:
-                logger.log(f'again - start idx: {start_idx}')
-                logger.log(f'agin - end idx: {end_idx}')
                 #find opt
                 # TODO
 
@@ -682,6 +680,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 #print('0: ', end_time - start_time)
                 for k in range(start_idx, end_idx + 1):
                     print('layer: ', k)
+                    logger.log(f'k: {k}')
                     try:
                         time.sleep(sleep_time_per_layer)
                         if k == 0:
@@ -716,7 +715,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         break
 
             print('is early: ', is_early_exit)
+            print('new ned: ', end_idx)
             logger.log(f'is early: {is_early_exit}')
+            logger.log(f'new end: ', end_idx)
 
         if not is_early_exit and end_idx >= 33:
             start_time = time.time()
