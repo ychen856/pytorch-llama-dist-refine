@@ -570,23 +570,24 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             start_idx = input[1]
             logger.log(f'opt start: {start_idx}')
 
-            end_idx, end_idx_buff, statistics_period = calculate_edge_server_opt(performance_data_store, args.ppl,
+            '''end_idx, end_idx_buff, statistics_period = calculate_edge_server_opt(performance_data_store, args.ppl,
                                                                                  lm_manager, args.mode,
                                                                                  edgeSplittingManagerPool, logger,
                                                                                  start_idx)
             if not end_idx:
                 end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
                 end_idx_buff = end_idx + 1
+                
 
             max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
-            layer_amount = opt_layer_amount
+            layer_amount = opt_layer_amount'''
 
             http_receiver.set_outgoing_queue(['T'])
-            is_exploring = False
+            #is_exploring = False
             continue
 
 
