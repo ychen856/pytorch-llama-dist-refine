@@ -846,6 +846,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         #max_layers = start_idx + max_layer_amount
 
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
+        logger.log(f'####################')
+        logger.log(f'## end_idx_buff: {end_idx_buff}')
+        logger.log(f'## end_idx: {end_idx}')
+        logger.log(f'## max_layers: {max_layers}')
+        logger.log(f'## start_idx: {start_idx}')
+        logger.log(f'## start_idx_buff: {start_idx_buff}')
         if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
