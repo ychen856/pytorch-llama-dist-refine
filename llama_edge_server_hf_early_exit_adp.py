@@ -727,8 +727,15 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, False)
         #no layer was processed because of oom, direct sent!
-        elif end_idx < 0 or end_idx < start_idx:
+        elif end_idx < 0:
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+
+            if is_oom:
+                end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
+                layer_amount = end_idx - start_idx
+                end_idx_buff = end_idx + 1
+        elif end_idx < start_idx:
+            outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
 
             if is_oom:
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
