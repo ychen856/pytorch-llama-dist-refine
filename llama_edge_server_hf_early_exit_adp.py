@@ -169,7 +169,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     if type == 2: # drop layers
         #print('decrease buffer')
         models = models[:-1]
-        #end_idx_buff = end_idx_buff - 1
+        end_idx_buff = end_idx_buff - 1
 
     if type == 3:   #reallocate model
         #print('increase buffer')
@@ -864,9 +864,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
-        if is_oom:
+        '''if is_oom:
             logger.log(f'drop drop early...')
-            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)'''
         while end_idx_buff > end_idx + 2:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
