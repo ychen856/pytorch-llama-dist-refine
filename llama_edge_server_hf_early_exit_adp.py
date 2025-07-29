@@ -523,6 +523,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
     statistics_period = performance_data_store.statistic_period
     sleep_time_per_layer = 0
     is_exploring = True
+    is_oom = False
     while(1):
         print('http sender outgoing queue size: ', outgoing_queue_forward.qsize())
         print('start time: ', time.time())
@@ -595,15 +596,20 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         is_early_exit = False
 
         logger.log(f'is exploring: {is_exploring}')
+
         #end recieved original data
         if performance_data_store.steady_state and not is_exploring and not is_oom:
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
-                end_idx, _ = result
+                end_idx_temp, _ = result
 
-                lm_head, _ = get_lm_head_idx(end_idx)
-                if not lm_head == head_idx:
-                    head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
+                if is_oom:
+                    end_idx = min(start_idx + layer_amount, end_idx_temp)
+
+        lm_head, _ = get_lm_head_idx(end_idx)
+        if not lm_head == head_idx:
+            head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
+
 
         is_oom = False
 
@@ -617,14 +623,11 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'start_idx: {start_idx}')
         logger.log(f'end_idx: {end_idx}')
 
-        outgoing_queue_forward.put(
-            [start_idx, out, ids, mask, idx, 0, start_idx])  # forward the original input to the server
-
         #input = http_receiver.get_in_queue_data()
         #print('start compute time: ', time.time())
         start_time = time.time()
 
-        '''# Forward pass through the model
+        # Forward pass through the model
         if start_idx < start_idx_buff or start_idx > end_idx:
             print('direct sent!')
             logger.log(f'direct sent!')
@@ -695,8 +698,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 start_time = time.time()
                 lm_logits = models[34](lm_logits)
 
-            #print('logits: ', lm_logits)
-            #print('logit size: ', lm_logits.size())
 
         end_time = time.time()
         total_comp_time = time.time() - start_comp_time
@@ -707,24 +708,39 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'total computation time: {total_comp_time}')
 
 
-        if is_dummy:
-            break
+        '''if is_dummy:
+            break'''
+        if is_oom:
+            end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
+            layer_amount = end_idx - start_idx
+            end_idx_buff = end_idx + 1
+            continue
 
-
+        #finished process with early exit, return to the client
         if is_early_exit or end_idx >= 34:
             http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
-        elif end_idx < 0:
+        #finished the whole process, return to the client
+        elif end_idx >= 34:
+            http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
+            performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
+                                                        end_idx_buff, total_comp_time, head_idx, False)
+        #no layer was processed because of oom, direct sent!
+        elif end_idx < 0 or end_idx < start_idx:
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
-        #if not is_early_exit and end_idx < 34 and start_idx != 0:
+
+            if is_oom:
+                end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
+                layer_amount = end_idx - start_idx
+                end_idx_buff = end_idx + 1
+        #the process is executed normally
         elif not is_early_exit and end_idx < 34:
-            #not prune the feature vectur
-            if end_idx <= start_idx:
+            '''if end_idx <= start_idx:
                 outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
                 performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), end_idx,
                                                             end_idx, end_idx_buff, 0, head_idx, False)
-                continue
+                continue'''
 
 
             input_count = input_count + 1
@@ -733,11 +749,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
-            #existed_statistic = find_row(calculate_opt.gateway_comp_statistics, 0, start_idx)
-            existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
-
-
-
             if is_oom:
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
@@ -745,7 +756,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 continue
                 # is_oom = False
 
-
+            existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
             if len(existed_opt) == 0:
                 end_idx = start_idx + 2
             else:
@@ -809,7 +820,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
             cycle_count = 0
             is_exploring = False
-        elif performance_data_store.steady_state and edgeSplittingManagerPool.is_trigger_override():
+        '''elif performance_data_store.steady_state and edgeSplittingManagerPool.is_trigger_override():
             end_idx = edgeSplittingManagerPool.decide_m(start_idx, end_idx, args.ppl)
             end_idx_buff = end_idx + 2
             logger.log(f'NNNNNNNNNNNNNNNNNNNNNNNNNN')
@@ -829,7 +840,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             }
             logger.log(f'new period: {performance_data_store._statisitc_period}')
             cycle_count = 0
-            is_exploring = False
+            is_exploring = False'''
 
         #max_layers = start_idx + max_layer_amount
 
@@ -841,7 +852,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
 
-        torch.cuda.empty_cache()'''
+        torch.cuda.empty_cache()
 
 
     performance_data_store.statistic_period = statistics_period
