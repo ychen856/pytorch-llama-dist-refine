@@ -710,11 +710,11 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         '''if is_dummy:
             break'''
-        if is_oom:
+        '''if is_oom:
             end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
             layer_amount = end_idx - start_idx
             end_idx_buff = end_idx + 1
-            continue
+            continue'''
 
         #finished process with early exit, return to the client
         if is_early_exit or end_idx >= 34:
