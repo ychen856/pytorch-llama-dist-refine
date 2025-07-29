@@ -196,6 +196,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
         print('end idx buff: ', end_idx_buff)'''
         logger.log(f'start_idx_buff: {start_idx_buff}')
         logger.log(f'end_idx_buff: {end_idx_buff}')
+        logger.log(f'max_layer: {max_layers}')
         logger.log(f'models length: {len(models)}')
         for checkpoint in checkpoints:
             print('checkpoint idx: ', checkpoint_idx)
@@ -545,6 +546,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
             end_idx_buff = end_idx + 1
+            logger.log(f'QQQQQQQQQQ end idx: {end_idx}')
+            logger.log(f'ZZZZZZZZZZ end idx buff: {end_idx_buff}')
 
             max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
