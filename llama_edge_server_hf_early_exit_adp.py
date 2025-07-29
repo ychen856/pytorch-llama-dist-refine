@@ -294,6 +294,8 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
             except:
                 end_idx_buff = i - 1
                 break
+        for model in models:
+            logger.log(f'model: {model}')
         #prune_wanda_allocation(args, models, tokenizer, device=torch.device("cuda:0"))
     if type == 4:   #reload the whole model
         load_model(args.ckpt_dir_hf_sep, 0, end_idx_buff, torch.device("cuda:0"))
