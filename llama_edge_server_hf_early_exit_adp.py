@@ -758,8 +758,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
             existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
             if len(existed_opt) == 0:
+                logger.log(f'no exist opt')
                 end_idx = start_idx + 2
             else:
+                logger.log(f'testing statistic period: {statistics_period}')
+                logger.log(f'testing cycle count: {cycle_count}')
+                logger.log(f'testing s-c: {statistics_period - cycle_count}')
                 if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                     print('testing higher value(i<12)')
                     logger.log(f'testing higher value(i<30)')
@@ -770,9 +774,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
                 # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
                 # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
-                logger.log(f'testing statistic period: {statistics_period}')
-                logger.log(f'testing cycle count: {cycle_count}')
-                logger.log(f'testing s-c: {statistics_period - cycle_count}')
                 if cycle_count > (statistics_period - 12) and input_count >= 24 and (
                         statistics_period - cycle_count) % 4 == 0:
                     print('testing lower value (i>12)')
@@ -846,6 +847,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #if end_idx_buff < end_idx and end_idx_buff + 3 <= max_layers:  #add buffer
         if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
+            logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 2:  #remove buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)

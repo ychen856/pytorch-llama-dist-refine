@@ -10,8 +10,8 @@
 sleep 10
 python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_3_1.log
 
-sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_3_2.log
+#sleep 10
+#python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_3_2.log
 
 #sleep 10
 #python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_3_3.log
