@@ -215,7 +215,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
             checkpoint_idx = checkpoint_idx + 1
 
 
-        end_idx_buff = max_layers
+        #end_idx_buff = max_layers
 
 
         if device.type == 'cuda':
