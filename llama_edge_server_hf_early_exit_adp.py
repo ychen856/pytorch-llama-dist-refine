@@ -322,9 +322,10 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     gc.collect()
     torch.cuda.empty_cache()
 
+    logger.log(f'show model start...')
     for model in models:
         logger.log(f'model: {model}')
-
+    logger.log(f'show model end...')
     return models, end_idx_buff
 
 
