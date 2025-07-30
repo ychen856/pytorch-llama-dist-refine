@@ -466,6 +466,9 @@ def task1_data_sending(args):
     while 1:
         timeout_count = 0
 
+        tracemalloc.start()
+        start_comp_time = time.time()
+
         #print('zzz', calculate_opt.steady_state)
         #while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
         #while outgoing_queue.empty() and input_queue.qsize() > 0:
@@ -514,6 +517,13 @@ def task1_data_sending(args):
         #print('data: ', data)
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+
+        snapshot = tracemalloc.take_snapshot()
+        top_stats = snapshot.statistics('lineno')
+
+        logger.log(f"[ Top memory usage T1 ]")
+        for stat in top_stats[:10]:
+            logger.log(f'{stat}')
 
 def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True):
     pid = os.getpid()
@@ -720,7 +730,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         snapshot = tracemalloc.take_snapshot()
         top_stats = snapshot.statistics('lineno')
 
-        logger.log(f"[ Top memory usage ]")
+        logger.log(f"[ Top memory usage T2]")
         for stat in top_stats[:10]:
             logger.log(f'{stat}')
 
