@@ -20,7 +20,7 @@ def get_in_queue_data():
     else:
         return []'''
     while incoming_queue.empty():
-        time.sleep(0.05)
+        time.sleep(0.001)
 
     print('http receiver incoming queue size: ', incoming_queue.qsize())
     return incoming_queue.get()
