@@ -322,10 +322,10 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
     gc.collect()
     torch.cuda.empty_cache()
 
-    logger.log(f'show model start...')
+    '''logger.log(f'show model start...')
     for model in models:
         logger.log(f'model: {model}')
-    logger.log(f'show model end...')
+    logger.log(f'show model end...')'''
     return models, end_idx_buff
 
 
@@ -715,7 +715,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             if start_idx >= start_idx_buff:
                 #find opt
                 # TODO
-
+                logger.log(f'show model start...')
+                for model in models:
+                    logger.log(f'model: {model}')
+                logger.log(f'show model end...')
                 end_time = time.time()
                 #print('0: ', end_time - start_time)
                 for k in range(start_idx, end_idx + 1):
