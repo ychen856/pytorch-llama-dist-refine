@@ -8,7 +8,7 @@ import yaml
 import gc
 import threading
 from queue import Queue
-
+import lz4.frame
 from datetime import datetime, timedelta
 
 '''parser = argparse.ArgumentParser(
@@ -65,7 +65,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #idx = text[4]
     #input = text[1]
     #client_comp_time = text[5]
-    newx = pickle.dumps(text)
+    compressed = lz4.frame.compress(pickle.dumps(text))
+    newx = pickle.dumps(compressed)
     total_size = len(newx)
     print('communication size: ', total_size)
 

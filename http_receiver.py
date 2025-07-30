@@ -7,7 +7,7 @@ import yaml
 import http_sender
 from queue import Queue
 import multiprocessing
-
+import lz4.frame
 #incoming_queue = []
 #outgoing_queue = []
 
@@ -63,10 +63,17 @@ class S(BaseHTTPRequestHandler):
         #print('receive POST:')
         start_time = time.time()
         content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        self._set_headers()
 
-        decrypt_data = pickle.loads(post_data)
+
+        #decompressed start
+        post_data = self.rfile.read(content_length)
+        decompress_data = lz4.frame.decompress(post_data)
+        decrypt_data = pickle.loads(decompress_data)
+        #decompressed end
+
+        '''post_data = self.rfile.read(content_length)
+        decrypt_data = pickle.loads(post_data)'''
+        self._set_headers()
 
         #if decrypt_data[0] == 'communication':
             #S.sleep_time = decrypt_data[1]
