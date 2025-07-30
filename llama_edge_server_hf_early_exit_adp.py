@@ -732,6 +732,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                                 #print('is early: ', is_early_exit)
                             except Exception as e:
                                 print('early oom!')
+                                logger.log(f'early oom!')
                                 is_oom = True
                                 is_early_exit = False
 
@@ -805,6 +806,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
 
             if is_oom:
+                logger.log(f'oom A')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
                 end_idx_buff = end_idx + 1
@@ -812,6 +814,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
 
             if is_oom:
+                logger.log(f'oom B')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
                 end_idx_buff = end_idx + 1
@@ -831,6 +834,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
             if is_oom:
+                logger.log(f'oom C')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
                 end_idx_buff = end_idx + 1
