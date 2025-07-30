@@ -246,7 +246,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
             elif i < start_idx_buff:
                 print('nnn')
                 logger.log(f'nnn')
-                models.append(None)
+                models[i].append(None)
                 continue
             #print('i: ', i)
             load_layer = False
@@ -306,6 +306,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
             except:
                 end_idx_buff = i - 1
                 break
+
         for model in models:
             logger.log(f'model: {model}')
         #prune_wanda_allocation(args, models, tokenizer, device=torch.device("cuda:0"))
@@ -840,46 +841,46 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 end_idx_buff = end_idx + 1
                 continue
                 # is_oom = False
-
-            existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
-            if len(existed_opt) == 0:
-                logger.log(f'no exist opt')
-                end_idx = start_idx + 2
             else:
-                logger.log(f'testing statistic period: {statistics_period}')
-                logger.log(f'testing cycle count: {cycle_count}')
-                logger.log(f'testing s-c: {statistics_period - cycle_count}')
-                if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
-                    print('testing higher value(i<12)')
-                    logger.log(f'testing higher value(i<30)')
+                existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
+                if len(existed_opt) == 0:
+                    logger.log(f'no exist opt')
+                    end_idx = start_idx + 2
+                else:
+                    logger.log(f'testing statistic period: {statistics_period}')
+                    logger.log(f'testing cycle count: {cycle_count}')
+                    logger.log(f'testing s-c: {statistics_period - cycle_count}')
+                    if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+                        print('testing higher value(i<12)')
+                        logger.log(f'testing higher value(i<30)')
 
-                    performance_data_store.max_layer_amount = layer_amount
-                    layer_amount = layer_amount + 1
-                    is_exploring = True
+                        performance_data_store.max_layer_amount = layer_amount
+                        layer_amount = layer_amount + 1
+                        is_exploring = True
 
-                # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
-                # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
-                if cycle_count > (statistics_period - 12) and input_count >= 24 and (
-                        statistics_period - cycle_count) % 4 == 0:
-                    print('testing lower value (i>12)')
+                    # if cycle_count > (statistics_period - 6) and input_count >= 12 and cycle_count % 2 == 0:
+                    # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
+                    if cycle_count > (statistics_period - 12) and input_count >= 24 and (
+                            statistics_period - cycle_count) % 4 == 0:
+                        print('testing lower value (i>12)')
 
-                    layer_amount = max(1, layer_amount - 2)
-                    is_exploring = True
-
-
-                # if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
-                # if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
-                if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and (
-                        statistics_period - cycle_count) % 4 == 0:
-                    print('testing higher value (i>30)')
-                    logger.log(f'testing higher value (i>30)')
-
-                    performance_data_store.max_layer_amount = layer_amount
-                    layer_amount = layer_amount + 1
-                    is_exploring = True
+                        layer_amount = max(1, layer_amount - 2)
+                        is_exploring = True
 
 
-                end_idx = start_idx + layer_amount
+                    # if cycle_count == (statistics_period - 6) and input_count >= 12 and end_idx < max_layers and cycle_count % 2 == 0:
+                    # if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and cycle_count % 4 == 0:
+                    if cycle_count == (statistics_period - 12) and input_count >= 24 and end_idx < max_layers and (
+                            statistics_period - cycle_count) % 4 == 0:
+                        print('testing higher value (i>30)')
+                        logger.log(f'testing higher value (i>30)')
+
+                        performance_data_store.max_layer_amount = layer_amount
+                        layer_amount = layer_amount + 1
+                        is_exploring = True
+
+
+                    end_idx = start_idx + layer_amount
 
         #if (input_count) % 10 == 0:
         if performance_data_store.new_record_count >= statistics_period:
@@ -943,7 +944,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         '''if is_oom:
             logger.log(f'drop drop early...')
             models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)'''
-        while end_idx_buff > end_idx + 2:  #remove buffer
+        while end_idx_buff > end_idx + 2:  #remove end buffer
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
         #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
