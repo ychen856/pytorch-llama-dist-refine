@@ -9,6 +9,7 @@ import yaml
 import gc
 import threading
 from queue import Queue
+import lz4.frame
 
 from datetime import datetime, timedelta
 import http_receiver
@@ -65,7 +66,17 @@ def pop_incoming_queue():
 def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager):
     start_time = time.time()
 
-    newx = pickle.dumps(text)
+    newx = lz4.frame.compress(pickle.dumps(text))
+    if len(text) > 5:
+        server_start_idx = text[0]
+        start_idx = text[6]
+        idx = text[4]
+        # input = text[1]
+        client_comp_time = text[5]
+
+    del text
+
+    #newx = pickle.dumps(text)
     total_size = len(newx)
     print('communication size: ', total_size)
     #start_time = time.time()
@@ -84,6 +95,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #print('package size: ', total_size)
     #print(newx)
     conn.send(newx)
+    del newx
     end_time = time.time()
     #print('client sending time: ', end_time - start_time)
     #if input is None:
@@ -113,11 +125,11 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
             resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
             #print('server side resp: ', resp_message)
 
-            server_start_idx = text[0]
+            '''server_start_idx = text[0]
             start_idx = text[6]
             idx = text[4]
-            input = text[1]
-            client_comp_time = text[5]
+            #input = text[1]
+            client_comp_time = text[5]'''
 
             if not resp_message[0] == -1:
                 timestamp_manager.end_times = (resp_message[2], end_time2)
