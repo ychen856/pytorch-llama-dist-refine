@@ -59,7 +59,7 @@ def pop_incoming_queue():
     returning_queue.get()
 
 
-def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager):
+def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager, logger):
     start_time = time.time()
     start_idx = text[0]
     #idx = text[4]
@@ -101,6 +101,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     resp_str = b''
 
     print(f'resp data: ', resp_data)
+    logger.log(f'resp data: {resp_data}')
     for i in range(4, len(resp_data)):
         resp_str = resp_str + resp_data[i]
     end_time2 = time.time()
@@ -113,6 +114,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
         resp_message = resp_message[0]
         resp_message.append(rtt)  # resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
         print('server side resp: ', resp_message)
+        logger.log(f'server side resp: {resp_message}')
 
         if not (resp_message[0] == -1 or resp_message[0] == 'T'):
             timestamp_manager.end_times = (resp_message[2], end_time2)
