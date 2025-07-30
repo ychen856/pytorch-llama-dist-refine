@@ -1,7 +1,7 @@
 # this code is used for seperating the weights into small pieces and store them into seperated .pt files. One time usage.
 # receive original data and prune or w/o prune
 import gc
-from memory_profiler import profile
+import tracemalloc
 import math
 import threading
 
@@ -514,7 +514,7 @@ def task1_data_sending(args):
         #print('data: ', data)
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
-@profile
+
 def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True):
     pid = os.getpid()
     curr_thread = current_thread().name
@@ -655,6 +655,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         for obj in leaked_objs:
             print(type(obj), repr(obj)[:200])
         logger.log(f'YYYYYYYYYYYYYYYYYYYYYY')
+        tracemalloc.start()
         start_comp_time = time.time()
         with torch.no_grad():
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
@@ -705,14 +706,20 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'is early: {is_early_exit}')
             logger.log(f'new end: {end_idx}')
 
-        if not is_early_exit and end_idx >= 33:
-            start_time = time.time()
-            lm_logits = models[33](out.last_hidden_state)
-
-            if end_idx >=34:
+            if not is_early_exit and end_idx >= 33:
                 start_time = time.time()
-                lm_logits = models[34](lm_logits)
+                lm_logits = models[33](out.last_hidden_state)
 
+                if end_idx >=34:
+                    start_time = time.time()
+                    lm_logits = models[34](lm_logits)
+
+        snapshot = tracemalloc.take_snapshot()
+        top_stats = snapshot.statistics('lineno')
+
+        logger.log(f"[ Top memory usage ]")
+        for stat in top_stats[:10]:
+            logger.log(f'{stat}')
 
         end_time = time.time()
         total_comp_time = time.time() - start_comp_time
@@ -893,7 +900,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
     #print('round time: ', time.time() - start_time_0)
-
 
 
 if __name__ == '__main__':
