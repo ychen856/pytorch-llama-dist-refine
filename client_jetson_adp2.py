@@ -490,6 +490,7 @@ def task1_data_sending(args):
                 logger.log(f'start idx: 0')
                 logger.log(f'end idx: 0')
             else:
+                logger.log(f'ELSE!')
                 break
 
 

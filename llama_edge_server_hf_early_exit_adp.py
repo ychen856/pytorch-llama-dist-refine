@@ -504,8 +504,8 @@ def task1_data_sending(args):
                 #print('client computation time: ', end_time - start_time)
                 # calculate_opt.client_comp_statistics = (-1, end_idx_buff, end_time - start_time)
                 print('server idle!')
-            else:
-                break
+            #else:
+            #    break
 
 
         data = outgoing_queue_forward.get()
