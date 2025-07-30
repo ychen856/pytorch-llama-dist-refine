@@ -641,6 +641,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 if is_oom:
                     end_idx = min(start_idx + layer_amount, end_idx_temp)
 
+        if end_idx > end_idx_buff:
+            end_idx = end_idx_buff
+
         lm_head, _ = utils.get_lm_head_idx(end_idx)
         logger.log(f'new lm_head: {lm_head}')
         logger.log(f'old head_idx: {head_idx}')
@@ -713,7 +716,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
                     except Exception as e:
                         print('oom!!!')
-                        logger.log(f'oom')
+                        logger.log(f'oom!!!')
+                        logger.log(f'{e}')
                         is_oom = True
 
                         end_idx = k - 1
