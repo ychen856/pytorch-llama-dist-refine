@@ -468,7 +468,7 @@ def task1_data_sending(args):
         #while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
         #while outgoing_queue.empty() and input_queue.qsize() > 0:
         #while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
-        logger.log(f'queue size: {http_receiver.incoming_queue.qsize()}')
+        logger.log(f'queue size direct: {http_receiver.incoming_queue.qsize()}')
         while http_receiver.incoming_queue.qsize() > 0 and performance_data_store.steady_state:
             logger.log(f'AAAAAAAAAAAAAAAA')
             timeout_count = timeout_count + 1
@@ -529,6 +529,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
     is_exploring = True
     is_oom = False
     while(1):
+        logger.log(f'queue size direct: {http_receiver.incoming_queue.qsize()}')
         print('http sender outgoing queue size: ', outgoing_queue_forward.qsize())
         print('start time: ', time.time())
         input = http_receiver.get_in_queue_data()
