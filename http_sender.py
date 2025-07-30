@@ -112,7 +112,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
         resp_message = resp_message[0]
         resp_message.append(rtt)  # resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
-        # print('server side resp: ', resp_message)
+        print('server side resp: ', resp_message)
 
         if not (resp_message[0] == -1 or resp_message[0] == 'T'):
             timestamp_manager.end_times = (resp_message[2], end_time2)
