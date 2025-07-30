@@ -521,6 +521,8 @@ def task1_data_sending(args):
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
 
+        gc.collect()
+
         # take after snapshot
         snapshot_after = tracemalloc.take_snapshot()
         stats = snapshot_after.compare_to(snapshot_before, 'lineno')
@@ -649,6 +651,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'old head_idx: {head_idx}')
         if not lm_head == head_idx:
             del lm_models, head_idx
+            gc.collect()
+            torch.cuda.empty_cache()
             head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
 
 
