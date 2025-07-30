@@ -321,7 +321,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                         print(name, param.data)'''
     gc.collect()
     torch.cuda.empty_cache()
-    
+
     for model in models:
         logger.log(f'model: {model}')
 
@@ -840,7 +840,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
                 end_idx_buff = end_idx + 1
-                continue
+                #continue
                 # is_oom = False
             else:
                 existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
