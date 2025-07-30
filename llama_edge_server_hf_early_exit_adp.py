@@ -454,6 +454,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
 
     for i in range(0, len(checkpoint_list)):
         torch.cuda.empty_cache()
+        logger.log(f"[GPU before] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
         if i == 0:
             lm_models.append((LlamaForCausalLM_norm(config)))
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
@@ -465,6 +466,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
             lm_models[i].to(device)
             lm_models[i].eval()
+        logger.log(f"[GPU after ] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
 
     gc.collect()
 
