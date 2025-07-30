@@ -150,19 +150,23 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     models.append(LlamaForCausalLM_emb(config))
                     models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
                     models[0].to(device)
+                    models[i].eval()
                 elif i == 33:
                     models.append((LlamaForCausalLM_norm(config)))
                     models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
                     models[33].to(device)
+                    models[i].eval()
 
                 elif i == 34:
                     models.append((LlamaForCausalLM_linear(config)))
                     models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
                     models[34].to(device)
+                    models[i].eval()
                 else:
                     models.append(LlamaForCausalLM_layer_0(config))
                     models[i].load_state_dict(checkpoint_list[i - start_idx], strict=True)
                     models[i].to(device)
+                    models[i].eval()
             except:
                 end_idx_buff = i - 1
                 break
@@ -258,6 +262,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     if load_layer is True:
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[0].to(device)
+                        models[i].eval()
                         checkpoint_idx = checkpoint_idx + 1
                 elif i == 33:
                     if i >= len(models):
@@ -270,6 +275,8 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     if load_layer is True:
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[33].to(device)
+                        models[i].eval()
+                        checkpoint_idx = checkpoint_idx + 1
                 elif i == 34:
                     if i >= len(models):
                         models.append((LlamaForCausalLM_linear(config)))
@@ -281,6 +288,8 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     if load_layer is True:
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[34].to(device)
+                        models[i].eval()
+                        checkpoint_idx = checkpoint_idx + 1
                 else:
                     if i >= len(models):
                         models.append((LlamaForCausalLM_layer_0(config)))
@@ -292,6 +301,8 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     if load_layer is True:
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[i].to(device)
+                        models[i].eval()
+                        checkpoint_idx = checkpoint_idx + 1
             except:
                 end_idx_buff = i - 1
                 break
@@ -352,19 +363,23 @@ def load_model(checkpoints_dir, start_idx, end_idx, device):
             models.append(LlamaForCausalLM_emb(config))
             models[i].load_state_dict(checkpoint_list[i], strict=True)
             models[0].to(device)
+            models[i].eval()
         elif i == 33:
             models.append((LlamaForCausalLM_norm(config)))
             models[i].load_state_dict(checkpoint_list[i], strict=True)
             models[33].to(device)
+            models[i].eval()
 
         elif i == 34:
             models.append((LlamaForCausalLM_linear(config)))
             models[i].load_state_dict(checkpoint_list[i], strict=True)
             models[34].to(device)
+            models[i].eval()
         else:
             models.append(LlamaForCausalLM_layer_0(config))
             models[i].load_state_dict(checkpoint_list[i], strict=True)
             models[i].to(device)
+            models[i].eval()
 
 
     '''for i in range(0, len(models)):
@@ -438,17 +453,21 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
     lm_models = []
 
     for i in range(0, len(checkpoint_list)):
+        torch.cuda.empty_cache()
         if i == 0:
             lm_models.append((LlamaForCausalLM_norm(config)))
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
             lm_models[i].to(device)
+            lm_models[i].eval()
 
         else:
             lm_models.append((LlamaForCausalLM_linear(config)))
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
             lm_models[i].to(device)
+            lm_models[i].eval()
 
     gc.collect()
+
     return lm_head, lm_models
 
 
@@ -650,7 +669,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'new lm_head: {lm_head}')
         logger.log(f'old head_idx: {head_idx}')
         if not lm_head == head_idx:
-            del lm_models, head_idx
+            try:
+                del lm_models, head_idx
+            except:
+                pass
             gc.collect()
             torch.cuda.empty_cache()
             head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
