@@ -1,6 +1,7 @@
 # this code is used for seperating the weights into small pieces and store them into seperated .pt files. One time usage.
 # receive original data and prune or w/o prune
 import gc
+from memory_profiler import profile
 import math
 import threading
 
@@ -513,7 +514,7 @@ def task1_data_sending(args):
         #print('data: ', data)
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
-
+@profile
 def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True):
     pid = os.getpid()
     curr_thread = current_thread().name
@@ -650,7 +651,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'XXXXXXXXXXXXXXXXXXXXXX')
         gc.collect()  # 手動觸發垃圾回收
         leaked_objs = gc.garbage  # 找出無法被釋放的物件
-        print(f"Leaked objects: {len(leaked_objs)}")
+        logger.log(f"Leaked objects: {len(leaked_objs)}")
         for obj in leaked_objs:
             print(type(obj), repr(obj)[:200])
         logger.log(f'YYYYYYYYYYYYYYYYYYYYYY')
