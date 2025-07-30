@@ -9,6 +9,7 @@ from queue import Queue
 import numpy as np
 import math
 import os
+import lz4.frame
 
 from pathlib import Path
 import argparse

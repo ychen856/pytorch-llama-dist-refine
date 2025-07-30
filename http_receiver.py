@@ -67,9 +67,10 @@ class S(BaseHTTPRequestHandler):
 
         post_data = self.rfile.read(content_length)
         decompress_data = lz4.frame.decompress(post_data)
+        del post_data
         self._set_headers()
         decrypt_data = pickle.loads(decompress_data)
-
+        del decompress_data
 
         '''post_data = self.rfile.read(content_length)
         self._set_headers()
