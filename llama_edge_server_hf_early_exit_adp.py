@@ -467,6 +467,9 @@ def task1_data_sending(args):
         timeout_count = 0
 
         tracemalloc.start()
+        # take before snapshot
+        snapshot_before = tracemalloc.take_snapshot()
+
         start_comp_time = time.time()
 
         #print('zzz', calculate_opt.steady_state)
@@ -518,11 +521,12 @@ def task1_data_sending(args):
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
 
-        snapshot = tracemalloc.take_snapshot()
-        top_stats = snapshot.statistics('lineno')
+        # take after snapshot
+        snapshot_after = tracemalloc.take_snapshot()
+        stats = snapshot_after.compare_to(snapshot_before, 'lineno')
 
         logger.log(f"[ Top memory usage T1 ]")
-        for stat in top_stats[:10]:
+        for stat in stats[:10]:
             logger.log(f'{stat}')
 
 def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True):
@@ -549,6 +553,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             print(type(obj), repr(obj)[:200])
         logger.log(f'YYYYYYYYYYYYYYYYYYYYYY')
         tracemalloc.start()
+        # take before snapshot
+        snapshot_before = tracemalloc.take_snapshot()
+
         start_comp_time = time.time()
 
 
@@ -727,11 +734,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     start_time = time.time()
                     lm_logits = models[34](lm_logits)
 
-        snapshot = tracemalloc.take_snapshot()
-        top_stats = snapshot.statistics('lineno')
+        # take after snapshot
+        snapshot_after = tracemalloc.take_snapshot()
+        stats = snapshot_after.compare_to(snapshot_before, 'lineno')
 
         logger.log(f"[ Top memory usage T2]")
-        for stat in top_stats[:10]:
+        for stat in stats[:10]:
             logger.log(f'{stat}')
 
         end_time = time.time()
