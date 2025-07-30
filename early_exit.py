@@ -273,7 +273,7 @@ def early_exit_lm_cuda_ppl_test(models, lm_models, out, ids, mask):
 
 
 
-def early_exit_lm_head(lm_models, out, lm_head, ppl, logger):
+def early_exit_lm_head(lm_models, out, lm_head, ppl):
     threshold = 0.5
     temperature = 0.5
 

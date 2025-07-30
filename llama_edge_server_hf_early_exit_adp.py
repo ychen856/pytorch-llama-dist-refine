@@ -728,7 +728,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         if k == head_idx:
                             try:
                                 time.sleep(sleep_time_per_layer)
-                                is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl, logger)
+                                is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                                 #print('is early: ', is_early_exit)
                             except Exception as e:
                                 print('early oom!')
