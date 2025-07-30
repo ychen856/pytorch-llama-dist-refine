@@ -405,7 +405,7 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
         return_unused_kwargs=True
     )
 
-    lm_head, lm_head_idx = get_lm_head_idx(end_idx)
+    lm_head, lm_head_idx = utils.get_lm_head_idx(end_idx)
 
     print('lm_head: ', lm_head)
     print('lm_head_idx: ', lm_head_idx)
@@ -648,6 +648,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'new lm_head: {lm_head}')
         logger.log(f'old head_idx: {head_idx}')
         if not lm_head == head_idx:
+            del lm_models, head_idx
             head_idx, lm_models = load_lm_head(args.ckpt_dir_hf_sep, end_idx, device, cache_dir="llm_weights")
 
 
