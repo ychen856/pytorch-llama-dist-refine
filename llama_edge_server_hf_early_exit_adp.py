@@ -811,7 +811,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 logger.log(f'oom A')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
-                end_idx_buff = end_idx + 1
+                #end_idx_buff = end_idx + 1
         elif end_idx < start_idx:
             outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
 
@@ -819,7 +819,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 logger.log(f'oom B')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
-                end_idx_buff = end_idx + 1
+                #end_idx_buff = end_idx + 1
         #the process is executed normally
         elif not is_early_exit and end_idx < 34:
             '''if end_idx <= start_idx:
@@ -839,7 +839,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 logger.log(f'oom C')
                 end_idx = max(1, math.ceil((end_idx - start_idx) / 2 + start_idx))
                 layer_amount = end_idx - start_idx
-                end_idx_buff = end_idx + 1
+                #end_idx_buff = end_idx + 1
                 #continue
                 # is_oom = False
             else:
@@ -939,6 +939,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'## max_layers: {max_layers}')
         logger.log(f'## start_idx: {start_idx}')
         logger.log(f'## start_idx_buff: {start_idx_buff}')
+
         if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
