@@ -65,8 +65,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #idx = text[4]
     #input = text[1]
     #client_comp_time = text[5]
-    compressed = lz4.frame.compress(pickle.dumps(text))
-    newx = pickle.dumps(compressed)
+    newx = lz4.frame.compress(pickle.dumps(text))
+    #newx = pickle.dumps(text)
     total_size = len(newx)
     print('communication size: ', total_size)
 
