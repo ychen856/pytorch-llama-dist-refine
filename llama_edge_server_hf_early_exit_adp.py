@@ -310,6 +310,7 @@ def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
                     if param.requires_grad:
                         print(name, param.data)'''
     gc.collect()
+    torch.cuda.empty_cache()
     return models, end_idx_buff
 
 
@@ -646,7 +647,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             layer_amount = 2
             continue
 
-
+        logger.log(f'XXXXXXXXXXXXXXXXXXXXXX')
+        gc.collect()  # 手動觸發垃圾回收
+        leaked_objs = gc.garbage  # 找出無法被釋放的物件
+        print(f"Leaked objects: {len(leaked_objs)}")
+        for obj in leaked_objs:
+            print(type(obj), repr(obj)[:200])
+        logger.log(f'YYYYYYYYYYYYYYYYYYYYYY')
         start_comp_time = time.time()
         with torch.no_grad():
             #if start_idx > 0 and start_idx <= max_layers and start_idx >= start_idx_buff:
