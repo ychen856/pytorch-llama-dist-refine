@@ -454,7 +454,6 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
 
     for i in range(0, len(checkpoint_list)):
         torch.cuda.empty_cache()
-        logger.log(f"[GPU before] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
         if i == 0:
             lm_models.append((LlamaForCausalLM_norm(config)))
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
@@ -466,7 +465,6 @@ def load_lm_head(checkpoints_dir, end_idx, device, cache_dir="llm_weights"):
             lm_models[i].load_state_dict(checkpoint_list[i], strict=True)
             lm_models[i].to(device)
             lm_models[i].eval()
-        logger.log(f"[GPU after ] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
 
     gc.collect()
 
@@ -730,7 +728,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         if k == head_idx:
                             try:
                                 time.sleep(sleep_time_per_layer)
-                                is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
+                                is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl, logger)
                                 #print('is early: ', is_early_exit)
                             except Exception as e:
                                 print('early oom!')

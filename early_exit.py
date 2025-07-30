@@ -273,12 +273,15 @@ def early_exit_lm_cuda_ppl_test(models, lm_models, out, ids, mask):
 
 
 
-def early_exit_lm_head(lm_models, out, lm_head, ppl):
+def early_exit_lm_head(lm_models, out, lm_head, ppl, logger):
     threshold = 0.5
     temperature = 0.5
 
+    logger.log(f"[GPU before inference lm_models[0]] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
     logits_norm = lm_models[0](out.last_hidden_state.detach())
+    logger.log(f"[GPU after inference lm_models[0]] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
     logits_linear = lm_models[1](logits_norm.detach())
+    logger.log(f"[GPU after inference lm_models[1]] {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MiB")
 
     probs = torch.softmax(logits_linear / temperature, dim=-1)
     probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
