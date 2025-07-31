@@ -543,7 +543,7 @@ def task1_data_sending(args):
         data = outgoing_queue_forward.get()
         #print('data: ', data)
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-        http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger)
 
         gc.collect()
 
