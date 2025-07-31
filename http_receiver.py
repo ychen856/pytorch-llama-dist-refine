@@ -97,6 +97,8 @@ class S(BaseHTTPRequestHandler):
         newx = pickle.dumps([output_message, 'Data received successfully!'])
         self.wfile.write(newx)
 
+        end_time = time.time()
+        print('rtt: ', end_time - start_time)
         #self.return_message()
 
 
