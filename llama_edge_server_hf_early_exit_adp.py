@@ -107,7 +107,9 @@ temp = []
 
 
 
-def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
+#def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
+def layer_reallocation(type, start_idx, end_idx, max_layers, models):
+    end_idx_buff = end_idx + 1
     if type == 1:  # add buffer layers
         # print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
@@ -611,8 +613,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'ZZZZZZZZZZ end idx buff: {end_idx_buff}')
 
             max_layers = start_idx - 2 + max_layer_amount
-            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
-            #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
+
+            #models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
+
             start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + opt_layer_amount
             layer_amount = opt_layer_amount
@@ -946,17 +950,23 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'## start_idx: {start_idx}')
         logger.log(f'## start_idx_buff: {start_idx_buff}')
 
-        if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
+        '''if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
-        '''if is_oom:
-            logger.log(f'drop drop early...')
-            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)'''
         if start_idx_buff < start_idx - 2:
             models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 2:  #remove end buffer
             logger.log(f'drop layers...')
-            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
+            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)'''
+
+        if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
+            logger.log(f'load model E')
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
+        if start_idx_buff < start_idx - 2:
+            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx, max_layers, models)
+        while end_idx_buff > end_idx + 2:  #remove end buffer
+            logger.log(f'drop layers...')
+            models, end_idx_buff = layer_reallocation(2, start_idx, end_idx, max_layers, models)
 
         #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
 
