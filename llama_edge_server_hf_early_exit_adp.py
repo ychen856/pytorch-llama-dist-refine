@@ -615,7 +615,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
 
             start_idx_buff = max(0, start_idx - 2)
-            end_idx = start_idx + opt_layer_amount
+            opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
 
 
@@ -648,7 +648,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 if is_oom:
                     end_idx = min(start_idx + layer_amount, end_idx_temp)
 
-                models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
+                models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_temp, max_layers, models)
                 start_idx_buff = max(0, start_idx - 2)
                 layer_amount = end_idx - start_idx
 
