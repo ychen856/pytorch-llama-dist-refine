@@ -640,6 +640,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             continue
         elif performance_data_store.steady_state and not is_exploring:
             start_idx = input[0]
+            logger.log(f'normal start: {start_idx}')
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx_temp, _ = result
@@ -679,6 +680,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
 
         is_oom = False
+        logger.log(f'input...: {input}')
 
 
         print('start idx buff: ', start_idx_buff)
