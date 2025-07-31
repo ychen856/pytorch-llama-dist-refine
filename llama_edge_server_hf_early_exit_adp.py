@@ -895,16 +895,17 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             print('end_idx: ', end_idx)
             print('end_idx_buff: ', end_idx_buff)
             print('statistics_period: ', statistics_period)
+            logger.log(f'calculate opt!!!')
             logger.log(f'end_idx: {end_idx}')
             logger.log(f'end_idx_buff: {end_idx_buff}')
             logger.log(f'statistics_period: {statistics_period}')
             if not end_idx:
                 end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
-                end_idx_buff = end_idx + 1
+                #end_idx_buff = end_idx + 1
 
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
-            end_idx_buff = min(max_layers, end_idx_buff)
+            #end_idx_buff = min(max_layers, end_idx_buff)
             #while new_buff_idx < end_idx_buff:
             #    models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
@@ -951,7 +952,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         '''if is_oom:
             logger.log(f'drop drop early...')
             models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)'''
+        if start_idx_buff < start_idx - 2:
+            models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
         while end_idx_buff > end_idx + 2:  #remove end buffer
+            logger.log(f'drop layers...')
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)
 
         #models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
