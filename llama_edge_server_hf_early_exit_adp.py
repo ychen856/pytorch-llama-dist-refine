@@ -726,7 +726,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     try:
                         time.sleep(sleep_time_per_layer)
                         if k == 0:
-                            out, ids, mask = models[0](input)
+                            out, ids, mask = models[0](out)
                             continue
 
                         out, ids, mask = models[k](out.last_hidden_state, position_ids=ids, attention_mask=mask)
