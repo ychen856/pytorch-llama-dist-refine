@@ -582,14 +582,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         # take before snapshot
         snapshot_before = tracemalloc.take_snapshot()
 
-        start_comp_time = time.time()
-
 
         logger.log(f'queue size t2: {http_receiver.incoming_queue.qsize()}')
         #print('http sender outgoing queue size: ', outgoing_queue_forward.qsize())
         print('start time: ', time.time())
         input = http_receiver.get_in_queue_data()
-
+        start_comp_time = time.time()
         #print('????: ', input)
         if input[0] == 'gateway':
             sleep_time_per_layer = input[1]
