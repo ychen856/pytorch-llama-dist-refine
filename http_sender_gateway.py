@@ -63,7 +63,7 @@ def pop_incoming_queue():
     returning_queue.get()
 
 
-def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager):
+def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager, logger):
     start_time = time.time()
 
     newx = lz4.frame.compress(pickle.dumps(text))
@@ -149,6 +149,9 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
             if client_comp_time is not None:
                 #http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
                 http_receiver.outgoing_queue.put([start_idx, rtt, idx])
+            else:
+                http_receiver.outgoing_queue.put([None, rtt, None])
+
 
     except:
         print('error')
