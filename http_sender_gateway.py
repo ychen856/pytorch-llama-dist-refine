@@ -147,7 +147,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
             # middle devices used only
             if client_comp_time is not None:
-                http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
+                #http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
+                http_receiver.outgoing_queue.put([start_idx, rtt, idx])
 
     except:
         print('error')

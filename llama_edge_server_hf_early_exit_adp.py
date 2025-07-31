@@ -99,7 +99,6 @@ edgeSplittingManagerPool = EdgeSplittingManagerPool(34, lm_manager, logger)
 global_initial_estimator = GlobalInitialStageEstimator(lm_manager, logger, 34)
 #incoming_queue = Queue()
 outgoing_queue_forward = Queue()
-outgoing_queue_return = Queue()
 performance_data_store = PerformanceDataStore(edgeSplittingManagerPool, global_initial_estimator, logger)
 timestamp_manager = Timestamp_manager(logger)
 nsamples = 0
