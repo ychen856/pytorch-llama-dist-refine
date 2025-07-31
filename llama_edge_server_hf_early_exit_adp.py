@@ -633,7 +633,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             start_idx_buff = max(0, start_idx - 2)
-
             layer_amount = end_idx - start_idx
 
             http_receiver.set_outgoing_queue(['T'])
@@ -653,7 +652,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'is exploring: {is_exploring}')
 
         #end recieved original data
-        if performance_data_store.steady_state and not is_exploring and not is_oom:
+        if performance_data_store.steady_state and not is_exploring:
             result = performance_data_store.get_optimal_end_idx(start_idx)
             if result:
                 end_idx_temp, _ = result
@@ -661,8 +660,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 if is_oom:
                     end_idx = min(start_idx + layer_amount, end_idx_temp)
 
-        if end_idx > end_idx_buff:
-            end_idx = end_idx_buff
+                models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
+                start_idx_buff = max(0, start_idx - 2)
+                layer_amount = end_idx - start_idx
+
 
         lm_head, _ = utils.get_lm_head_idx(end_idx)
         logger.log(f'new lm_head: {lm_head}')
