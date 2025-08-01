@@ -49,6 +49,7 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
+        print('NaNI???????????')
         with semaphore:
             try:
                 content_length = int(self.headers['Content-Length'])
