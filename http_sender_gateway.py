@@ -64,6 +64,9 @@ def pop_incoming_queue():
 
 
 def send_data(server_ip, server_port, text, performance_data_store, timestamp_manager, logger):
+    logger.log(f'UUUUUUUUUUUUUUUUUUU')
+    logger.log(f'UUUUUUUUUUUUUUUUUUU')
+    logger.log(f'UUUUUUUUUUUUUUUUUUU')
     start_time = time.time()
 
     newx = lz4.frame.compress(pickle.dumps(text))
