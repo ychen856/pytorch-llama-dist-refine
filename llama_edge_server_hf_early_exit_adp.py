@@ -239,7 +239,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         for i in range(0, end_idx_buff + 1):
             print('i: ', i)
             logger.log(f'i: {i}')
-            if i < start_idx_buff and len(models) > i:
+            '''if i < start_idx_buff and len(models) > i:
                 print('mmm')
                 logger.log(f'mmm')
                 models[i] = None
@@ -248,7 +248,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                 print('nnn')
                 logger.log(f'nnn')
                 models.append(None)
-                continue
+                continue'''
             #print('i: ', i)
             load_layer = False
             try:
