@@ -108,7 +108,7 @@ temp = []
 
 #def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
 def layer_reallocation(type, start_idx, end_idx, max_layers, models):
-    end_idx_buff = end_idx + 1
+    end_idx_buff = min(end_idx + 1, max_layers)
     if type == 1:  # add buffer layers
         # print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
@@ -192,7 +192,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
 
         start_idx_buff = max(0, start_idx - 2)
         #print('FFFFFFFFFFff: ', max_layers)
-        checkpoints = checkpoints[start_idx_buff : max_layers]
+        checkpoints = checkpoints[start_idx_buff : end_idx_buff + 1]
         checkpoint_idx = start_idx_buff
 
         '''print('start idxzzzz: ', start_idx_buff)
@@ -208,7 +208,16 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
             print('checkpoint idx: ', checkpoint_idx)
             logger.log(f'checkpoint idx: {checkpoint_idx}')
             logger.log(f'checkpoint: {checkpoint}')
-            if checkpoint_idx > end_idx_buff:
+            if len(models) > checkpoint_idx and models[checkpoint_idx] is None:
+                logger.log(f'A')
+                ckpt_path = checkpoint
+                checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
+            elif len(models) <= checkpoint_idx:
+                logger.log(f'B')
+                ckpt_path = checkpoint
+                checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
+
+            '''if checkpoint_idx > end_idx_buff:
                 logger.log(f'A')
                 ckpt_path = checkpoint
                 checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
@@ -216,7 +225,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
             elif len(models) <= checkpoint_idx:
                 logger.log(f'B')
                 ckpt_path = checkpoint
-                checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))
+                checkpoint_list.append(torch.load(ckpt_path, map_location="cpu"))'''
 
             checkpoint_idx = checkpoint_idx + 1
 
@@ -237,18 +246,14 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         print('start idx buff: ', start_idx_buff)
         checkpoint_idx = 0
         for i in range(0, end_idx_buff + 1):
-            print('i: ', i)
-            logger.log(f'i: {i}')
-            '''if i < start_idx_buff and len(models) > i:
-                print('mmm')
-                logger.log(f'mmm')
+            if i < start_idx_buff and len(models) > i:
+                logger.log(f'i: {i} -> None')
                 models[i] = None
                 continue
             elif i < start_idx_buff:
-                print('nnn')
-                logger.log(f'nnn')
+                logger.log(f'i: {i} -> None')
                 models.append(None)
-                continue'''
+                continue
             #print('i: ', i)
             load_layer = False
             try:
@@ -261,6 +266,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         load_layer = True
 
                     if load_layer is True:
+                        logger.log(f'i: {i} -> emb')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[0].to(device)
                         models[i].eval()
@@ -274,6 +280,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         load_layer = True
 
                     if load_layer is True:
+                        logger.log(f'i: {i} -> 33')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[33].to(device)
                         models[i].eval()
@@ -287,6 +294,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         load_layer = True
 
                     if load_layer is True:
+                        logger.log(f'i: {i} -> 34')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[34].to(device)
                         models[i].eval()
@@ -300,6 +308,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         load_layer = True
 
                     if load_layer is True:
+                        logger.log(f'i: {i} -> L')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[i].to(device)
                         models[i].eval()
@@ -609,7 +618,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #end_idx_buff = end_idx + 1
             logger.log(f'QQQQQQQQQQ end idx: {end_idx}')
 
-            max_layers = start_idx - 2 + max_layer_amount
+            #max_layers = start_idx - 2 + max_layer_amount
 
             #models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
@@ -629,7 +638,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
             #end_idx_buff = end_idx + 1
             logger.log(f'QQQQQQQQQQ end idx: {end_idx}')
-            max_layers = start_idx - 2 + max_layer_amount
+            #max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
             start_idx_buff = max(0, start_idx - 2)
