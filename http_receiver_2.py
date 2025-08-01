@@ -11,19 +11,35 @@ incoming_queue = Queue()
 outgoing_queue = Queue()
 
 def get_in_queue_data():
+    '''if len(incoming_queue) > 0:
+        return incoming_queue[0]
+    else:
+        return []'''
     while incoming_queue.empty():
         time.sleep(0.001)
+
     print('http receiver incoming queue size: ', incoming_queue.qsize())
     return incoming_queue.get()
 
-def set_outgoing_queue(outputs):
-    outgoing_queue.put(outputs)
+def get_in_queue_len():
+    return incoming_queue.qsize()
 
 def get_out_queue_data():
+    '''if len(incoming_queue) > 0:
+        return incoming_queue[0]
+    else:
+        return []'''
     while outgoing_queue.empty():
         time.sleep(0.005)
+
     print('http receiver returning queue size: ', outgoing_queue.qsize())
     return outgoing_queue.get()
+
+def set_outgoing_queue(outputs):
+    #outgoing_queue.append(outputs)
+    outgoing_queue.put(outputs)
+def pop_incoming_queue():
+    incoming_queue.pop(0)
 
 class S(BaseHTTPRequestHandler):
     sleep_time = 0
@@ -40,10 +56,11 @@ class S(BaseHTTPRequestHandler):
             try:
 
                 content_length = int(self.headers['Content-Length'])
-                post_data = self.rfile.read(content_length)
 
+                post_data = self.rfile.read(content_length)
                 decompress_data = lz4.frame.decompress(post_data)
                 del post_data
+                self._set_headers()
                 decrypt_data = pickle.loads(decompress_data)
                 del decompress_data
 
