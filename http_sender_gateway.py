@@ -12,8 +12,8 @@ from queue import Queue
 import lz4.frame
 
 from datetime import datetime, timedelta
-import http_receiver
-#import http_receiver2 as http_receiver
+#import http_receiver
+import http_receiver_2 as http_receiver
 
 '''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
