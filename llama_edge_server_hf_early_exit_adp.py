@@ -12,8 +12,8 @@ import argparse
 import random
 
 
-import http_receiver
-#import http_receiver2 as http_receiver
+#import http_receiver
+import http_receiver_2 as http_receiver
 import http_sender_gateway
 #import http_sender_gateway2 as http_sender_gateway
 
