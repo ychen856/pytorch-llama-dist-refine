@@ -14,8 +14,8 @@ import random
 
 #import http_receiver
 import http_receiver_2 as http_receiver
-import http_sender_gateway
-#import http_sender_gateway2 as http_sender_gateway
+#import http_sender_gateway
+import http_sender_gateway_2 as http_sender_gateway
 
 from safetensors.torch import save_file
 from transformers import PreTrainedTokenizerFast, LlamaTokenizer, AutoModelForCausalLM, LlamaConfig, AutoConfig
