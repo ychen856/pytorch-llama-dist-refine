@@ -6,7 +6,7 @@ import utils
 from exit_weight_manager import ExitWeightManager
 
 class PerformanceDataStore:
-    def __init__(self, shock_manager, global_initial_estimator, logger, max_records_per_type=0, statisitc_period=10):
+    def __init__(self, shock_manager, global_initial_estimator, logger, max_records_per_type=3, statisitc_period=10):
         """
         Initializes the CommunicationDataStore.
 
@@ -543,6 +543,9 @@ class PerformanceDataStore:
             return True  # 表示有更新
         return False  # 表示未更新
 
+    def replace_optimal_set(self, start_idx, end_idx, latency):
+        self.optimal_latency_map[start_idx] = (end_idx, latency)
+
 
 def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock_manager, logger,
                               edge_server_start_idx: int):
@@ -705,7 +708,8 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
             else:  # No valid records or weights applied after removal
                 continue
 
-            data_store.set_optimal_set(es_start, es_end, current_weighted_avg_latency)
+            #data_store.set_optimal_set(es_start, es_end, current_weighted_avg_latency)
+            data_store.replace_optimal_set(es_start, es_end, current_weighted_avg_latency)
 
         '''# Find the path with the minimum weighted average latency
         if current_weighted_avg_latency < min_weighted_avg_latency:
