@@ -376,6 +376,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
     WEIGHT_OLD = 0
     WEIGHT_NEW = 1
 
+
     for (start_idx, end_idx), records in all_data.items():
         individual_latencies_with_timestamps_not_early = []
         individual_latencies_with_timestamps_is_early = []
@@ -427,7 +428,7 @@ def calculate_opt(data_store: PerformanceDataStore, ppl, lm_manager, mode, shock
                 individual_latencies_with_timestamps_is_early.append((latency_is_early, record["timestamp"]))
 
 
-        if not individual_latencies_with_timestamps_is_early and not individual_latencies_with_timestamps_not_early:
+        if len(individual_latencies_with_timestamps_is_early) == 0 or len(individual_latencies_with_timestamps_not_early) == 0:
             print('not valid continue..')
             continue
 
