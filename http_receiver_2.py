@@ -5,6 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from queue import Queue
 import threading
 import concurrent.futures
+import uuid
 
 # 控制最大同時 HTTP 處理請求數量
 MAX_CONCURRENT_REQUESTS = 2
@@ -59,7 +60,7 @@ class S(BaseHTTPRequestHandler):
                 del decompress_data
 
                 # 新增唯一 request_id（例如 input 的 idx）
-                request_id = decrypt_data[4]  # 假設格式為 [..., idx, ...]
+                request_id = uuid.uuid4().hex  # 假設格式為 [..., idx, ...]
 
                 # 把資料送到 incoming_queue 供主線程處理
                 incoming_queue.put((request_id, decrypt_data))
