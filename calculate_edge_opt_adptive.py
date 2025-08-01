@@ -574,11 +574,13 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
 
     start_idx_list = []
     for key_tuple, records_list in data_store.get_all_data_by_type('edge_to_server').items():
-        logger.log(f'(key_tuple, record_list):({key_tuple}, {records_list})')
+        logger.log(f'(key_tuple, record_list): ({key_tuple}, {records_list})')
         temp_start_idx, _, _ = key_tuple
-        start_idx_list.append(temp_start_idx)
+        if temp_start_idx not in start_idx_list:
+            start_idx_list.append(temp_start_idx)
 
     for temp_edge_server_start_idx in start_idx_list:
+        logger.log(f'record start idx: {temp_edge_server_start_idx}')
         relevant_data_by_full_key = data_store.get_all_data_by_edge_server_start_index(temp_edge_server_start_idx)
         if not relevant_data_by_full_key:
             return None

@@ -860,7 +860,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
                 if len(existed_opt) == 0:
                     logger.log(f'no exist opt')
-                    end_idx = start_idx + 2
+                    end_idx = start_idx + 1
                 else:
                     logger.log(f'testing statistic period: {statistics_period}')
                     logger.log(f'testing cycle count: {cycle_count}')
@@ -877,9 +877,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     # if cycle_count > (statistics_period - 12) and input_count >= 24 and cycle_count % 4 == 0:
                     if cycle_count > (statistics_period - 12) and input_count >= 24 and (
                             statistics_period - cycle_count) % 4 == 0:
-                        print('testing lower value (i>12)')
+                        print('testing lower value (i>30)')
+                        logger.log(f'testing lower value (i>30)')
 
-                        layer_amount = max(1, layer_amount - 2)
+                        layer_amount = max(1, layer_amount - 1)
                         is_exploring = True
 
 
