@@ -12,8 +12,8 @@ import argparse
 import random
 
 
-import http_receiver
-#import http_receiver_2 as http_receiver
+#import http_receiver
+import http_receiver_2 as http_receiver
 import http_sender_gateway
 #import http_sender_gateway2 as http_sender_gateway
 
@@ -521,11 +521,11 @@ def task1_data_sending(args):
                 idx = http_receiver.incoming_queue.qsize()
                 timestamp_manager.start_times = (idx, start_time)
 
-                input = http_receiver.get_in_queue_data()
+                request_id, input = http_receiver.get_in_queue_data()
 
                 if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
                     logger.log(f'I think this is where the error comes from...')
-                    http_receiver.incoming_queue.put(input)
+                    http_receiver.incoming_queue.put((request_id, input))
                     continue
 
                 start_idx = input[0]
@@ -536,9 +536,9 @@ def task1_data_sending(args):
 
                 #if received origina data
                 if start_idx == 0:
-                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
                 else:
-                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
+                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx, request_id])
 
 
                 end_time = time.time()
@@ -596,19 +596,21 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'queue size t2: {http_receiver.incoming_queue.qsize()}')
         #print('http sender outgoing queue size: ', outgoing_queue_forward.qsize())
         print('start time: ', time.time())
-        input = http_receiver.get_in_queue_data()
+        request_id, input = http_receiver.get_in_queue_data()
         start_comp_time = time.time()
         #print('????: ', input)
         if input[0] == 'gateway':
             sleep_time_per_layer = input[1]
             print('sleep time: ', sleep_time_per_layer)
-            http_receiver.set_outgoing_queue(['T'])
+            http_receiver.set_outgoing_result(request_id, ['T'])
+            #http_receiver.set_outgoing_queue(['T'])
             continue
         if input[0] == 'communication':
-            http_receiver.set_outgoing_queue(['T'])
+            http_receiver.set_outgoing_result(request_id, ['T'])
+            #http_receiver.set_outgoing_queue(['T'])
             continue
         if input[0] == 'server':
-            outgoing_queue_forward.put(['server', input[1]])
+            outgoing_queue_forward.put(['server', input[1], request_id])
             continue
         if input[0] == 'opt' and not performance_data_store.steady_state:
             start_idx = input[1]
@@ -627,8 +629,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
 
-
-            http_receiver.set_outgoing_queue(['T'])
+            http_receiver.set_outgoing_result(request_id, ['T'])
+            #http_receiver.set_outgoing_queue(['T'])
             is_exploring = False
             continue
         elif input[0] == 'opt':
@@ -644,7 +646,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             start_idx_buff = max(0, start_idx - 2)
             layer_amount = end_idx - start_idx
 
-            http_receiver.set_outgoing_queue(['T'])
+            http_receiver.set_outgoing_result(request_id, ['T'])
+            #http_receiver.set_outgoing_queue(['T'])
             #is_exploring = False
             continue
         elif performance_data_store.steady_state and not is_exploring:
@@ -713,7 +716,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'direct sent!')
 
             #sending original data
-            outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx]) # forward the original input to the server
+            outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx, request_id]) # forward the original input to the server
             '''start_idx_buff = max(0, start_idx - 2)
             end_idx = start_idx + 2
             layer_amount = 2'''
@@ -809,17 +812,19 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #finished process with early exit, return to the client
         if is_early_exit or end_idx >= 34:
-            http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
+            http_receiver.set_outgoing_result(request_id, [start_idx, total_comp_time, idx])
+            #http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, True)
         #finished the whole process, return to the client
         elif end_idx >= 34:
-            http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
+            http_receiver.set_outgoing_result(request_id, [start_idx, total_comp_time, idx])
+            #http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
                                                         end_idx_buff, total_comp_time, head_idx, False)
         #no layer was processed because of oom, direct sent!
         elif end_idx < 0:
-            outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+            outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
 
             if is_oom:
                 logger.log(f'oom A')
@@ -827,7 +832,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 layer_amount = end_idx - start_idx
                 #end_idx_buff = end_idx + 1
         elif end_idx < start_idx:
-            outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
+            outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx, request_id])
 
             if is_oom:
                 logger.log(f'oom B')
@@ -846,7 +851,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             input_count = input_count + 1
             cycle_count = cycle_count + 1
 
-            outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
+            outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx, request_id])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx, end_idx_buff, total_comp_time, head_idx, False)
 
             if is_oom:

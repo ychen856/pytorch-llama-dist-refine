@@ -4,82 +4,74 @@ import lz4.frame
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from queue import Queue
 import threading
+import concurrent.futures
 
+# 控制最大同時 HTTP 處理請求數量
 MAX_CONCURRENT_REQUESTS = 2
 semaphore = threading.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+# 內部資料 queue
 incoming_queue = Queue()
-outgoing_queue = Queue()
+outgoing_map = {}
+outgoing_map_lock = threading.Lock()
+
+# background 處理 worker 數量（GPU 線程）
+processing_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 
 def get_in_queue_data():
-    '''if len(incoming_queue) > 0:
-        return incoming_queue[0]
-    else:
-        return []'''
     while incoming_queue.empty():
         time.sleep(0.001)
-
-    print('http receiver incoming queue size: ', incoming_queue.qsize())
     return incoming_queue.get()
 
-def get_in_queue_len():
-    return incoming_queue.qsize()
+def get_out_queue_len():
+    return len(outgoing_map)
 
-def get_out_queue_data():
-    '''if len(incoming_queue) > 0:
-        return incoming_queue[0]
-    else:
-        return []'''
-    while outgoing_queue.empty():
-        time.sleep(0.005)
+def set_outgoing_result(request_id, result):
+    with outgoing_map_lock:
+        outgoing_map[request_id] = result
 
-    print('http receiver returning queue size: ', outgoing_queue.qsize())
-    return outgoing_queue.get()
-
-def set_outgoing_queue(outputs):
-    #outgoing_queue.append(outputs)
-    outgoing_queue.put(outputs)
-def pop_incoming_queue():
-    incoming_queue.pop(0)
+def wait_for_result(request_id):
+    while True:
+        with outgoing_map_lock:
+            if request_id in outgoing_map:
+                return outgoing_map.pop(request_id)
+        time.sleep(0.001)
 
 class S(BaseHTTPRequestHandler):
     sleep_time = 0
 
     def _set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'application/octet-stream')
         self.end_headers()
 
     def do_POST(self):
-        start_time = time.time()
-
         with semaphore:
             try:
-
                 content_length = int(self.headers['Content-Length'])
 
                 post_data = self.rfile.read(content_length)
                 decompress_data = lz4.frame.decompress(post_data)
                 del post_data
-                self._set_headers()
                 decrypt_data = pickle.loads(decompress_data)
                 del decompress_data
 
-                incoming_queue.put(decrypt_data)
-                print(f'[{time.strftime("%X")}] Queue size after put: {incoming_queue.qsize()}')
+                # 新增唯一 request_id（例如 input 的 idx）
+                request_id = decrypt_data[4]  # 假設格式為 [..., idx, ...]
+
+                # 把資料送到 incoming_queue 供主線程處理
+                incoming_queue.put((request_id, decrypt_data))
+
+                # 等待背景計算完成的結果
+                result = wait_for_result(request_id)
 
                 time.sleep(S.sleep_time)
-
-                self.send_response(200)
-                self.end_headers()
-
-                output_message = outgoing_queue.get()
-                print(f'[{time.strftime("%X")}] http returning: ', output_message)
-
-                newx = pickle.dumps([output_message, 'Data received successfully!'])
+                self._set_headers()
+                newx = pickle.dumps([result, 'Data received successfully!'])
                 self.wfile.write(newx)
 
             except Exception as e:
-                print(f"[ERROR] Exception in POST: {e}")
+                print(f"[ERROR] POST failed: {e}")
                 self.send_response(500)
                 self.end_headers()
 

@@ -12,8 +12,8 @@ from queue import Queue
 import lz4.frame
 
 from datetime import datetime, timedelta
-import http_receiver
-#import http_receiver_2 as http_receiver
+#import http_receiver
+import http_receiver_2 as http_receiver
 
 '''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
@@ -69,13 +69,17 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     logger.log(f'UUUUUUUUUUUUUUUUUUU')
     start_time = time.time()
 
-    newx = lz4.frame.compress(pickle.dumps(text))
     if len(text) > 5:
         server_start_idx = text[0]
         start_idx = text[6]
         idx = text[4]
         # input = text[1]
         client_comp_time = text[5]
+
+    request_id = text[-1]
+    text = text[:-1]
+    newx = lz4.frame.compress(pickle.dumps(text))
+
 
     del text
 
@@ -122,7 +126,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
         print('zzzzzzzz: ', resp_message[0])
         if resp_message[0] == ["T"]:
-            http_receiver.outgoing_queue.put(["T"])
+            http_receiver.set_outgoing_result(request_id, ["T"])
+            #http_receiver.outgoing_queue.put(["T"])
         else:
             resp_message = resp_message[0]
             resp_message.append(rtt)    #resp_message = [start_idx, total_comp_time, idx, rtt(total time)]
@@ -151,9 +156,11 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
             # middle devices used only
             if client_comp_time is not None:
                 #http_receiver.outgoing_queue.put([start_idx, rtt + client_comp_time, idx])
-                http_receiver.outgoing_queue.put([start_idx, rtt, idx])
+                http_receiver.set_outgoing_result(request_id, [start_idx, rtt, idx])
+                #http_receiver.outgoing_queue.put([start_idx, rtt, idx])
             else:
-                http_receiver.outgoing_queue.put([None, rtt, None])
+                http_receiver.set_outgoing_result(request_id, [None, rtt, None])
+                #http_receiver.outgoing_queue.put([None, rtt, None])
 
 
     except:
