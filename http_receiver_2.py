@@ -30,6 +30,8 @@ def set_outgoing_result(request_id, result):
     with outgoing_map_lock:
         outgoing_map[request_id] = result
 
+    print('outgoing map: ', outgoing_map)
+
 def wait_for_result(request_id):
     while True:
         with outgoing_map_lock:
