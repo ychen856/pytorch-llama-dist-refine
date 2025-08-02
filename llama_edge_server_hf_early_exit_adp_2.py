@@ -534,6 +534,8 @@ def task1_data_sending(args):
                 mask = input[3]
                 idx = input[4]
 
+                time.sleep(1)
+
                 #if received origina data
                 if start_idx == 0:
                     outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
