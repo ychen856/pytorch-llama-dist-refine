@@ -509,8 +509,9 @@ def task1_data_sending(args):
         while 1 and not stop_event.is_set():
             timeout_count = 0
 
+            logger.log(f'queue size t1: {outgoing_queue.qsize()}')
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
-            while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+            while outgoing_queue.qsize() < 2 and input_queue.qsize() > 0 and performance_data_store.steady_state:
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
                 timeout_count = timeout_count + 1
 
@@ -594,6 +595,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
         count = count + 1
         #print('========================================')
 
+        logger.log(f'queue size t2: {outgoing_queue.qsize()}')
         idx = input_queue.qsize()
         input = input_queue.get()
 
