@@ -667,7 +667,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 layer_amount = end_idx - start_idx
 
 
-        time.sleep(3)
         #if received original data
         start_idx = input[0]
         out = input[1]
