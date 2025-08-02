@@ -8,7 +8,7 @@ import concurrent.futures
 import uuid
 
 # 控制最大同時 HTTP 處理請求數量
-MAX_CONCURRENT_REQUESTS = 2
+MAX_CONCURRENT_REQUESTS = 1
 semaphore = threading.Semaphore(MAX_CONCURRENT_REQUESTS)
 
 # 內部資料 queue
