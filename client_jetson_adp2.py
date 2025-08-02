@@ -24,8 +24,8 @@ from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCaus
 from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
 from early_exit import early_exit_lm_head, early_exit_regression
-#import http_sender
-import http_sender_2 as http_sender
+import http_sender
+#import http_sender_2 as http_sender
 from logger import Logger
 
 parser = argparse.ArgumentParser(
@@ -462,7 +462,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             if batch_count == total_batch_num:
                 return'''
 
-'''def task1_data_sending(args):
+def task1_data_sending(args):
     while 1 and not stop_event.is_set():
         timeout_count = 0
 
@@ -499,11 +499,11 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
         data = outgoing_queue.get()
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         #http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
-        http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)'''
+        http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
 
 
-def task1_data_sending(args):
+'''def task1_data_sending(args):
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
         futures = []
         while 1 and not stop_event.is_set():
@@ -549,7 +549,7 @@ def task1_data_sending(args):
                 executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
 
         # 等所有任務完成
-        concurrent.futures.wait(futures)
+        concurrent.futures.wait(futures)'''
 
 
 '''def task2_computation():
