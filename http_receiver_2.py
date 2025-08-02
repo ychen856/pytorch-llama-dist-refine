@@ -17,7 +17,7 @@ outgoing_map = {}
 outgoing_map_lock = threading.Lock()
 
 # background 處理 worker 數量（GPU 線程）
-processing_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+processing_pool = concurrent.futures.ThreadPoolExecutor(max_workers=3)
 
 def get_in_queue_data():
     while incoming_queue.empty():
@@ -31,7 +31,7 @@ def set_outgoing_result(request_id, result):
     with outgoing_map_lock:
         outgoing_map[request_id] = result
 
-    print('outgoing map: ', outgoing_map)
+    print(f"[{time.strftime('%X')}] [SET RESULT] thread={threading.current_thread().name} request_id={request_id}, result={result}")
 
 def wait_for_result(request_id):
     while True:
