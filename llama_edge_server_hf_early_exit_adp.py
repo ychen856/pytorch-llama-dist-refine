@@ -913,6 +913,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
                 #end_idx_buff = end_idx + 1
 
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
             #end_idx_buff = min(max_layers, end_idx_buff)
