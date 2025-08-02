@@ -71,6 +71,9 @@ class S(BaseHTTPRequestHandler):
 
                 time.sleep(S.sleep_time)
                 self._set_headers()
+                self.send_response(200)
+                self.end_headers()
+
                 newx = pickle.dumps([result, 'Data received successfully!'])
                 self.wfile.write(newx)
 
