@@ -6,7 +6,7 @@ import utils
 from exit_weight_manager import ExitWeightManager
 
 class PerformanceDataStore:
-    def __init__(self, shock_manager, global_initial_estimator, logger, max_records_per_type=3, statisitc_period=10):
+    def __init__(self, shock_manager, global_initial_estimator, logger, max_records_per_type=0, statisitc_period=10):
         """
         Initializes the CommunicationDataStore.
 
