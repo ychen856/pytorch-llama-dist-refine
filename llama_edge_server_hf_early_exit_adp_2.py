@@ -919,6 +919,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
                 #end_idx_buff = end_idx + 1
 
+            models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
             #end_idx_buff = min(max_layers, end_idx_buff)
@@ -975,7 +976,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
         if start_idx_buff < start_idx - 2:
+            logger.log(f'drop early layer')
             models, end_idx_buff = layer_reallocation(5, start_idx, end_idx, max_layers, models)
+            start_idx_buff = max(0, start_idx - 2)
         while end_idx_buff > end_idx + 2:  #remove end buffer
             logger.log(f'drop layers...')
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx, max_layers, models)
