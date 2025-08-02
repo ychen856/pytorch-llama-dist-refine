@@ -534,7 +534,7 @@ def task1_data_sending(args):
                 mask = input[3]
                 idx = input[4]
 
-                time.sleep(1)
+                #time.sleep(1)
 
                 #if received origina data
                 if start_idx == 0:

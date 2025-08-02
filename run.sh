@@ -8,16 +8,16 @@
 #sleep 10
 #python3.8 client_jetson_adp.py --ppl 30 --mode bandwidth-aware --config config_jetson2.yaml --log 13_jetson2_wlan_ppl_10_SM_fixed_end_4.log
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_org_2_1.log
+python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_pool_1.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_org_2_2.log
+python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_pool_2.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_org_2_3.log
+python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_pool_3.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_org_2_4.log
+python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_pool_4.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_org_2_5.log
+python3.8 client_jetson_adp2.py --ppl 30 --mode exit-rate --config config_jetson2.yaml --log 25_test_pool_5.log
