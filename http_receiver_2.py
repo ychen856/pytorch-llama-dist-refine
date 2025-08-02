@@ -41,7 +41,7 @@ def wait_for_result(request_id):
         time.sleep(0.001)
 
 class S(BaseHTTPRequestHandler):
-    sleep_time = 0.5
+    sleep_time = 0
 
     def _set_headers(self):
         self.send_response(200)
