@@ -511,7 +511,7 @@ def task1_data_sending(args):
 
             logger.log(f'queue size t1: {outgoing_queue.qsize()}')
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
-            while outgoing_queue.qsize() < 2 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+            while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state:
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
                 timeout_count = timeout_count + 1
 
