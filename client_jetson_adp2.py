@@ -504,7 +504,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
 
 def task1_data_sending(args):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         futures = []
         while 1 and not stop_event.is_set():
             timeout_count = 0
