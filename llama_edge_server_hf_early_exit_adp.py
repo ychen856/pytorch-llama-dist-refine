@@ -108,7 +108,7 @@ temp = []
 
 #def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
 def layer_reallocation(type, start_idx, end_idx, max_layers, models):
-    end_idx_buff = min(end_idx + 1, max_layers)
+    end_idx_buff = min(end_idx + 1, max_layers - 1)
     if type == 1:  # add buffer layers
         # print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
