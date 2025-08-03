@@ -108,7 +108,7 @@ temp = []
 
 #def layer_reallocation(type, start_idx, end_idx_buff, max_layers, models):
 def layer_reallocation(type, start_idx, end_idx, max_layers, models):
-    end_idx_buff = min(end_idx + 1, max_layers)
+    end_idx_buff = min(end_idx + 1, max_layers - 1)
     if type == 1:  # add buffer layers
         # print('increase buffer')
         config, kwargs = AutoConfig.from_pretrained(
@@ -954,6 +954,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'####################')
         logger.log(f'## end_idx_buff: {end_idx_buff}')
         logger.log(f'## end_idx: {end_idx}')
+        logger.log(f'## layer_amount: {layer_amount}')
         logger.log(f'## max_layers: {max_layers}')
         logger.log(f'## start_idx: {start_idx}')
         logger.log(f'## start_idx_buff: {start_idx_buff}')
@@ -967,7 +968,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'drop layers...')
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)'''
 
-        if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
+        '''if end_idx_buff < end_idx:
+            end_idx = end_idx_buff
+            layer_amount = end_idx - start_idx'''
+        if (end_idx_buff < end_idx or end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
         if start_idx_buff < start_idx - 2:
