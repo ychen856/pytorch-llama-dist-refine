@@ -238,7 +238,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         else:
             torch.set_default_tensor_type(torch.BFloat16Tensor)
 
-        models = models[:end_idx_buff]
+        models = models[:end_idx_buff + 1]
 
         logger.log(f'model length: {len(models)}')
         logger.log(f'start idx buff: {start_idx_buff}')
@@ -313,8 +313,9 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].to(device)
                         models[i].eval()
                         checkpoint_idx = checkpoint_idx + 1
-            except:
+            except Exception as e:
                 logger.log(f'expect!!')
+                logger.log(f'{e}')
                 end_idx_buff = i - 1
                 break
         #prune_wanda_allocation(args, models, tokenizer, device=torch.device("cuda:0"))
