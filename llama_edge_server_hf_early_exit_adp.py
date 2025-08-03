@@ -897,7 +897,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                         is_exploring = True
 
 
-                    end_idx = start_idx + layer_amount
+                    end_idx = min(start_idx + layer_amount, max_layers)
+                    layer_amount = end_idx - start_idx
 
         #if (input_count) % 10 == 0:
         if performance_data_store.new_record_count >= statistics_period:
@@ -969,9 +970,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             logger.log(f'drop layers...')
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx_buff, max_layers, models)'''
 
-        '''if end_idx_buff < end_idx:
-            end_idx = end_idx_buff
-            layer_amount = end_idx - start_idx'''
+
+        #if (end_idx_buff < end_idx or end_idx_buff < max_layers) or start_idx < start_idx_buff:
         if (end_idx_buff < end_idx or end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
