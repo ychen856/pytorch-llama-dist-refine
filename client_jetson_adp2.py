@@ -354,9 +354,6 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
         #outgoing_queue.put(['server', 0])
         #outgoing_queue.put(['communication', 0])
 
-        input_queue.put(['server', 0])
-        input_queue.put(['communication', 0])
-
         while True and not stop_event.is_set():
             if not is_first:
 
