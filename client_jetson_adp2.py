@@ -407,6 +407,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             if is_first:
                 logger.log(f'LLLLLLLLLLLLLLL')
                 testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
+                logger.log(f'testenc: {testenc}')
 
             nsamples = len(testenc)
 
