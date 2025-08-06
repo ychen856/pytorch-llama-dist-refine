@@ -358,8 +358,8 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             if not is_first:
 
                 while len(timestamp_manager.end_times) < batch_size:
-                    logger.log(f'::::::::::::::::::::::')
-                    logger.log(f'timestamp: {timestamp_manager.end_times}')
+                    '''logger.log(f'::::::::::::::::::::::')
+                    logger.log(f'timestamp: {timestamp_manager.end_times}')'''
                     time.sleep(0.0001)
 
                 print('time: ', timestamp_manager)
