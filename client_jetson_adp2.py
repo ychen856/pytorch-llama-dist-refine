@@ -526,9 +526,6 @@ def task1_data_sending_direct(args):
             performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
             http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager,
                                   logger)
-        else:
-            logger.log(f'ELSE!')
-            #break
 
 
 
