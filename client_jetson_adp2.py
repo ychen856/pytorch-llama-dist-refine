@@ -351,8 +351,11 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
     elif mode == 2:  # stream arrival
         testenc = None
         global sleep_time_per_layer
-        outgoing_queue.put(['server', 0])
-        outgoing_queue.put(['communication', 0])
+        #outgoing_queue.put(['server', 0])
+        #outgoing_queue.put(['communication', 0])
+
+        input_queue.put(['server', 0])
+        input_queue.put(['communication', 0])
 
         while True and not stop_event.is_set():
             if not is_first:
