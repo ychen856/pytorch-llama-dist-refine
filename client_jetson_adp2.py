@@ -753,7 +753,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #print('statistic')
             #statistics_period = statistics_period + 5
             end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
-            outgoing_queue.put(['opt', end_idx + 1])
+            #outgoing_queue.put(['opt', end_idx + 1])
 
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', end_idx_buff)
