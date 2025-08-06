@@ -349,13 +349,14 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 
 
     elif mode == 2:  # stream arrival
+        logger.log(f'PPPPPPPPPPPPPP')
         testenc = None
         global sleep_time_per_layer
         outgoing_queue.put(['server', 0])
         outgoing_queue.put(['communication', 0])
 
         while True and not stop_event.is_set():
-
+            logger.log(f'FFFFFFFFFFFFFF')
             if not is_first:
 
                 while len(timestamp_manager.end_times) < batch_size:
@@ -404,6 +405,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
                 #outgoing_queue.put(['communication', 1])'''
 
             if is_first:
+                logger.log(f'LLLLLLLLLLLLLLL')
                 testenc = get_wikitext2_testloader(batch_size, seed, seqlen, tokenizer, device)
 
             nsamples = len(testenc)
