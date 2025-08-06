@@ -466,7 +466,7 @@ def task1_data_sending(args):
     while 1 and not stop_event.is_set():
         timeout_count = 0
 
-        #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
+        '''#while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
         while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
         #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
             timeout_count = timeout_count + 1
@@ -493,13 +493,33 @@ def task1_data_sending(args):
                 logger.log(f'end idx: 0')
             else:
                 logger.log(f'ELSE!')
-                break
+                break'''
+        start_time = time.time()
+        if input_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
+            idx = input_queue.qsize()
+            timestamp_manager.start_times = (idx, start_time)
+
+            output = input_queue.get()
+            outgoing_queue.put([0, output, None, None, idx, 0])
+
+            # packed_data = serialize_and_compress(0, [None, None, output], None, None, idx, 0)
+            # outgoing_queue.put(packed_data)
+
+            end_time = time.time()
+
+            print('server idle!')
+            logger.log(f'server idle!')
+            logger.log(f'start idx: 0')
+            logger.log(f'end idx: 0')
+        else:
+            logger.log(f'ELSE!')
+            break
 
 
         data = outgoing_queue.get()
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-        #http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
-        http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
+        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
 
 
@@ -838,10 +858,10 @@ if __name__ == '__main__':
                                      head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
-    thread2.start()
+    #thread2.start()
     thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
-    thread2.join()
+    #thread2.join()
     thread3.join()
