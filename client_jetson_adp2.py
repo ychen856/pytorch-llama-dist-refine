@@ -528,7 +528,7 @@ def task1_data_sending_direct(args):
                                   logger)
         else:
             logger.log(f'ELSE!')
-            break
+            #break
 
 
 
