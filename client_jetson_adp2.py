@@ -351,15 +351,13 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
     elif mode == 2:  # stream arrival
         testenc = None
         global sleep_time_per_layer
-        #outgoing_queue.put(['server', 0])
-        #outgoing_queue.put(['communication', 0])
+        outgoing_queue.put(['server', 0])
+        outgoing_queue.put(['communication', 0])
 
         while True and not stop_event.is_set():
             if not is_first:
 
                 while len(timestamp_manager.end_times) < batch_size:
-                    '''logger.log(f'::::::::::::::::::::::')
-                    logger.log(f'timestamp: {timestamp_manager.end_times}')'''
                     time.sleep(0.0001)
 
                 print('time: ', timestamp_manager)
@@ -464,7 +462,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
             if batch_count == total_batch_num:
                 return'''
 
-'''def task1_data_sending(args):
+def task1_data_sending(args):
     while 1 and not stop_event.is_set():
         timeout_count = 0
 
@@ -501,7 +499,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
         data = outgoing_queue.get()
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
         http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger)
-        #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)'''
+        #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
 
 def task1_data_sending_direct(args):
@@ -862,8 +860,8 @@ if __name__ == '__main__':
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
-    #thread1 = threading.Thread(target=task1_data_sending, args=[args])
-    thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread1 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
                                      head_idx, max_layers, batch_num, device])
