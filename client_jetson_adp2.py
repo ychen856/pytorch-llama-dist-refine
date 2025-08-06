@@ -495,6 +495,7 @@ def task1_data_sending(args):
                 logger.log(f'ELSE!')
                 break'''
         start_time = time.time()
+        logger.log(f'queue size: {input_queue.qsize()}')
         if input_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
             idx = input_queue.qsize()
             timestamp_manager.start_times = (idx, start_time)
@@ -518,7 +519,7 @@ def task1_data_sending(args):
 
         data = outgoing_queue.get()
         performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager)
+        http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger)
         #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
 
