@@ -507,6 +507,7 @@ def data_producer(total_batch_num, batch_size, seed, seqlen, bs, tokenizer, mode
 def task1_data_sending_direct(args):
     while 1 and not stop_event.is_set():
         start_time = time.time()
+        logger.log(f'queue size: {input_queue.qsize()}')
         if input_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
             idx = input_queue.qsize()
             timestamp_manager.start_times = (idx, start_time)
