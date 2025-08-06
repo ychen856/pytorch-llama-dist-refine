@@ -186,6 +186,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
             http_receiver.set_outgoing_queue(['T'])
             continue
 
+        logger.log(f'inputttttt: {input}')
         #received original data
         start_idx = input[0]
         out = input[1]
