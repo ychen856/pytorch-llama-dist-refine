@@ -539,7 +539,7 @@ def task1_data_sending_multi(args):
             timeout_count = 0
 
             logger.log(f'queue size t1: {outgoing_queue.qsize()}')
-            prob = randrange(1, 3)
+            prob = random.randint(1, 3)
             logger.log(f'probbb: {prob}')
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
             while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state and prob / 3 > 0:
