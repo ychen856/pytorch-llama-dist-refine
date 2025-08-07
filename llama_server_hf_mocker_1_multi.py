@@ -164,6 +164,7 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
     print(f'{pid} with thread {curr_thread}, with process: {curr_process} Started')
     print('T2 computaton...')
     while(1):
+        logger.log(f'queue size: {incoming_queue.qsize()}')
         print('start time: ', time.time())
         start_time_0 = time.time()
         if is_dummy:
