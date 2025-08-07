@@ -849,7 +849,7 @@ if __name__ == '__main__':
 
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
-    n_sample = 30
+    n_sample = 10
     batch_num = 30
     #seed = random.seed(time.time())
     seed = 0
