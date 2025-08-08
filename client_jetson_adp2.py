@@ -26,8 +26,8 @@ from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get
 from timestamp_manager import Timestamp_manager
 from early_exit import early_exit_lm_head, early_exit_regression
 import http_sender
-#import http_sender_2 as http_sender
-from logger import Logger
+import http_sender_2 as http_sender
+#from logger import Logger
 
 parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
@@ -542,7 +542,7 @@ def task1_data_sending_multi(args):
             prob = random.randint(1, 3)
             logger.log(f'probbb: {prob}')
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0 and performance_data_store.steady_state:
-            while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state and prob / 3 > 0:
+            while outgoing_queue.qsize() < 1 and input_queue.qsize() > 0 and performance_data_store.steady_state and prob / 3 > 1:
             #while outgoing_queue.qsize() < 3 and input_queue.qsize() > 0:
                 timeout_count = timeout_count + 1
 
@@ -867,17 +867,17 @@ if __name__ == '__main__':
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
     #thread1 = threading.Thread(target=task1_data_sending, args=[args])
-    thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
-    #thread1 = threading.Thread(target=task1_data_sending_multi, args=[args])
+    #thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread1 = threading.Thread(target=task1_data_sending_multi, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
                                      head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
-    #thread2.start()
+    thread2.start()
     thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
-    #thread2.join()
+    thread2.join()
     thread3.join()
