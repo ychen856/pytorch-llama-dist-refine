@@ -76,6 +76,8 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
 
         decrypt_data = pickle.loads(post_data)'''
+        print('DATTTTAAAA: ', decrypt_data)
+
 
         #if decrypt_data[0] == 'communication':
             #S.sleep_time = decrypt_data[1]
