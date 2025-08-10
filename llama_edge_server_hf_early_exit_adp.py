@@ -512,7 +512,7 @@ def task1_data_sending_direct(args):
         # while outgoing_queue.empty() and input_queue.qsize() > 0:
         # while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
         logger.log(f'queue size t1: {http_receiver.incoming_queue.qsize()}')
-        while http_receiver.incoming_queue.qsize() > 0:
+        if http_receiver.incoming_queue.qsize() > 0:
             timeout_count = timeout_count + 1
 
             start_time = time.time()
