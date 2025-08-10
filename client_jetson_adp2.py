@@ -25,8 +25,8 @@ from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCaus
 from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
 from early_exit import early_exit_lm_head, early_exit_regression
-#import http_sender
-import http_sender_2 as http_sender
+import http_sender
+#import http_sender_2 as http_sender
 from logger import Logger
 
 parser = argparse.ArgumentParser(
@@ -526,9 +526,9 @@ def task1_data_sending_direct(args):
 
             data = outgoing_queue.get()
             performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-            #http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger)
-            http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager,
-                                  logger)
+            http_sender.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger)
+            #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager,
+            #                      logger)
 
 
 
