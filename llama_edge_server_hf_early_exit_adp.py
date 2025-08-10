@@ -496,6 +496,58 @@ def task1_data_receiving(args):
     while 1:
         http_receiver.run(port=args.gateway_port)
 
+
+def task1_data_sending_direct(args):
+    while 1:
+        timeout_count = 0
+
+        tracemalloc.start()
+        # take before snapshot
+        snapshot_before = tracemalloc.take_snapshot()
+
+        start_comp_time = time.time()
+
+        # print('zzz', calculate_opt.steady_state)
+        # while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
+        # while outgoing_queue.empty() and input_queue.qsize() > 0:
+        # while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
+        logger.log(f'queue size t1: {http_receiver.incoming_queue.qsize()}')
+        while http_receiver.incoming_queue.qsize() > 0:
+            timeout_count = timeout_count + 1
+
+            start_time = time.time()
+            # print('outgoing queue size: ', outgoing_queue.qsize())
+
+            if http_receiver.incoming_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
+                idx = http_receiver.incoming_queue.qsize()
+                timestamp_manager.start_times = (idx, start_time)
+
+                input = http_receiver.get_in_queue_data()
+
+                out = input[1]
+                idx = input[4]
+
+                # if received origina data
+                outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+
+
+                end_time = time.time()
+                # print('client computation time: ', end_time - start_time)
+                # calculate_opt.client_comp_statistics = (-1, end_idx_buff, end_time - start_time)
+                print('server idle!')
+                logger.log(f'server idle!')
+            # else:
+            #    break
+
+        data = outgoing_queue_forward.get()
+        # print('data: ', data)
+        performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+        http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager,
+                                      logger)
+
+
+
+
 def task1_data_sending(args):
     while 1:
         timeout_count = 0
@@ -1029,16 +1081,17 @@ if __name__ == '__main__':
 
     start_time = time.time()
     thread1 = threading.Thread(target=task1_data_receiving, args=[args])
-    thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
     #(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True)
     thread3 = threading.Thread(target=task2_computation, args=[models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, False])
 
     thread1.start()
     thread2.start()
-    thread3.start()
+    #thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
     thread2.join()
-    thread3.join()
+    #thread3.join()
     print('total_time: ', time.time() - start_time)
