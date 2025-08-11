@@ -1081,17 +1081,17 @@ if __name__ == '__main__':
 
     start_time = time.time()
     thread1 = threading.Thread(target=task1_data_receiving, args=[args])
-    #thread2 = threading.Thread(target=task1_data_sending, args=[args])
-    thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
     #(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True)
     thread3 = threading.Thread(target=task2_computation, args=[models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, False])
 
     thread1.start()
     thread2.start()
-    #thread3.start()
+    thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
     thread2.join()
-    #thread3.join()
+    thread3.join()
     print('total_time: ', time.time() - start_time)
