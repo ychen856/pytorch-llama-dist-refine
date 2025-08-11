@@ -818,6 +818,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
 
         #finished process with early exit, return to the client
         if is_early_exit or end_idx >= 34:
+            logger.log('AA')
             http_receiver.set_outgoing_result(request_id, [start_idx, total_comp_time, idx])
             #http_receiver.set_outgoing_queue([start_idx, total_comp_time, idx])
             performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), start_idx, end_idx,
@@ -830,6 +831,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                                                         end_idx_buff, total_comp_time, head_idx, False)
         #no layer was processed because of oom, direct sent!
         elif end_idx < 0:
+            logger.log('BB')
             outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
 
             if is_oom:
@@ -847,6 +849,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 #end_idx_buff = end_idx + 1
         #the process is executed normally
         elif not is_early_exit and end_idx < 34:
+            logger.log('CC')
             '''if end_idx <= start_idx:
                 outgoing_queue_forward.put([end_idx + 1, out, ids, mask, idx, total_comp_time, start_idx])
                 performance_data_store.add_edge_server_info(datetime.now() + timedelta(milliseconds=50), end_idx,
@@ -872,6 +875,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 if len(existed_opt) == 0:
                     logger.log(f'no exist opt')
                     end_idx = start_idx + 1
+                    layer_amount = 1
                 else:
                     logger.log(f'testing statistic period: {statistics_period}')
                     logger.log(f'testing cycle count: {cycle_count}')
