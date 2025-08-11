@@ -190,7 +190,8 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         checkpoints = natsorted(checkpoints)
         assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
 
-        start_idx_buff = max(0, start_idx - 2)
+        #start_idx_buff = max(0, start_idx - 2)
+        start_idx_buff = 0
         #print('FFFFFFFFFFff: ', max_layers)
         checkpoints = checkpoints[start_idx_buff : end_idx_buff + 1]
         checkpoint_idx = start_idx_buff
@@ -645,7 +646,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
-            start_idx_buff = max(0, start_idx - 2)
+
+            #start_idx_buff = max(0, start_idx - 2)
+            start_idx_buff = 0
             layer_amount = end_idx - start_idx
 
             http_receiver.set_outgoing_result(request_id, ['T'])
@@ -665,7 +668,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 logger.log(f'new end: {end_idx}')
 
                 models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
-                start_idx_buff = max(0, start_idx - 2)
+
+                #start_idx_buff = max(0, start_idx - 2)
+                start_idx_buff = 0
                 layer_amount = end_idx - start_idx
 
 
