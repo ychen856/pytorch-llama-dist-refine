@@ -627,7 +627,7 @@ def task1_data_sending_multi(args):
                 # else:
                 #    break
 
-                data = outgoing_queue_forward.get()
+            data = outgoing_queue_forward.get()
             performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
             #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
