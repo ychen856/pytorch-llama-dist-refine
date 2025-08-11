@@ -980,10 +980,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         if (end_idx_buff < end_idx and end_idx_buff < max_layers) or start_idx < start_idx_buff:
             logger.log(f'load model E')
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
-        if start_idx_buff < start_idx - 2:
+        '''if start_idx_buff < start_idx - 2:
             logger.log(f'drop early layer')
             models, end_idx_buff = layer_reallocation(5, start_idx, end_idx, max_layers, models)
-            start_idx_buff = max(0, start_idx - 2)
+            start_idx_buff = max(0, start_idx - 2)'''
         while end_idx_buff > end_idx + 2:  #remove end buffer
             logger.log(f'drop layers...')
             models, end_idx_buff = layer_reallocation(2, start_idx, end_idx, max_layers, models)
