@@ -616,9 +616,8 @@ def task1_data_sending_multi(args):
 
 
             futures.append(
-                executor.submit(http_sender_gateway.send_data, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
-                #executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
-                #                performance_data_store, timestamp_manager, logger))
+                executor.submit(http_sender_gateway.send_data, args.server_ip, args.server_port, data,
+                                performance_data_store, timestamp_manager, logger))
 
 
         # 等所有任務完成
