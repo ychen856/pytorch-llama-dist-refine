@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 import argparse
 import random
-
+import concurrent.futures
 
 #import http_receiver
 import http_receiver_2 as http_receiver
@@ -568,6 +568,63 @@ def task1_data_sending(args):
         for stat in stats[:10]:
             logger.log(f'{stat}')
 
+
+def task1_data_sending_multi(args):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        futures = []
+        while 1:
+            logger.log(f'AAAAAAAAAAAAAAAA')
+            timeout_count = timeout_count + 1
+
+            start_time = time.time()
+            # print('outgoing queue size: ', outgoing_queue.qsize())
+
+            if http_receiver.incoming_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
+                idx = http_receiver.incoming_queue.qsize()
+                timestamp_manager.start_times = (idx, start_time)
+
+                request_id, input = http_receiver.get_in_queue_data()
+
+                if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
+                    logger.log(f'I think this is where the error comes from...')
+                    http_receiver.incoming_queue.put((request_id, input))
+                    continue
+
+                start_idx = input[0]
+                out = input[1]
+                ids = input[2]
+                mask = input[3]
+                idx = input[4]
+
+                # time.sleep(1)
+
+                # if received origina data
+                if start_idx == 0:
+                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
+                else:
+                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx, request_id])
+
+                end_time = time.time()
+                # print('client computation time: ', end_time - start_time)
+                # calculate_opt.client_comp_statistics = (-1, end_idx_buff, end_time - start_time)
+                print('server idle!')
+                logger.log(f'server idle!')
+
+            data = outgoing_queue_forward.get()
+            #performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+            #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
+
+
+            futures.append(
+                executor.submit(http_sender_gateway.send_data, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
+                #executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
+                #                performance_data_store, timestamp_manager, logger))
+
+
+        # 等所有任務完成
+        concurrent.futures.wait(futures)
+
+
 def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True):
     pid = os.getpid()
     curr_thread = current_thread().name
@@ -1038,7 +1095,8 @@ if __name__ == '__main__':
 
     start_time = time.time()
     thread1 = threading.Thread(target=task1_data_receiving, args=[args])
-    thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    thread2 = threading.Thread(target=task1_data_sending_multi, args=[args])
     #(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True)
     thread3 = threading.Thread(target=task2_computation, args=[models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, False])
 
