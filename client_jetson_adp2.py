@@ -534,7 +534,7 @@ def task1_data_sending_direct(args):
 
 
 def task1_data_sending_multi(args):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         futures = []
         while 1 and not stop_event.is_set():
             timeout_count = 0

@@ -17,7 +17,7 @@ outgoing_map = {}
 outgoing_map_lock = threading.Lock()
 
 # background 處理 worker 數量（GPU 線程）
-processing_pool = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+#processing_pool = concurrent.futures.ThreadPoolExecutor(max_workers=3)
 
 def get_in_queue_data():
     while incoming_queue.empty():
