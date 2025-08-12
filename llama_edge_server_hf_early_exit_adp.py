@@ -524,18 +524,22 @@ def task1_data_sending_direct(args):
 
                 input = http_receiver.get_in_queue_data()
 
+                if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
+                    logger.log(f'I think this is where the error comes from...')
+                    http_receiver.incoming_queue.put(input)
+                    continue
+
+                start_idx = input[0]
                 out = input[1]
+                ids = input[2]
+                mask = input[3]
                 idx = input[4]
 
                 # if received origina data
-                outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
-
-
-                end_time = time.time()
-                # print('client computation time: ', end_time - start_time)
-                # calculate_opt.client_comp_statistics = (-1, end_idx_buff, end_time - start_time)
-                print('server idle!')
-                logger.log(f'server idle!')
+                if start_idx == 0:
+                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+                else:
+                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
             # else:
             #    break
 
