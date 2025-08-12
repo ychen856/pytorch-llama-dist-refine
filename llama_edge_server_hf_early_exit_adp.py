@@ -527,6 +527,7 @@ def task1_data_sending_direct(args):
                 if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
                     logger.log(f'I think this is where the error comes from...')
                     #http_receiver.incoming_queue.put(input)
+                    http_receiver.set_outgoing_queue(['T'])
                     continue
 
                 start_idx = input[0]
