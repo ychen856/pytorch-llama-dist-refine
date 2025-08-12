@@ -578,9 +578,9 @@ def task1_data_sending_multi(args):
 
 
             futures.append(
-                #executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
-                executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
-                                performance_data_store, timestamp_manager, logger))
+                executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
+                #executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
+                #                performance_data_store, timestamp_manager, logger))
 
 
         # 等所有任務完成
@@ -853,7 +853,7 @@ if __name__ == '__main__':
 
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
-    n_sample = 10
+    n_sample = 30
     batch_num = 30
     #seed = random.seed(time.time())
     seed = 0
