@@ -578,9 +578,9 @@ def task1_data_sending_multi(args):
 
 
             futures.append(
-                executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
-                #executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
-                #                performance_data_store, timestamp_manager, logger))
+                #executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
+                executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
+                                performance_data_store, timestamp_manager, logger))
 
 
         # 等所有任務完成
@@ -653,7 +653,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             except Exception as e:
                 print(e)
 
-
+            end_idx = 4
             for k in range(1, end_idx + 1):
                 try:
                     time.sleep(sleep_time_per_layer)
@@ -853,7 +853,7 @@ if __name__ == '__main__':
 
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
-    n_sample = 30
+    n_sample = 10
     batch_num = 30
     #seed = random.seed(time.time())
     seed = 0
