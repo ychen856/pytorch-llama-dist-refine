@@ -593,12 +593,12 @@ def task1_data_sending_direct(args):
                 idx = http_receiver.incoming_queue.qsize()
                 timestamp_manager.start_times = (idx, start_time)
 
-                input = http_receiver.get_in_queue_data()
+                request_id, input = http_receiver.get_in_queue_data()
 
                 if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
                     logger.log(f'I think this is where the error comes from...')
                     #http_receiver.incoming_queue.put(input)
-                    http_receiver.set_outgoing_queue(['T'])
+                    http_receiver.set_outgoing_result(request_id, ['T'])
                     continue
 
                 start_idx = input[0]
@@ -609,9 +609,9 @@ def task1_data_sending_direct(args):
 
                 # if received origina data
                 if start_idx == 0:
-                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0, request_id])
                 else:
-                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
+                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx, request_id])
             # else:
             #    break
 
