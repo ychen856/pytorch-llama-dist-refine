@@ -653,7 +653,6 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             except Exception as e:
                 print(e)
 
-            end_idx = 1
             for k in range(1, end_idx + 1):
                 try:
                     time.sleep(sleep_time_per_layer)
