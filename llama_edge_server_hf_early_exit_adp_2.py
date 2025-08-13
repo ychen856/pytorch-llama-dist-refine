@@ -174,8 +174,8 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
 
     if type == 2: # drop layers
         #print('decrease buffer')
-        models = models[:-1]
-        end_idx_buff = end_idx_buff - 1
+        models = models[:end_idx_buff + 1]
+        #end_idx_buff = end_idx_buff - 1
 
     if type == 3:   #reallocate model
         #print('increase buffer')
@@ -1001,6 +1001,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     logger.log(f'no exist opt')
                     end_idx = start_idx + 1
                     layer_amount = 1
+
                 else:
                     logger.log(f'testing statistic period: {statistics_period}')
                     logger.log(f'testing cycle count: {cycle_count}')
