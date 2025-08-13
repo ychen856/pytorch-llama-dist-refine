@@ -759,7 +759,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             #print('statistic')
             #statistics_period = statistics_period + 5
             end_idx, end_idx_buff, statistics_period = calculate_opt(performance_data_store, args.ppl, lm_manager, args.mode, shock_manager, logger)
-            #outgoing_queue.put(['opt', end_idx + 1])
+            outgoing_queue.put(['opt', end_idx + 1])
 
             print('opt end idx: ', end_idx)
             print('opt buff idx: ', end_idx_buff)
@@ -772,7 +772,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             outgoing_queue.put(packed_data)'''
 
             cycle_count = 0
-        '''elif performance_data_store.steady_state and shock_manager.is_trigger_override():
+        elif performance_data_store.steady_state and shock_manager.is_trigger_override():
             end_idx = shock_manager.decide_k(args.ppl, end_idx)
             end_idx_buff = end_idx + 1
             shock_manager.reset_history()
@@ -790,7 +790,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
             performance_data_store.new_record_count = 0
             performance_data_store.data_storage.clear()
             logger.log(f'new period: {performance_data_store._statisitc_period}')
-            cycle_count = 0'''
+            cycle_count = 0
 
 
 
