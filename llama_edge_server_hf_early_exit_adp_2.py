@@ -568,6 +568,60 @@ def task1_data_sending(args):
         for stat in stats[:10]:
             logger.log(f'{stat}')
 
+def task1_data_sending_direct(args):
+    while 1:
+        timeout_count = 0
+
+        tracemalloc.start()
+        # take before snapshot
+        snapshot_before = tracemalloc.take_snapshot()
+
+        start_comp_time = time.time()
+
+        # print('zzz', calculate_opt.steady_state)
+        # while outgoing_queue_forward.empty() and incoming_queue.qsize() > 0 and calculate_opt.steady_state:
+        # while outgoing_queue.empty() and input_queue.qsize() > 0:
+        # while outgoing_queue_forward.qsize() < 3 and incoming_queue.qsize() > 0 and performance_data_store.steady_state:
+        #logger.log(f'queue size t1: {http_receiver.incoming_queue.qsize()}')
+        if http_receiver.incoming_queue.qsize() > 0:
+            timeout_count = timeout_count + 1
+
+            start_time = time.time()
+            # print('outgoing queue size: ', outgoing_queue.qsize())
+
+            if http_receiver.incoming_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
+                idx = http_receiver.incoming_queue.qsize()
+                timestamp_manager.start_times = (idx, start_time)
+
+                input = http_receiver.get_in_queue_data()
+
+                if input[0] == 'gateway' or input[0] == 'communication' or input[0] == 'server' or input[0] == 'opt':
+                    logger.log(f'I think this is where the error comes from...')
+                    #http_receiver.incoming_queue.put(input)
+                    http_receiver.set_outgoing_queue(['T'])
+                    continue
+
+                start_idx = input[0]
+                out = input[1]
+                ids = input[2]
+                mask = input[3]
+                idx = input[4]
+
+                # if received origina data
+                if start_idx == 0:
+                    outgoing_queue_forward.put([0, out, None, None, idx, 0, 0])
+                else:
+                    outgoing_queue_forward.put([start_idx, out, ids, mask, idx, 0, start_idx])
+            # else:
+            #    break
+
+            data = outgoing_queue_forward.get()
+            # print('data: ', data)
+            performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+            http_sender_gateway.send_data(args.server_ip, args.server_port, data, performance_data_store, timestamp_manager,
+                                      logger)
+
+
 
 def task1_data_sending_multi(args):
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
@@ -1109,8 +1163,9 @@ if __name__ == '__main__':
 
     start_time = time.time()
     thread1 = threading.Thread(target=task1_data_receiving, args=[args])
+    thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
     #thread2 = threading.Thread(target=task1_data_sending, args=[args])
-    thread2 = threading.Thread(target=task1_data_sending_multi, args=[args])
+    #thread2 = threading.Thread(target=task1_data_sending_multi, args=[args])
     #(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True)
     thread3 = threading.Thread(target=task2_computation, args=[models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, False])
 
