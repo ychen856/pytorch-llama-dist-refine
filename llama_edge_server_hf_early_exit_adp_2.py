@@ -239,7 +239,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         else:
             torch.set_default_tensor_type(torch.BFloat16Tensor)
 
-        models = models[:end_idx_buff]
+        models = models[:end_idx_buff + 1]
 
         logger.log(f'model length: {len(models)}')
         logger.log(f'start idx buff: {start_idx_buff}')
