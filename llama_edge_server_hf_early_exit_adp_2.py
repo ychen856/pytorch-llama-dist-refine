@@ -316,8 +316,9 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].to(device)
                         models[i].eval()
                     checkpoint_idx = checkpoint_idx + 1
-            except:
+            except Exception as e:
                 logger.log(f'expect!!')
+                logger.log(f'{e}')
                 end_idx_buff = i - 1
                 break
         #prune_wanda_allocation(args, models, tokenizer, device=torch.device("cuda:0"))
@@ -1002,8 +1003,11 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
                 if len(existed_opt) == 0:
                     logger.log(f'no exist opt')
-                    end_idx = start_idx + 1
-                    layer_amount = 1
+                    #end_idx = start_idx + 1
+                    #layer_amount = 1
+
+                    end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
+                    layer_amount = end_idx- start_idx
 
                 else:
                     logger.log(f'testing statistic period: {statistics_period}')
