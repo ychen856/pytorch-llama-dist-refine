@@ -1006,7 +1006,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     #end_idx = start_idx + 1
                     #layer_amount = 1
 
-                    end_idx = global_initial_estimator.predict_best_m(args.ppl, input[1])
+                    end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
                     layer_amount = end_idx- start_idx
 
                 else:
