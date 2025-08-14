@@ -247,6 +247,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         print('start idx buff: ', start_idx_buff)
         checkpoint_idx = 0
         for i in range(0, end_idx_buff + 1):
+            logger.log(f'checkpoint idx: {checkpoint_idx}')
             if i < start_idx_buff and len(models) > i:
                 logger.log(f'i: {i} -> None')
                 models[i] = None
@@ -271,7 +272,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[0].to(device)
                         models[i].eval()
-                        checkpoint_idx = checkpoint_idx + 1
+                    checkpoint_idx = checkpoint_idx + 1
                 elif i == 33:
                     if i >= len(models):
                         models.append((LlamaForCausalLM_norm(config)))
