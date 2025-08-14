@@ -310,7 +310,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         logger.log(f'MDD')
                         models[i] = LlamaForCausalLM_layer_0(config)
                         load_layer = True
-
+                    logger.log(f'new lenght: {len(models)}')
                     if load_layer is True:
                         logger.log(f'i: {i} -> L')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
