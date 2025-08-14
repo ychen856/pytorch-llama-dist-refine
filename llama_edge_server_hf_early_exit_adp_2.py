@@ -787,6 +787,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             if result:
                 logger.log(f'if result...')
                 end_idx_temp, _ = result
+                logger.log(f'end_idx_temp: {end_idx_temp}')
 
                 if is_oom:
                     end_idx = min(start_idx + layer_amount, end_idx_temp)

@@ -528,6 +528,7 @@ class PerformanceDataStore:
         回傳該 start_idx 對應的最佳 end_idx 與 latency。
         若該 start_idx 尚未記錄，則回傳 None。
         """
+        self.logger.log(f'optimal_latency_map: {self.optimal_latency_map}')
         return self.optimal_latency_map.get(start_idx, None)
 
     def set_optimal_set(self, start_idx, end_idx, latency):
