@@ -528,7 +528,7 @@ class PerformanceDataStore:
         回傳該 start_idx 對應的最佳 end_idx 與 latency。
         若該 start_idx 尚未記錄，則回傳 None。
         """
-        self.logger.log(f'optimal_latency_map: {self.optimal_latency_map}')
+        #self.logger.log(f'optimal_latency_map: {self.optimal_latency_map}')
         return self.optimal_latency_map.get(start_idx, None)
 
     def set_optimal_set(self, start_idx, end_idx, latency):
@@ -645,7 +645,7 @@ def calculate_edge_server_opt(data_store: PerformanceDataStore, ppl, lm_manager,
                 for flag in [True, False]:
                     # Get candidates that match the flag
                     flagged_entries = [entry for entry in latencies_with_timestamps if entry[5] == flag]
-                    if len(flagged_entries) > 0:
+                    if len(flagged_entries) > 1:
                         max_entry = max(flagged_entries, key=lambda x: x[0])  # Find max segment_latency
                         latencies_with_timestamps.remove(max_entry)
                 # print(f"DEBUG ES_OPT: For path {(es_start, es_end)}, removed record with latency {max_latency_entry[0]:.4f}")
