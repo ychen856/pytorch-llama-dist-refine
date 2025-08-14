@@ -272,7 +272,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[0].to(device)
                         models[i].eval()
-                    checkpoint_idx = checkpoint_idx + 1
+                        checkpoint_idx = checkpoint_idx + 1
                 elif i == 33:
                     if i >= len(models):
                         models.append((LlamaForCausalLM_norm(config)))
@@ -286,7 +286,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[33].to(device)
                         models[i].eval()
-                    checkpoint_idx = checkpoint_idx + 1
+                        checkpoint_idx = checkpoint_idx + 1
                 elif i == 34:
                     if i >= len(models):
                         models.append((LlamaForCausalLM_linear(config)))
@@ -300,7 +300,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[34].to(device)
                         models[i].eval()
-                    checkpoint_idx = checkpoint_idx + 1
+                        checkpoint_idx = checkpoint_idx + 1
                 else:
                     if i >= len(models):
                         logger.log(f'KAKA')
@@ -316,7 +316,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
                         models[i].to(device)
                         models[i].eval()
-                    checkpoint_idx = checkpoint_idx + 1
+                        checkpoint_idx = checkpoint_idx + 1
             except Exception as e:
                 logger.log(f'expect!!')
                 logger.log(f'{e}')
