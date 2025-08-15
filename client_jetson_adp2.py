@@ -506,7 +506,6 @@ def task1_data_sending(args):
 def task1_data_sending_direct(args):
     while 1 and not stop_event.is_set():
         start_time = time.time()
-        logger.log(f'WHYYYY')
         if input_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
             logger.log(f'queue size: {input_queue.qsize()}')
             idx = input_queue.qsize()
@@ -875,10 +874,10 @@ if __name__ == '__main__':
                                      head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
-    thread2.start()
-    #thread3.start()
+    #thread2.start()
+    thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
-    thread2.join()
-    #thread3.join()
+    #thread2.join()
+    thread3.join()
