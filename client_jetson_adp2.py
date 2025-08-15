@@ -506,6 +506,7 @@ def task1_data_sending(args):
 def task1_data_sending_direct(args):
     while 1 and not stop_event.is_set():
         start_time = time.time()
+        logger.log(f'WHYYYY')
         if input_queue.qsize() > 0:  # and calculate_opt.incoming_count + 2 >= calculate_opt.outgoint_count:
             logger.log(f'queue size: {input_queue.qsize()}')
             idx = input_queue.qsize()
