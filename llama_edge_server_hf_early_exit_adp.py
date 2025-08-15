@@ -174,8 +174,8 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
 
     if type == 2: # drop layers
         #print('decrease buffer')
-        models = models[:-1]
-        end_idx_buff = end_idx_buff - 1
+        models = models[:end_idx_buff + 1]
+        #end_idx_buff = end_idx_buff - 1
 
     if type == 3:   #reallocate model
         #print('increase buffer')
@@ -190,7 +190,8 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         checkpoints = natsorted(checkpoints)
         assert len(checkpoints) > 0, f"no checkpoint files found in {args.ckpt_dir_hf_sep}"
 
-        start_idx_buff = max(0, start_idx - 2)
+        #start_idx_buff = max(0, start_idx - 2)
+        start_idx_buff = 0
         #print('FFFFFFFFFFff: ', max_layers)
         checkpoints = checkpoints[start_idx_buff : end_idx_buff + 1]
         checkpoint_idx = start_idx_buff
@@ -246,6 +247,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         print('start idx buff: ', start_idx_buff)
         checkpoint_idx = 0
         for i in range(0, end_idx_buff + 1):
+            logger.log(f'checkpoint idx: {checkpoint_idx}')
             if i < start_idx_buff and len(models) > i:
                 logger.log(f'i: {i} -> None')
                 models[i] = None
@@ -301,12 +303,14 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
                         checkpoint_idx = checkpoint_idx + 1
                 else:
                     if i >= len(models):
+                        logger.log(f'KAKA')
                         models.append((LlamaForCausalLM_layer_0(config)))
                         load_layer = True
                     elif models[i] is None:
+                        logger.log(f'MDD')
                         models[i] = LlamaForCausalLM_layer_0(config)
                         load_layer = True
-
+                    logger.log(f'new lenght: {len(models)}')
                     if load_layer is True:
                         logger.log(f'i: {i} -> L')
                         models[i].load_state_dict(checkpoint_list[checkpoint_idx], strict=True)
@@ -339,6 +343,7 @@ def layer_reallocation(type, start_idx, end_idx, max_layers, models):
         logger.log(f'model: {model}')
     logger.log(f'show model end...')'''
     return models, end_idx_buff
+
 
 
 def load_model(checkpoints_dir, start_idx, end_idx, device):
@@ -699,7 +704,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #max_layers = start_idx - 2 + max_layer_amount
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
             # models, end_idx_buff = layer_reallocation(5, start_idx, end_idx_buff, max_layers, models)
-            start_idx_buff = max(0, start_idx - 2)
+            #start_idx_buff = max(0, start_idx - 2)
+            start_idx_buff = 0
             layer_amount = end_idx - start_idx
 
             http_receiver.set_outgoing_queue(['T'])
