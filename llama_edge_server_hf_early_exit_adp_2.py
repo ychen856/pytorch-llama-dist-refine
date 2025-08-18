@@ -794,7 +794,12 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 logger.log(f'end_idx_temp: {end_idx_temp}')
 
                 if is_oom:
+                    logger.log(f'is oom')
                     end_idx = min(start_idx + layer_amount, end_idx_temp)
+
+                logger.log(f'debug.. start_idx: {start_idx}')
+                logger.log(f'debug.. layer_amount: {layer_amount}')
+                logger.log(f'debug.. start_idx + layer_amount: {start_idx + layer_amount}')
                 logger.log(f'new end: {end_idx}')
 
                 models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
@@ -1015,6 +1020,10 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     logger.log(f'testing statistic period: {statistics_period}')
                     logger.log(f'testing cycle count: {cycle_count}')
                     logger.log(f'testing s-c: {statistics_period - cycle_count}')
+
+                    logger.log(f'debug.. is cycle_count > (statistics_period - 12): {cycle_count > (statistics_period - 12)}')
+                    logger.log(f'debug.. is input_count >= 24: {input_count >= 24}')
+                    logger.log(f'debug.. is statistics_period - cycle_count) % 4 == 0: {(statistics_period - cycle_count) % 4 == 0}')
                     if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                         print('testing higher value(i<12)')
                         logger.log(f'testing higher value(i<30)')
