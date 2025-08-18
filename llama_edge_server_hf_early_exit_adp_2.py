@@ -922,13 +922,13 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     start_time = time.time()
                     lm_logits = models[34](lm_logits)
 
-        # take after snapshot
+        '''# take after snapshot
         snapshot_after = tracemalloc.take_snapshot()
         stats = snapshot_after.compare_to(snapshot_before, 'lineno')
 
         logger.log(f"[ Top memory usage T2]")
         for stat in stats[:10]:
-            logger.log(f'{stat}')
+            logger.log(f'{stat}')'''
 
         end_time = time.time()
         total_comp_time = time.time() - start_comp_time
