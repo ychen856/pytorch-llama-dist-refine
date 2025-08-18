@@ -83,12 +83,12 @@ init_params = {
     (4, 20): {'a': 202, 'b': 131, 'gamma': 1.0},    #0.606606661
     (4, 30): {'a': 268, 'b': 65,  'gamma': 1.0},    #0.8048048
     (6, 10): {'a': 103, 'b': 230, 'gamma': 1.0},    #0.30930931
-    (6, 20): {'a': 119, 'b': 214, 'gamma': 1.0},    #0.357357
+    (6, 20): {'a': 227, 'b': 106, 'gamma': 1.0},    #0.357357
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0},    #0.906906
-    (8, 10): {'a': 135, 'b': 198, 'gamma': 1.0},    #0.405405
-    (8, 20): {'a': 227, 'b': 106, 'gamma': 1.0},    #0.68168168
+    (8, 10): {'a': 119, 'b': 214, 'gamma': 1.0},    #0.405405
+    (8, 20): {'a': 243, 'b': 90, 'gamma': 1.0},    #0.68168168
     (8, 30): {'a': 322, 'b': 11,  'gamma': 1.0},    #0.99699
-    (10, 10): {'a': 243,  'b': 90, 'gamma': 1.0},
+    (10, 10): {'a': 135,  'b': 198, 'gamma': 1.0},
     (10, 20): {'a': 248, 'b': 85, 'gamma': 1.0},
     (10, 30): {'a': 321, 'b': 12,  'gamma': 1.0},
 
@@ -1173,18 +1173,18 @@ if __name__ == '__main__':
 
     start_time = time.time()
     thread1 = threading.Thread(target=task1_data_receiving, args=[args])
-    thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
-    #thread2 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread2 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread2 = threading.Thread(target=task1_data_sending, args=[args])
     #thread2 = threading.Thread(target=task1_data_sending_multi, args=[args])
     #(models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, is_dummy=True)
     thread3 = threading.Thread(target=task2_computation, args=[models, lm_models, start_idx, end_idx, early_idx_buff, end_idx_buff, max_layers, max_layer_amount, head_idx, tokenizer, device, False])
 
     thread1.start()
     thread2.start()
-    #thread3.start()
+    thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
     thread2.join()
-    #thread3.join()
+    thread3.join()
     print('total_time: ', time.time() - start_time)
