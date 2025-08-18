@@ -784,7 +784,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #http_receiver.set_outgoing_queue(['T'])
             #is_exploring = False
             continue
-        elif performance_data_store.steady_state and not is_exploring:
+        #elif performance_data_store.steady_state and not is_exploring:
+        elif not is_exploring:
             start_idx = input[0]
             logger.log(f'normal start: {start_idx}')
             result = performance_data_store.get_optimal_end_idx(start_idx)
@@ -1024,7 +1025,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                     logger.log(f'debug.. is cycle_count > (statistics_period - 12): {cycle_count > (statistics_period - 12)}')
                     logger.log(f'debug.. is input_count >= 24: {input_count >= 24}')
                     logger.log(f'debug.. is statistics_period - cycle_count) % 4 == 0: {(statistics_period - cycle_count) % 4 == 0}')
-                    if (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
+                    if cycle_count == (statistics_period - 12) and (input_count) % 4 == 0 and input_count < 24 and end_idx < max_layers and statistics_period <= 20:
                         print('testing higher value(i<12)')
                         logger.log(f'testing higher value(i<30)')
 
