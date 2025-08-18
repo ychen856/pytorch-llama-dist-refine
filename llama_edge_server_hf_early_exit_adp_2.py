@@ -785,8 +785,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #http_receiver.set_outgoing_queue(['T'])
             #is_exploring = False
             continue
-        #elif performance_data_store.steady_state and not is_exploring:
-        elif not is_exploring:
+        elif performance_data_store.steady_state and not is_exploring:
             start_idx = input[0]
             logger.log(f'normal start: {start_idx}')
             result = performance_data_store.get_optimal_end_idx(start_idx)
