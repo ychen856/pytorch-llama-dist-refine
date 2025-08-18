@@ -757,7 +757,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             #models, end_idx_buff = layer_reallocation(3, start_idx, end_idx_buff, max_layers, models)
             models, end_idx_buff = layer_reallocation(3, start_idx, end_idx, max_layers, models)
 
-            start_idx_buff = max(0, start_idx - 2)
+            #start_idx_buff = max(0, start_idx - 2)
+            start_idx_buff = 0
             opt_layer_amount = end_idx - start_idx
             layer_amount = opt_layer_amount
 
@@ -789,6 +790,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
             start_idx = input[0]
             logger.log(f'normal start: {start_idx}')
             result = performance_data_store.get_optimal_end_idx(start_idx)
+            logger.log(f'result: {result}')
             if result:
                 logger.log(f'if result...')
                 end_idx_temp, _ = result
