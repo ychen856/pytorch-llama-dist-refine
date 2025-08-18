@@ -83,16 +83,17 @@ init_params = {
     (4, 20): {'a': 202, 'b': 131, 'gamma': 1.0},    #0.606606661
     (4, 30): {'a': 268, 'b': 65,  'gamma': 1.0},    #0.8048048
     (6, 10): {'a': 103, 'b': 230, 'gamma': 1.0},    #0.30930931
-    (6, 20): {'a': 119, 'b': 214, 'gamma': 1.0},    #0.357357
+    (6, 20): {'a': 227, 'b': 106, 'gamma': 1.0},    #0.357357
     (6, 30): {'a': 302, 'b': 31,  'gamma': 1.0},    #0.906906
-    (8, 10): {'a': 135, 'b': 198, 'gamma': 1.0},    #0.405405
-    (8, 20): {'a': 227, 'b': 106, 'gamma': 1.0},    #0.68168168
+    (8, 10): {'a': 119, 'b': 214, 'gamma': 1.0},    #0.405405
+    (8, 20): {'a': 243, 'b': 90, 'gamma': 1.0},    #0.68168168
     (8, 30): {'a': 322, 'b': 11,  'gamma': 1.0},    #0.99699
-    (10, 10): {'a': 243,  'b': 90, 'gamma': 1.0},
+    (10, 10): {'a': 135,  'b': 198, 'gamma': 1.0},
     (10, 20): {'a': 248, 'b': 85, 'gamma': 1.0},
     (10, 30): {'a': 321, 'b': 12,  'gamma': 1.0},
 
 }
+
 lm_manager = LMHeadManager(head_names, ppl_list, init_params, logger)
 #shock_manager = PredictiveSplittingManager(lm_manager, logger, shock_alpha=1.5, window_size=5, shock_threshold=3)
 edgeSplittingManagerPool = EdgeSplittingManagerPool(34, lm_manager, logger)

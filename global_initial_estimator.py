@@ -34,7 +34,8 @@ class GlobalInitialStageEstimator:
         best_m = None
         best_est = float('inf')
 
-        for m in range(start_idx, self.total_layers):
+        #for m in range(start_idx, self.total_layers):
+        for m in range(start_idx, 10):
             head_name, _ = utils.get_lm_head_idx(m)
             exit_rate = self.lm_manager.predict_exit_rate(head_name, ppl)
 
@@ -56,4 +57,5 @@ class GlobalInitialStageEstimator:
                 best_est = est
                 best_m = m
 
-        return best_m if best_m is not None else self.total_layers - 1
+        #return best_m if best_m is not None else self.total_layers - 1
+        return best_m if best_m is not None else 9
