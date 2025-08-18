@@ -1005,11 +1005,11 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
                 existed_opt = performance_data_store.get_all_data_by_edge_server_start_index(start_idx)
                 if len(existed_opt) == 0:
                     logger.log(f'no exist opt')
-                    #end_idx = start_idx + 1
-                    #layer_amount = 1
+                    end_idx = start_idx + 1
+                    layer_amount = 1
 
-                    end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
-                    layer_amount = end_idx- start_idx
+                    #end_idx = global_initial_estimator.predict_best_m(args.ppl, start_idx)
+                    #layer_amount = end_idx- start_idx
 
                 else:
                     logger.log(f'testing statistic period: {statistics_period}')
