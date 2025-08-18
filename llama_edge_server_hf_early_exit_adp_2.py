@@ -713,7 +713,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
     is_exploring = True
     is_oom = False
     while(1):
-        logger.log(f'XXXXXXXXXXXXXXXXXXXXXX')
+        '''logger.log(f'XXXXXXXXXXXXXXXXXXXXXX')
         gc.collect()  # 手動觸發垃圾回收
         leaked_objs = gc.garbage  # 找出無法被釋放的物件
         logger.log(f"Leaked objects: {len(leaked_objs)}")
@@ -722,7 +722,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         logger.log(f'YYYYYYYYYYYYYYYYYYYYYY')
         tracemalloc.start()
         # take before snapshot
-        snapshot_before = tracemalloc.take_snapshot()
+        snapshot_before = tracemalloc.take_snapshot()'''
 
 
         logger.log(f'queue size t2: {http_receiver.incoming_queue.qsize()}')
@@ -813,6 +813,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, early_idx_buff, end
         is_early_exit = False
 
         logger.log(f'is exploring: {is_exploring}')
+        logger.log(f'is steady: {performance_data_store.steady_state}')
 
         #end recieved original data
 
