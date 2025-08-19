@@ -8,16 +8,16 @@
 #sleep 10
 #python3.8 client_jetson_adp.py --ppl 30 --mode bandwidth-aware --config config_jetson2.yaml --log 13_jetson2_wlan_ppl_10_SM_fixed_end_4.log
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_45_1.log
+python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_46_1.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_45_2.log
+python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_46_2.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_45_3.log
+python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_46_3.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_45_4.log
+python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_46_4.log
 
 sleep 10
-python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_45_5.log
+python3.8 client_jetson_adp2.py --ppl 20 --mode exit-rate --config config_jetson2.yaml --log 10_3_device_3_hop_test_46_5.log
