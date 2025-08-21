@@ -186,6 +186,10 @@ def task2_computation(models, start_idx, end_idx, tokenizer, device, is_dummy=Tr
             http_receiver.set_outgoing_queue(['T'])
             continue
 
+        if input[0] == 'opt':
+            http_receiver.set_outgoing_queue(['T'])
+            continue
+
         print('input: ', input)
         #received original data
         start_idx = input[0]
