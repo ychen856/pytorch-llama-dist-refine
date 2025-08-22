@@ -66,15 +66,6 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #input = text[1]
     #client_comp_time = text[5]
 
-    url = "https://test-server-service.nrp-nautilus.io/"
-    response = requests.get(url)
-
-    # Accessing the response
-    print(f"Status Code: {response.status_code}")
-    print(f"Response Text: {response.text}")
-    print(f"Response JSON: {response.json()}")
-
-
 
 
     newx = lz4.frame.compress(pickle.dumps(text))
@@ -87,11 +78,13 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
     conn = http.client.HTTPSConnection(server_ip, server_port)
     conn.connect()
-    #conn.request("GET", "/3/library/http.client.html")
+    conn.request("GET", "/3/library/http.client.html")
+    # Get the response
+    response = conn.getresponse()
 
-    #response = conn.getresponse()
+    # Print the status and read the response body
+    print(f"Status: {response.status}")
 
-    #print(f"Status: {response.status}, Reason: {response.reason}")
 
     #conn.putrequest('POST', '/upload/')
     conn.putrequest('POST', '/')
