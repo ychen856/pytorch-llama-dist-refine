@@ -66,7 +66,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #input = text[1]
     #client_comp_time = text[5]
 
-    url = "http://test-server-service.nrp-nautilus.io/"
+    url = "https://test-server-service.nrp-nautilus.io/"
     response = requests.get(url)
 
     # Accessing the response
@@ -87,6 +87,11 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
     conn = http.client.HTTPSConnection(server_ip, server_port)
     conn.connect()
+    conn.request("GET", "/3/library/http.client.html")
+
+    response = conn.getresponse()
+
+    print(f"Status: {response.status}, Reason: {response.reason}")
 
     #conn.putrequest('POST', '/upload/')
     conn.putrequest('POST', '/')
