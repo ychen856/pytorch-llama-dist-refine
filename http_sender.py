@@ -66,7 +66,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #input = text[1]
     #client_comp_time = text[5]
 
-    url = "https://test-server-service.nrp-nautilus.io/"
+    url = "http://test-server-service.nrp-nautilus.io/"
     response = requests.get(url)
 
     # Accessing the response
