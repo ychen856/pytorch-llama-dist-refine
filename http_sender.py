@@ -74,7 +74,7 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
     #start_time = time.time()
 
-    conn = http.client.HTTPConnection(server_ip, server_port)
+    conn = http.client.HTTPSConnection(server_ip, server_port)
     conn.connect()
 
     #conn.putrequest('POST', '/upload/')
