@@ -41,8 +41,8 @@ def send_request(server_ip, server_port, text, performance_data_store, timestamp
     print('communication size: ', total_size)
 
 
-    conn = http.client.HTTPConnection(server_ip, server_port)
-    #conn = http.client.HTTPSConnection(server_ip)
+    #conn = http.client.HTTPSConnection(server_ip, server_port)
+    conn = http.client.HTTPSConnection(server_ip)
     conn.connect()
 
     conn.putrequest('POST', '/')

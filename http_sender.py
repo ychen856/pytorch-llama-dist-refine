@@ -76,8 +76,8 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
     #start_time = time.time()
 
-    conn = http.client.HTTPConnection(server_ip, server_port)
-    #conn = http.client.HTTPSConnection(server_ip)
+    #conn = http.client.HTTPSConnection(server_ip, server_port)
+    conn = http.client.HTTPSConnection(server_ip)
     conn.connect()
     conn.request("GET", "/3/library/http.client.html")
     # Get the response
