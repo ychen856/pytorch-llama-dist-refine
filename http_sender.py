@@ -10,7 +10,7 @@ import threading
 from queue import Queue
 import lz4.frame
 from datetime import datetime, timedelta
-
+import requests
 '''parser = argparse.ArgumentParser(
     description='Pytorch Imagenet Training')
 parser.add_argument('--config', default='config_server.yaml')
@@ -65,6 +65,17 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
     #idx = text[4]
     #input = text[1]
     #client_comp_time = text[5]
+
+    url = "https://test-server-service.nrp-nautilus.io/"
+    response = requests.get(url)
+
+    # Accessing the response
+    print(f"Status Code: {response.status_code}")
+    print(f"Response Text: {response.text}")
+    print(f"Response JSON: {response.json()}")
+
+
+
 
     newx = lz4.frame.compress(pickle.dumps(text))
 
