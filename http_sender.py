@@ -87,11 +87,11 @@ def send_data(server_ip, server_port, text, performance_data_store, timestamp_ma
 
     conn = http.client.HTTPSConnection(server_ip, server_port)
     conn.connect()
-    conn.request("GET", "/3/library/http.client.html")
+    #conn.request("GET", "/3/library/http.client.html")
 
-    response = conn.getresponse()
+    #response = conn.getresponse()
 
-    print(f"Status: {response.status}, Reason: {response.reason}")
+    #print(f"Status: {response.status}, Reason: {response.reason}")
 
     #conn.putrequest('POST', '/upload/')
     conn.putrequest('POST', '/')
