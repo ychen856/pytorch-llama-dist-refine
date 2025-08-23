@@ -12,7 +12,7 @@ MAX_CONCURRENT_REQUESTS = 1
 semaphore = threading.Semaphore(MAX_CONCURRENT_REQUESTS)
 
 # 內部資料 queue
-incoming_queue = Queue()
+incoming_queue = Queue(maxsize=2)
 outgoing_map = {}
 outgoing_map_lock = threading.Lock()
 
