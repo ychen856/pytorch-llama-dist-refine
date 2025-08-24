@@ -661,7 +661,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     count = 0
     early_count = 0
     statistics_period = performance_data_store.statistic_period
-    batch_size = 30
+    batch_size = 20
     # repeated 5->0, 10->1, 20->3
     global repeated
     #while not input_queue.empty():
@@ -904,7 +904,7 @@ if __name__ == '__main__':
 
     tokenizer = LlamaTokenizer.from_pretrained(args.ckpt_dir_hf, use_fast=False)
 
-    n_sample = 30
+    n_sample = 20
     batch_num = 30
     #seed = random.seed(time.time())
     seed = 0
