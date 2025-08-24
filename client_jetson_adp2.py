@@ -666,6 +666,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     global repeated
     #while not input_queue.empty():
     while(1 and not stop_event.is_set()):
+        logger.log(f'in queue size t2: {input_queue.qsize()}')
         if count > max_batch_num * batch_size:
             break
 
