@@ -25,8 +25,8 @@ from model_hf import LlamaForCausalLM_emb, LlamaForCausalLM_linear, LlamaForCaus
 from data import get_wikitext2_testloader, get_wikitext2_random_test_stream, get_wikitext2_testloader_full
 from timestamp_manager import Timestamp_manager
 from early_exit import early_exit_lm_head, early_exit_regression
-import http_sender
-#import http_sender_2 as http_sender
+#import http_sender
+import http_sender_2 as http_sender
 from logger import Logger
 
 parser = argparse.ArgumentParser(
@@ -577,16 +577,15 @@ def task1_data_sending_multi_save(args):
 
 
             futures.append(
-                #executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
-                executor.submit(http_sender.send_request, args.server_ip, args.server_port, data,
-                                performance_data_store, timestamp_manager, logger))
+                executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
+                #executor.submit(http_sender.send_request, args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger))
 
 
         # 等所有任務完成
         concurrent.futures.wait(futures)
 
 def task1_data_sending_multi(args):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         futures = []
         while 1 and not stop_event.is_set():
             timeout_count = 0
@@ -919,17 +918,17 @@ if __name__ == '__main__':
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
     #thread1 = threading.Thread(target=task1_data_sending, args=[args])
-    thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
-    #thread1 = threading.Thread(target=task1_data_sending_multi_save, args=[args])
+    #thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread1 = threading.Thread(target=task1_data_sending_multi_save, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
                                      head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
     thread1.start()
-    #thread2.start()
+    thread2.start()
     thread3.start()
 
     # Wait for both threads to finish (optional)
     thread1.join()
-    #thread2.join()
+    thread2.join()
     thread3.join()
