@@ -920,7 +920,7 @@ if __name__ == '__main__':
                                                                                             })
     #thread1 = threading.Thread(target=task1_data_sending, args=[args])
     #thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
-    thread1 = threading.Thread(target=task1_data_sending_multi, args=[args])
+    thread1 = threading.Thread(target=task1_data_sending_multi_save, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
                                      head_idx, max_layers, batch_num, device])
