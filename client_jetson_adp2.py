@@ -661,7 +661,7 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
     count = 0
     early_count = 0
     statistics_period = performance_data_store.statistic_period
-    batch_size = 20
+    batch_size = 30
     # repeated 5->0, 10->1, 20->3
     global repeated
     #while not input_queue.empty():
