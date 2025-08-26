@@ -570,15 +570,15 @@ def task1_data_sending_multi_save(args):
                     logger.log(f'ELSE!')
                     break
 
+            if outgoing_queue.qsize() > 0:
+                data = outgoing_queue.get()
+                #performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
+                #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
-            data = outgoing_queue.get()
-            #performance_data_store.outgoing_count = performance_data_store.outgoing_count + 1
-            #http_sender.send_data(args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger)
 
-
-            futures.append(
-                #executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
-                executor.submit(http_sender.send_request, args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger))
+                futures.append(
+                    #executor.submit(http_sender.send_request, args.gateway_ip, args.gateway_port, data, performance_data_store, timestamp_manager, logger))
+                    executor.submit(http_sender.send_request, args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger))
 
 
         # 等所有任務完成
