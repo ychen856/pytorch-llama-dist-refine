@@ -581,8 +581,8 @@ def task1_data_sending_multi_save(args):
                     executor.submit(http_sender.send_request, args.server_ip, args.server_port, data, performance_data_store, timestamp_manager, logger))
 
 
-        # 等所有任務完成
-        concurrent.futures.wait(futures)
+                # 等所有任務完成
+                concurrent.futures.wait(futures)
 
 def task1_data_sending_multi(args):
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
