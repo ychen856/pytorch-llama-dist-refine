@@ -938,11 +938,11 @@ if __name__ == '__main__':
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
                                      head_idx, max_layers, batch_num, device])
     #thread3 = threading.Thread(target=data_producer, args=[models, test_loader, bs, device])
-    thread1.start()
+    #thread1.start()
     #thread2.start()
     thread3.start()
 
     # Wait for both threads to finish (optional)
-    thread1.join()
+    #thread1.join()
     #thread2.join()
     thread3.join()
