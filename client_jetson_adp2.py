@@ -776,6 +776,8 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
                 for line in mask:
                     np.savetxt(f, line, fmt='%.2f')
 
+            os._exit(0)
+
             outgoing_queue.put([end_idx + 1, out, ids, mask, idx, end_time - start_time])
 
             print('outgoing queue PUT!')
