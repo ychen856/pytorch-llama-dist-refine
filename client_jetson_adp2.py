@@ -764,6 +764,18 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
 
             #outgoing_queue.put([end_idx + 1, pruned_feature_vector, ids, mask, idx, end_time - start_time])
+            with open('vector_out.txt', 'wb') as f:
+                for line in out:
+                    np.savetxt(f, line, fmt='%.2f')
+
+            with open('vector_ids.txt', 'wb') as f:
+                for line in ids:
+                    np.savetxt(f, line, fmt='%.2f')
+
+            with open('vector_mask.txt', 'wb') as f:
+                for line in mask:
+                    np.savetxt(f, line, fmt='%.2f')
+
             outgoing_queue.put([end_idx + 1, out, ids, mask, idx, end_time - start_time])
 
             print('outgoing queue PUT!')
@@ -917,8 +929,8 @@ if __name__ == '__main__':
                                                                                             "distribution": "exponential",
                                                                                             "dist_args": {"scale": 0.8}
                                                                                             })
-    #thread1 = threading.Thread(target=task1_data_sending, args=[args])
-    thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
+    thread1 = threading.Thread(target=task1_data_sending, args=[args])
+    #thread1 = threading.Thread(target=task1_data_sending_direct, args=[args])
     #thread1 = threading.Thread(target=task1_data_sending_multi_save, args=[args])
     thread2 = threading.Thread(target=task2_computation,
                                args=[models, lm_models, start_idx, performance_data_store.end_idx, performance_data_store.end_idx_buff,
