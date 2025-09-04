@@ -764,17 +764,9 @@ def task2_computation(models, lm_models, start_idx, end_idx, end_idx_buff, head_
 
 
             #outgoing_queue.put([end_idx + 1, pruned_feature_vector, ids, mask, idx, end_time - start_time])
-            with open('vector_out.txt', 'wb') as f:
-                for line in out:
-                    np.savetxt(f, line, fmt='%.2f')
-
-            with open('vector_ids.txt', 'wb') as f:
-                for line in ids:
-                    np.savetxt(f, line, fmt='%.2f')
-
-            with open('vector_mask.txt', 'wb') as f:
-                for line in mask:
-                    np.savetxt(f, line, fmt='%.2f')
+            torch.save(out, 'vector_out.pt')
+            torch.save(ids, 'vector_ids.pt')
+            torch.save(mask, 'vector_mask.pt')
 
             os._exit(0)
 
