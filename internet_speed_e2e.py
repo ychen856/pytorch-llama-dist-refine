@@ -8,7 +8,7 @@ import torch
 
 # 這裡需要替換成你的實際 API 端點
 #API_ENDPOINT = "https://test-server-service.nrp-nautilus.io/"
-API_ENDPOINT = "https://131.193.173.107:8000/"
+API_ENDPOINT = "http://131.193.173.107:8000/"
 FEATURE_VECTOR_FILE_1 = "vector_out.pt"
 FEATURE_VECTOR_FILE_2 = "vector_ids.pt"
 FEATURE_VECTOR_FILE_3 = "vector_mask.pt"
