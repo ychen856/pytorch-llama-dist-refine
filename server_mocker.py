@@ -9,9 +9,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # 設定伺服器位址和連接埠
 # 這是 Mocker 服務實際運行的位址和埠，它會從您的服務層接收請求
+#SERVER_HOST = ''
+#SERVER_PORT = 80  # 更改為一個常見的 HTTP 埠
 SERVER_HOST = ''
-SERVER_PORT = 80  # 更改為一個常見的 HTTP 埠
-
+SERVER_PORT = 8000  # 更改為一個常見的 HTTP 埠
 
 class S(BaseHTTPRequestHandler):
     """
