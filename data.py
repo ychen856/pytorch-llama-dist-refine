@@ -32,8 +32,7 @@ def get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device):
     trainloader = []
 
     for _ in range(nsamples):
-        #i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
-        i = 0
+        i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j].to(device)
         trainloader.append(inp)
