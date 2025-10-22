@@ -28,7 +28,7 @@ def get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device):
 
     trainenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
-    random.seed(seed)
+    #random.seed(seed)
     trainloader = []
 
     for _ in range(nsamples):
@@ -37,6 +37,7 @@ def get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device):
         inp = trainenc.input_ids[:, i:j].to(device)
         trainloader.append(inp)
 
+    print('trainloader: ', trainloader)
     return trainloader
 
 
