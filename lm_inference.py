@@ -219,7 +219,8 @@ if __name__ == '__main__':
     seqlen = 1024
 
     #testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
-    testenc = get_wikitext2_testloader_full(tokenizer)
+    test_loader = get_wikitext2_testloader_full(tokenizer)
+    testenc = test_loader.input_ids
     # List to store negative log likelihoods
     nlls = []
     early_count = 0
