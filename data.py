@@ -28,11 +28,12 @@ def get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device):
 
     trainenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
 
-    #random.seed(seed)
+    random.seed(seed)
     trainloader = []
 
     for _ in range(nsamples):
-        i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
+        #i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
+        i = 0
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j].to(device)
         trainloader.append(inp)
