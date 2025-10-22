@@ -214,7 +214,8 @@ if __name__ == '__main__':
     nsamples = testenc.numel() // seqlen'''
 
     nsamples = 500
-    seed = random.seed(time.time())
+    #seed = random.seed(time.time())
+    seed = 1
     seqlen = 1024
 
     testenc = get_wikitext2_trainloader(nsamples, seed, seqlen, tokenizer, device)
@@ -245,6 +246,7 @@ if __name__ == '__main__':
                 if k == head_idx:
                     try:
                         is_early_exit, lm_logits = early_exit_lm_head_shift(lm_models, out, head_idx, args.ppl)
+                        break
                         #is_early_exit, lm_logits = early_exit_lm_head(lm_models, out, head_idx, args.ppl)
                         # print('is early: ', is_early_exit)
                     except Exception as e:
